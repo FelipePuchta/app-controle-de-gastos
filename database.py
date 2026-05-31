@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 
 #CONEXÃO COM O BANCO DE DADOS
-load_dotenv(r"C:\Users\Usuario\Desktop\App Controle de Gastos\.env")
+load_dotenv()
 
 conexao=psycopg2.connect(
     host=os.getenv("DB_HOST"),
@@ -22,7 +22,7 @@ def criar_tabela():
     cursor.execute("CREATE TABLE IF NOT EXISTS categorias(id SERIAL PRIMARY KEY, nome VARCHAR(30) NOT NULL)")
 
     cursor.execute("CREATE TABLE IF NOT EXISTS gastos(id SERIAL PRIMARY KEY, descricao VARCHAR(100) NOT NULL, " \
-    "valor REAL NOT NULL, data DATE)")
+    "valor REAL NOT NULL, data DATE, categoria_id INTEGER REFERENCES categorias(id))")
     conexao.commit()
 
 criar_tabela()
