@@ -31,8 +31,6 @@ def criar_tabela():
     )
     conn.commit()
 
-criar_tabela()
-
 def adicionar_gasto(descricao, valor, data, categoria_id):
     conn = get_conn()
     cur = conn.cursor()

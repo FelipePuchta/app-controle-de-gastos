@@ -1,14 +1,20 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from database import (
+    criar_tabela,
     adicionar_gasto, visualizar_gasto, deletar_gasto, atualizar_gasto,
     visualizar_categorias, visualizar_gastos_por_categoria,
     visualizar_gastos_por_mes, total_por_categoria, total_por_mes
 )
 
-app = FastAPI(title="Controle de Gastos API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    criar_tabela()
+    yield
 
-from fastapi.middleware.cors import CORSMiddleware
+app = FastAPI(title="Controle de Gastos API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
