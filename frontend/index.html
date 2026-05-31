@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="FinTrack — Controle total dos seus gastos pessoais">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <title>FinTrack — Controle de Gastos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ---- HERO ---- */
+    .hero {
+      min-height: 100svh;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px 28px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-glow);
+      border: 1px solid var(--border-accent);
+      padding: 6px 14px; border-radius: 100px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+      width: fit-content;
+      animation: fadeUp 0.7s var(--ease) 0.1s both;
+    }
+    .hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2s infinite; }
+
+    .hero-title {
+      font-size: clamp(64px, 18vw, 120px);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+    }
+
+    .hero-title .line {
+      display: block;
+      overflow: hidden;
+    }
+    .hero-title .line span {
+      display: block;
+      animation: slideUp 0.9s var(--ease) both;
+    }
+    .hero-title .line:nth-child(1) span { animation-delay: 0.2s; }
+    .hero-title .line:nth-child(2) span { animation-delay: 0.35s; }
+    .hero-title .line:nth-child(3) span { animation-delay: 0.5s; }
+
+    .hero-title .stroke-text {
+      -webkit-text-stroke: 2px var(--text);
+      color: transparent;
+    }
+    [data-theme="light"] .hero-title .stroke-text {
+      -webkit-text-stroke: 2px #0a0a0a;
+    }
+
+    .hero-accent-bar {
+      width: 60px; height: 5px;
+      background: var(--accent);
+      border-radius: 5px;
+      margin-bottom: 24px;
+      animation: slideRight 0.8s var(--ease) 0.65s both;
+    }
+
+    .hero-desc {
+      font-size: 16px; line-height: 1.65;
+      color: var(--muted);
+      max-width: 340px;
+      animation: fadeUp 0.8s var(--ease) 0.7s both;
+      margin-bottom: 40px;
+    }
+
+    .hero-cta {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      animation: fadeUp 0.8s var(--ease) 0.85s both;
+    }
+
+    .hero-cta .btn { flex: 1; min-width: 140px; padding: 16px 20px; font-size: 14px; }
+
+    .hero-scroll {
+      position: absolute; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: fadeUp 1s var(--ease) 1.2s both;
+      color: var(--muted); font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; font-weight: 600;
+    }
+    .scroll-arrow {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(5px); } }
+
+    .hero-bg-number {
+      position: absolute; right: -20px; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(160px, 40vw, 260px);
+      color: var(--accent); opacity: 0.04;
+      pointer-events: none; line-height: 1;
+      user-select: none;
+    }
+
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes slideRight { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); } }
+
+    /* ---- SECTIONS ---- */
+    section { padding: 64px 0; position: relative; }
+
+    .section-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 12px; padding: 0 28px;
+    }
+
+    .section-title-big {
+      font-size: clamp(40px, 10vw, 64px);
+      line-height: 0.92; padding: 0 28px;
+      margin-bottom: 40px;
+    }
+
+    /* ---- FEATURES ---- */
+    .features-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; padding: 0 20px;
+    }
+
+    .feature-card {
+      padding: 22px 18px;
+      border-radius: var(--r);
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s var(--ease);
+      cursor: default;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-y);
+    }
+
+    .feature-icon {
+      font-size: 28px; margin-bottom: 12px;
+      display: block;
+      filter: grayscale(0);
+      animation: none;
+      transition: transform 0.3s var(--ease-spring);
+    }
+    .feature-card:hover .feature-icon { transform: scale(1.2) rotate(-6deg); }
+
+    .feature-name {
+      font-family: 'Anton', sans-serif;
+      font-size: 15px; text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+
+    .feature-desc {
+      font-size: 12px; color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ---- STATS ---- */
+    .stats-section { background: var(--accent); color: #0a0a0a; padding: 48px 28px; }
+    .stats-section .section-eyebrow { color: rgba(0,0,0,0.5); padding: 0; }
+    .stats-section .section-title-big { color: #0a0a0a; padding: 0; margin-bottom: 32px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stat-box { background: rgba(0,0,0,0.08); border-radius: var(--r-sm); padding: 20px; }
+    .stat-box .n { font-family: 'Anton', sans-serif; font-size: 38px; line-height: 1; }
+    .stat-box .l { font-size: 12px; font-weight: 600; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    /* ---- TESTIMONIALS ---- */
+    .testimonials-scroll {
+      display: flex; gap: 14px;
+      overflow-x: auto; padding: 4px 20px 12px;
+      scrollbar-width: none;
+    }
+    .testimonials-scroll::-webkit-scrollbar { display: none; }
+
+    .testi-card {
+      flex-shrink: 0; width: 260px;
+      padding: 24px;
+      border-radius: var(--r);
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+
+    .testi-stars { color: var(--accent); font-size: 14px; margin-bottom: 12px; letter-spacing: 2px; }
+    .testi-text { font-size: 14px; line-height: 1.6; color: var(--muted); margin-bottom: 16px; }
+    .testi-author { display: flex; align-items: center; gap: 10px; }
+    .testi-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent); color: #0a0a0a;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px;
+    }
+    .testi-name { font-weight: 600; font-size: 13px; }
+    .testi-role { font-size: 11px; color: var(--muted); }
+
+    /* ---- NAVIGATION CTA ---- */
+    .nav-cta { padding: 0 20px 40px; display: flex; flex-direction: column; gap: 12px; }
+    .nav-cta-card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 22px;
+      border-radius: var(--r);
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      text-decoration: none; color: var(--text);
+      transition: all 0.3s var(--ease);
+    }
+    .nav-cta-card:hover { border-color: var(--border-accent); transform: translateX(4px); }
+    .nav-cta-card:active { transform: scale(0.97); }
+    .nav-cta-info .name { font-family: 'Anton', sans-serif; font-size: 20px; text-transform: uppercase; }
+    .nav-cta-info .desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .nav-cta-icon { font-size: 24px; }
+    .nav-cta-arrow {
+      font-size: 20px; color: var(--accent);
+      margin-left: 12px;
+      transition: transform 0.2s;
+    }
+    .nav-cta-card:hover .nav-cta-arrow { transform: translateX(4px); }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      padding: 40px 28px 48px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Anton', sans-serif;
+      font-size: 28px; letter-spacing: 0.04em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-tagline { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .footer-copy { font-size: 11px; color: var(--dim); margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <!-- Top controls -->
+  <div class="top-controls">
+    <button class="icon-btn" id="themeBtn" aria-label="Tema">☀️</button>
+    <span></span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero-bg-number">₢</div>
+
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        FinTrack · 2025
+      </div>
+
+      <h1 class="hero-title font-anton">
+        <div class="line"><span>CONTROLE</span></div>
+        <div class="line"><span class="stroke-text">SEUS</span></div>
+        <div class="line"><span>GASTOS.</span></div>
+      </h1>
+
+      <div class="hero-accent-bar"></div>
+
+      <p class="hero-desc">
+        Visibilidade total das suas finanças pessoais. Categorize, analise e elimine gastos desnecessários com inteligência.
+      </p>
+
+      <div class="hero-cta">
+        <a href="dashboard.html" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a href="adicionar.html" class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo Gasto
+        </a>
+      </div>
+
+      <div class="hero-scroll">
+        SCROLL
+        <div class="scroll-arrow">↓</div>
+      </div>
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <section>
+      <p class="section-eyebrow reveal">Funcionalidades</p>
+      <h2 class="section-title-big reveal reveal-delay-1">TUDO QUE<br>VOCÊ<br>PRECISA</h2>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <span class="feature-icon">📊</span>
+          <div class="feature-name">Dashboard</div>
+          <p class="feature-desc">Gráficos animados com visão completa dos seus gastos mensais.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <span class="feature-icon">🏷️</span>
+          <div class="feature-name">Categorias</div>
+          <p class="feature-desc">Organize os gastos por categoria e veja onde seu dinheiro vai.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <span class="feature-icon">📅</span>
+          <div class="feature-name">Histórico</div>
+          <p class="feature-desc">Filtre e analise gastos por mês para identificar padrões.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <span class="feature-icon">✈️</span>
+          <div class="feature-name">Offline</div>
+          <p class="feature-desc">App funciona offline como PWA instalado no seu celular.</p>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-icon">⚡</span>
+          <div class="feature-name">Rápido</div>
+          <p class="feature-desc">Adicione gastos em segundos com formulário intuitivo.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <span class="feature-icon">🌙</span>
+          <div class="feature-name">Dark Mode</div>
+          <p class="feature-desc">Interface elegante em modo escuro ou claro, sua escolha.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== STATS ===== -->
+    <section class="stats-section">
+      <p class="section-eyebrow reveal">Números</p>
+      <h2 class="section-title-big reveal reveal-delay-1">SEU CONTROLE<br>FINANCEIRO</h2>
+      <div class="stats-grid">
+        <div class="stat-box reveal">
+          <div class="n">100%</div>
+          <div class="l">Gratuito</div>
+        </div>
+        <div class="stat-box reveal reveal-delay-1">
+          <div class="n">∞</div>
+          <div class="l">Gastos</div>
+        </div>
+        <div class="stat-box reveal reveal-delay-2">
+          <div class="n">5+</div>
+          <div class="l">Categorias</div>
+        </div>
+        <div class="stat-box reveal reveal-delay-3">
+          <div class="n">0s</div>
+          <div class="l">De setup</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DEPOIMENTOS ===== -->
+    <section>
+      <p class="section-eyebrow reveal px-20">Depoimentos</p>
+      <h2 class="section-title-big reveal reveal-delay-1">O QUE<br>DIZEM</h2>
+
+      <div class="testimonials-scroll">
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Finalmente um app de controle de gastos que não parece feito nos anos 2000. Visual incrível e muito fácil de usar."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">A</div>
+            <div>
+              <div class="testi-name">Ana Clara</div>
+              <div class="testi-role">Designer, São Paulo</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Uso todo dia para rastrear meus gastos. Os gráficos são claros e as animações deixam tudo mais agradável."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">R</div>
+            <div>
+              <div class="testi-name">Rafael Souza</div>
+              <div class="testi-role">Engenheiro, RJ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Instalei como PWA no meu celular e funciona perfeito. Em 3 semanas já reduzi 30% dos gastos supérfluos."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">M</div>
+            <div>
+              <div class="testi-name">Marina Torres</div>
+              <div class="testi-role">Empreendedora, BH</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Interface com esse nível de capricho é raro. Parece um app pago da App Store mas é totalmente gratuito."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">L</div>
+            <div>
+              <div class="testi-name">Lucas Ferreira</div>
+              <div class="testi-role">Dev, Curitiba</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PÁGINAS ===== -->
+    <section style="padding-top: 0;">
+      <p class="section-eyebrow reveal px-20">Navegação</p>
+      <h2 class="section-title-big reveal reveal-delay-1">EXPLORE<br>O APP</h2>
+
+      <div class="nav-cta">
+        <a href="dashboard.html" class="nav-cta-card reveal">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="nav-cta-icon">📊</span>
+            <div class="nav-cta-info">
+              <div class="name">Dashboard</div>
+              <div class="desc">Gráficos e relatórios mensais</div>
+            </div>
+          </div>
+          <span class="nav-cta-arrow">→</span>
+        </a>
+
+        <a href="gastos.html" class="nav-cta-card reveal reveal-delay-1">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="nav-cta-icon">💸</span>
+            <div class="nav-cta-info">
+              <div class="name">Gastos</div>
+              <div class="desc">Visualizar e gerenciar gastos</div>
+            </div>
+          </div>
+          <span class="nav-cta-arrow">→</span>
+        </a>
+
+        <a href="adicionar.html" class="nav-cta-card reveal reveal-delay-2">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="nav-cta-icon">➕</span>
+            <div class="nav-cta-info">
+              <div class="name">Adicionar</div>
+              <div class="desc">Registrar novo gasto</div>
+            </div>
+          </div>
+          <span class="nav-cta-arrow">→</span>
+        </a>
+
+        <a href="categorias.html" class="nav-cta-card reveal reveal-delay-3">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="nav-cta-icon">🏷️</span>
+            <div class="nav-cta-info">
+              <div class="name">Categorias</div>
+              <div class="desc">Gastos por categoria</div>
+            </div>
+          </div>
+          <span class="nav-cta-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <div class="footer-logo font-anton">FIN<span>TRACK</span></div>
+      <p class="footer-tagline">Controle total. Sem complicação.</p>
+      <p class="footer-copy">© 2025 FinTrack · Todos os direitos reservados</p>
+    </footer>
+
+  </div><!-- .page-content -->
+
+  <script src="js/app.js"></script>
+</body>
+</html>

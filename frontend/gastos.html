@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <title>Gastos · FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .list-container {
+      margin: 0 16px;
+      border-radius: var(--r);
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .expense-item {
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.15s;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: pan-y;
+    }
+    .expense-item:last-child { border-bottom: none; }
+    .expense-item:active { background: var(--card-hover); }
+
+    .expense-item .swipe-bg {
+      position: absolute; right: 0; top: 0; bottom: 0;
+      background: linear-gradient(to left, rgba(255,60,60,0.25), transparent);
+      width: 0;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 18px;
+      pointer-events: none;
+      transition: none;
+      color: #ff5555; font-size: 20px;
+    }
+
+    .expense-item .inner {
+      display: flex; align-items: center; gap: 14px;
+      flex: 1; min-width: 0;
+      transition: transform 0.15s;
+      pointer-events: none;
+    }
+
+    .cat-dot {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+      position: relative;
+    }
+
+    .expense-info { flex: 1; min-width: 0; }
+    .expense-desc { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .expense-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .expense-amount {
+      font-family: 'Anton', sans-serif;
+      font-size: 17px; color: var(--accent);
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* Delete modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex; align-items: flex-end;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s var(--ease);
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: all; }
+    .modal-sheet {
+      width: 100%;
+      background: var(--bg2);
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 20px 24px 40px;
+      border-top: 1px solid var(--border);
+      transform: translateY(100%);
+      transition: transform 0.4s var(--ease-spring);
+    }
+    .modal-overlay.show .modal-sheet { transform: translateY(0); }
+    .modal-handle {
+      width: 36px; height: 4px; border-radius: 4px;
+      background: var(--border); margin: 0 auto 20px;
+    }
+    .modal-title { font-family: 'Anton', sans-serif; font-size: 22px; text-transform: uppercase; margin-bottom: 8px; }
+    .modal-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+    .modal-item-preview {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-sm); padding: 14px 16px;
+      margin-bottom: 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-item-name { font-weight: 600; }
+    .modal-item-val { color: var(--accent); font-weight: 700; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-actions .btn { flex: 1; }
+
+    /* Edit sheet */
+    .edit-sheet { display: none; }
+    .edit-sheet.show { display: block; }
+
+    /* Swipe hint */
+    .swipe-hint {
+      text-align: center; font-size: 11px;
+      color: var(--dim); padding: 12px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <div class="top-controls">
+    <button class="icon-btn" id="backBtn" aria-label="Voltar">←</button>
+    <div class="api-status checking" id="apiStatus">
+      <span class="api-dot"></span>Verificando
+    </div>
+    <button class="icon-btn" id="themeBtn">🌙</button>
+  </div>
+
+  <div class="page-content pb-nav">
+    <div class="page-header">
+      <h1>SEUS<br>GASTOS</h1>
+      <p class="sub" id="headerSub">Carregando...</p>
+    </div>
+
+    <!-- Month selector -->
+    <div class="month-selector reveal" id="monthSelector">
+      <button class="month-nav-btn" id="prevMonth">‹</button>
+      <span class="month-label" id="monthLabel">—</span>
+      <button class="month-nav-btn" id="nextMonth">›</button>
+    </div>
+
+    <!-- Swipe hint -->
+    <p class="swipe-hint">← Deslize para esquerda para excluir</p>
+
+    <!-- List -->
+    <div id="listWrap">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <span>Carregando gastos...</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FAB -->
+  <a href="adicionar.html" class="fab" aria-label="Adicionar gasto">+</a>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item" data-page="dashboard.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="gastos.html" class="nav-item" data-page="gastos.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span>Gastos</span>
+    </a>
+    <a href="adicionar.html" class="nav-item" data-page="adicionar.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Adicionar</span>
+    </a>
+    <a href="categorias.html" class="nav-item" data-page="categorias.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+      <span>Categorias</span>
+    </a>
+  </nav>
+
+  <!-- Delete modal -->
+  <div class="modal-overlay" id="deleteModal" role="dialog" aria-modal="true">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Excluir Gasto</div>
+      <p class="modal-desc">Esta ação não pode ser desfeita. O gasto será removido permanentemente.</p>
+      <div class="modal-item-preview">
+        <span class="modal-item-name" id="deleteItemName">—</span>
+        <span class="modal-item-val" id="deleteItemVal">—</span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancelDelete">Cancelar</button>
+        <button class="btn btn-danger" id="confirmDelete">
+          <span class="btn-text">Excluir</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    let curMonth, curYear;
+    let gastos = [], categorias = [];
+    let deleteTarget = null;
+
+    async function init() {
+      const now = new Date();
+      curMonth = now.getMonth() + 1;
+      curYear = now.getFullYear();
+      updateLabel();
+      try {
+        [gastos, categorias] = await Promise.all([api.getGastos(), api.getCategorias()]);
+        renderList();
+      } catch (e) {
+        document.getElementById('listWrap').innerHTML =
+          `<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao carregar gastos.<br>${e.message}</p></div>`;
+      }
+    }
+
+    function updateLabel() {
+      document.getElementById('monthLabel').textContent =
+        MONTHS[curMonth - 1].toUpperCase() + ' ' + curYear;
+    }
+
+    function filtered() {
+      return gastos.filter(g => {
+        const [y, m] = g.data.split('-');
+        return parseInt(m) === curMonth && parseInt(y) === curYear;
+      }).sort((a, b) => b.data.localeCompare(a.data));
+    }
+
+    function renderList() {
+      const list = filtered();
+      const total = list.reduce((s, g) => s + g.valor, 0);
+
+      document.getElementById('headerSub').textContent =
+        list.length + ' gasto' + (list.length !== 1 ? 's' : '') +
+        ' · ' + fmtBRL(total);
+
+      if (!list.length) {
+        document.getElementById('listWrap').innerHTML = `
+          <div class="empty-state">
+            <div class="ei">💸</div>
+            <p>Nenhum gasto em ${MONTHS[curMonth-1]} ${curYear}.<br>
+            <a href="adicionar.html" style="color:var(--accent)">Adicionar agora →</a></p>
+          </div>`;
+        return;
+      }
+
+      // Group by date
+      const groups = {};
+      list.forEach(g => {
+        if (!groups[g.data]) groups[g.data] = [];
+        groups[g.data].push(g);
+      });
+
+      let html = '';
+      Object.entries(groups).sort((a,b) => b[0].localeCompare(a[0])).forEach(([date, items]) => {
+        const dayTotal = items.reduce((s, g) => s + g.valor, 0);
+        html += `
+          <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:20px;">
+            <span>${fmtDate(date)}</span>
+            <span style="color:var(--accent);font-size:12px;font-weight:700">${fmtBRL(dayTotal)}</span>
+          </div>
+          <div class="list-container mb-12">
+        `;
+        items.forEach(g => {
+          const cat = categorias.find(c => c.id === g.categoria_id);
+          const catNome = cat ? cat.nome : 'Outros';
+          const catIdx = cat ? categorias.indexOf(cat) : 0;
+          const color = getCatColor(catIdx);
+          const icon = getCatIcon(catNome);
+          html += `
+            <div class="expense-item" data-id="${g.id}" data-desc="${escHtml(g.descricao)}" data-val="${g.valor}">
+              <div class="swipe-bg">🗑️</div>
+              <div class="inner">
+                <div class="cat-dot" style="background:${color}22;border:1px solid ${color}44;">
+                  ${icon}
+                </div>
+                <div class="expense-info">
+                  <div class="expense-desc">${escHtml(g.descricao)}</div>
+                  <div class="expense-meta">${catNome}</div>
+                </div>
+                <div class="expense-amount">${fmtBRL(g.valor)}</div>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      });
+
+      document.getElementById('listWrap').innerHTML = html;
+
+      // Swipe to delete
+      document.querySelectorAll('.expense-item').forEach(el => {
+        let startX, startY, swiping = false;
+
+        el.addEventListener('touchstart', e => {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          swiping = false;
+        }, { passive: true });
+
+        el.addEventListener('touchmove', e => {
+          const dx = e.touches[0].clientX - startX;
+          const dy = e.touches[0].clientY - startY;
+          if (!swiping && Math.abs(dy) > Math.abs(dx)) return;
+          if (dx < -5) {
+            swiping = true;
+            const bg = el.querySelector('.swipe-bg');
+            const inner = el.querySelector('.inner');
+            const dist = Math.min(Math.abs(dx), 80);
+            bg.style.width = dist + 'px';
+            inner.style.transform = `translateX(-${dist * 0.5}px)`;
+          }
+        }, { passive: true });
+
+        el.addEventListener('touchend', e => {
+          const dx = e.changedTouches[0].clientX - startX;
+          const bg = el.querySelector('.swipe-bg');
+          const inner = el.querySelector('.inner');
+          if (dx < -60) {
+            openDeleteModal(
+              parseInt(el.dataset.id),
+              el.dataset.desc,
+              parseFloat(el.dataset.val)
+            );
+          }
+          bg.style.width = '0';
+          inner.style.transform = '';
+        }, { passive: true });
+
+        // Click to show detail
+        el.querySelector('.inner').addEventListener('click', () => {
+          const id = parseInt(el.dataset.id);
+          const g = gastos.find(x => x.id === id);
+          if (g) showDetail(g);
+        });
+      });
+    }
+
+    function escHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function openDeleteModal(id, desc, val) {
+      deleteTarget = id;
+      document.getElementById('deleteItemName').textContent = desc;
+      document.getElementById('deleteItemVal').textContent = fmtBRL(val);
+      document.getElementById('deleteModal').classList.add('show');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('show');
+      deleteTarget = null;
+    }
+
+    function showDetail(g) {
+      const cat = categorias.find(c => c.id === g.categoria_id);
+      toast(`${g.descricao} — ${fmtDate(g.data)}`, 'success');
+    }
+
+    document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
+    document.getElementById('deleteModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeDeleteModal();
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', async () => {
+      if (!deleteTarget) return;
+      const btn = document.getElementById('confirmDelete');
+      btn.classList.add('btn-loading');
+      try {
+        await api.deleteGasto(deleteTarget);
+        gastos = gastos.filter(g => g.id !== deleteTarget);
+        closeDeleteModal();
+        renderList();
+        toast('Gasto excluído!');
+      } catch (e) {
+        toast('Erro ao excluir: ' + e.message, 'error');
+      } finally {
+        btn.classList.remove('btn-loading');
+      }
+    });
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      curMonth--; if (curMonth < 1) { curMonth = 12; curYear--; }
+      updateLabel(); renderList();
+    });
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      curMonth++; if (curMonth > 12) { curMonth = 1; curYear++; }
+      updateLabel(); renderList();
+    });
+
+    init();
+  </script>
+</body>
+</html>

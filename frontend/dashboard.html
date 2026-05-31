@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <title>Dashboard · FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 16px; }
+    .stat-full { grid-column: 1 / -1; }
+
+    .chart-card { margin: 0 16px 16px; border-radius: var(--r); background: var(--card); border: 1px solid var(--border); backdrop-filter: blur(16px); overflow: hidden; }
+    .chart-header { padding: 18px 20px 4px; display: flex; align-items: center; justify-content: space-between; }
+    .chart-title { font-family: 'Anton', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .chart-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .pie-wrap { display: flex; flex-direction: column; align-items: center; padding: 16px 16px 0; }
+    .pie-wrap canvas { max-width: 220px; }
+
+    .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px 20px 20px; }
+    .legend-row { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-name { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .legend-val { font-size: 12px; font-weight: 600; margin-left: auto; white-space: nowrap; padding-left: 6px; }
+
+    .empty-chart { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+
+    .top-list { padding: 0 20px 20px; }
+    .top-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .top-item:last-child { border-bottom: none; }
+    .top-rank { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--dim); width: 28px; flex-shrink: 0; }
+    .top-rank.gold { color: var(--accent); }
+    .top-rank.silver { color: #a8a8a8; }
+    .top-rank.bronze { color: #cd7f32; }
+    .top-info { flex: 1; min-width: 0; }
+    .top-desc { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-meta { font-size: 11px; color: var(--muted); }
+    .top-val { font-family: 'Anton', sans-serif; font-size: 16px; color: var(--accent); }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <div class="top-controls">
+    <button class="icon-btn" id="backBtn" aria-label="Voltar">←</button>
+    <div class="api-status checking" id="apiStatus">
+      <span class="api-dot"></span>Verificando
+    </div>
+    <button class="icon-btn" id="themeBtn">🌙</button>
+  </div>
+
+  <div class="page-content pb-nav">
+
+    <div class="page-header">
+      <h1>DASH<br>BOARD</h1>
+      <p class="sub" id="headerSub">Carregando dados...</p>
+    </div>
+
+    <!-- Month selector -->
+    <div class="month-selector reveal" id="monthSelector">
+      <button class="month-nav-btn" id="prevMonth">‹</button>
+      <span class="month-label" id="monthLabel">—</span>
+      <button class="month-nav-btn" id="nextMonth">›</button>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-row" id="statRow">
+      <div class="glass stat-card reveal" id="statTotal">
+        <div class="label">Total do mês</div>
+        <div class="value accent" id="valTotal">—</div>
+        <div class="bg-icon">💰</div>
+      </div>
+      <div class="glass stat-card reveal reveal-delay-1" id="statCount">
+        <div class="label">Gastos</div>
+        <div class="value" id="valCount">—</div>
+        <div class="bg-icon">📋</div>
+      </div>
+      <div class="glass stat-card reveal reveal-delay-2" id="statMax">
+        <div class="label">Maior gasto</div>
+        <div class="value" id="valMax">—</div>
+        <div class="bg-icon">📈</div>
+      </div>
+      <div class="glass stat-card reveal reveal-delay-3" id="statMedia">
+        <div class="label">Média / gasto</div>
+        <div class="value" id="valMedia">—</div>
+        <div class="bg-icon">📊</div>
+      </div>
+    </div>
+
+    <!-- Pie chart -->
+    <div class="chart-card reveal">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Por Categoria</div>
+          <div class="chart-sub">Distribuição de gastos</div>
+        </div>
+      </div>
+      <div class="pie-wrap">
+        <canvas id="pieChart"></canvas>
+      </div>
+      <div class="legend-grid" id="pieLegend"></div>
+    </div>
+
+    <!-- Line chart -->
+    <div class="chart-card reveal">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Evolução Mensal</div>
+          <div class="chart-sub">Últimos 6 meses</div>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Top gastos -->
+    <div class="chart-card reveal" style="margin-bottom: 16px;">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Top Gastos</div>
+          <div class="chart-sub" id="topSub">Maiores do mês</div>
+        </div>
+      </div>
+      <div class="top-list" id="topList">
+        <div class="empty-chart">Carregando...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item" data-page="dashboard.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="gastos.html" class="nav-item" data-page="gastos.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+      <span>Gastos</span>
+    </a>
+    <a href="adicionar.html" class="nav-item" data-page="adicionar.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Adicionar</span>
+    </a>
+    <a href="categorias.html" class="nav-item" data-page="categorias.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+      <span>Categorias</span>
+    </a>
+  </nav>
+
+  <script src="js/app.js"></script>
+  <script>
+    let curMonth, curYear, allGastos = [], categorias = [];
+    let pieChart, lineChartObj;
+
+    async function init() {
+      const now = new Date();
+      curMonth = now.getMonth() + 1;
+      curYear = now.getFullYear();
+      updateMonthLabel();
+
+      try {
+        [allGastos, categorias] = await Promise.all([api.getGastos(), api.getCategorias()]);
+      } catch (e) {
+        toast('Erro ao carregar dados: ' + e.message, 'error');
+      }
+
+      loadDashboard();
+      loadLineChart();
+    }
+
+    function updateMonthLabel() {
+      document.getElementById('monthLabel').textContent =
+        MONTHS[curMonth - 1].toUpperCase() + ' ' + curYear;
+    }
+
+    async function loadDashboard() {
+      const monthGastos = allGastos.filter(g => {
+        const [y, m] = g.data.split('-');
+        return parseInt(m) === curMonth && parseInt(y) === curYear;
+      });
+
+      document.getElementById('headerSub').textContent =
+        `${monthGastos.length} gasto${monthGastos.length !== 1 ? 's' : ''} em ${MONTHS[curMonth-1]}`;
+
+      const total = monthGastos.reduce((s, g) => s + g.valor, 0);
+      const maxG = monthGastos.length ? Math.max(...monthGastos.map(g => g.valor)) : 0;
+      const media = monthGastos.length ? total / monthGastos.length : 0;
+
+      // Animate counters
+      animateCount(document.getElementById('valTotal'), total, 1200, true);
+      document.getElementById('valCount').textContent = monthGastos.length.toString();
+      animateCount(document.getElementById('valMax'), maxG, 1000, true);
+      animateCount(document.getElementById('valMedia'), media, 1000, true);
+
+      // Pie
+      const catMap = {};
+      monthGastos.forEach(g => {
+        const cat = categorias.find(c => c.id === g.categoria_id);
+        const nome = cat ? cat.nome : 'Outros';
+        catMap[nome] = (catMap[nome] || 0) + g.valor;
+      });
+
+      const pieData = Object.entries(catMap)
+        .sort((a, b) => b[1] - a[1])
+        .map(([categoria, total]) => ({ categoria, total }));
+
+      if (pieData.length) {
+        pieChart = new PieChart('pieChart', pieData);
+        pieChart.animate();
+        renderLegend(pieData);
+      } else {
+        document.getElementById('pieLegend').innerHTML = '<div class="empty-chart" style="grid-column:1/-1">Sem dados para este mês</div>';
+        document.querySelector('.pie-wrap').innerHTML = '<div class="empty-chart">Sem gastos neste mês</div>';
+      }
+
+      // Top gastos
+      renderTop(monthGastos);
+    }
+
+    function renderLegend(data) {
+      const el = document.getElementById('pieLegend');
+      el.innerHTML = data.map((d, i) => `
+        <div class="legend-row">
+          <span class="legend-dot" style="background:${CAT_COLORS[i % CAT_COLORS.length]}"></span>
+          <span class="legend-name">${d.categoria}</span>
+          <span class="legend-val">${fmtBRL(d.total)}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderTop(gastos) {
+      const sorted = [...gastos].sort((a, b) => b.valor - a.valor).slice(0, 5);
+      const ranks = ['gold', 'silver', 'bronze', '', ''];
+      const rankSymbols = ['1', '2', '3', '4', '5'];
+
+      document.getElementById('topSub').textContent =
+        `Maiores de ${MONTHS[curMonth-1]}`;
+
+      if (!sorted.length) {
+        document.getElementById('topList').innerHTML =
+          '<div class="empty-chart">Nenhum gasto neste mês</div>';
+        return;
+      }
+
+      document.getElementById('topList').innerHTML = sorted.map((g, i) => {
+        const cat = categorias.find(c => c.id === g.categoria_id);
+        return `
+          <div class="top-item">
+            <div class="top-rank ${ranks[i]}">${rankSymbols[i]}</div>
+            <div class="top-info">
+              <div class="top-desc">${g.descricao}</div>
+              <div class="top-meta">${cat ? cat.nome : 'Outros'} · ${fmtDate(g.data)}</div>
+            </div>
+            <div class="top-val">${fmtBRL(g.valor)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadLineChart() {
+      const now = new Date();
+      const months = [];
+      const values = [];
+
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const m = d.getMonth() + 1;
+        const y = d.getFullYear();
+        months.push(MONTHS_SHORT[m - 1]);
+
+        const gastos = allGastos.filter(g => {
+          const [gy, gm] = g.data.split('-');
+          return parseInt(gm) === m && parseInt(gy) === y;
+        });
+        values.push(gastos.reduce((s, g) => s + g.valor, 0));
+      }
+
+      setTimeout(() => {
+        lineChartObj = new LineChart('lineChart', months, values);
+        lineChartObj.animate();
+      }, 400);
+    }
+
+    // Month navigation
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      curMonth--;
+      if (curMonth < 1) { curMonth = 12; curYear--; }
+      updateMonthLabel();
+      loadDashboard();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      curMonth++;
+      if (curMonth > 12) { curMonth = 1; curYear++; }
+      updateMonthLabel();
+      loadDashboard();
+    });
+
+    init();
+  </script>
+</body>
+</html>
