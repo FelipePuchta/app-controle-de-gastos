@@ -36,7 +36,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
   // API calls: network only, no caching
-  if (url.hostname === '127.0.0.1' || url.port === '8000') {
+  if (url.hostname === '127.0.0.1' || url.port === '8000' || url.hostname === 'app-controle-de-gastos.railway.app') {
     event.respondWith(fetch(event.request).catch(() =>
       new Response(JSON.stringify({ error: 'Offline' }), {
         status: 503,
