@@ -1,6 +1,6 @@
 /* ===== FINTRACK SHARED UTILITIES ===== */
 
-const API = 'http://127.0.0.1:8000';
+const API = 'https://app-controle-de-gastos.railway.app';
 
 const CAT_COLORS = [
   '#f5c518','#ff6b35','#4ecdc4','#a29bfe',
