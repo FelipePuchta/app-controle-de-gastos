@@ -27,6 +27,16 @@ app.add_middleware(
 )
 
 
+@app.get("/health")
+def health():
+    try:
+        from database import get_conn
+        get_conn().cursor().execute("SELECT 1")
+        return {"status": "ok"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+
 class GastoCreate(BaseModel):
     descricao: str
     valor: float
