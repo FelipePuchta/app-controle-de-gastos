@@ -9,19 +9,21 @@
 
 /* ---------- Tokens de design (variáveis CSS) ---------- */
 :root {
-  /* Cores */
-  --bg:           #0a0a0a;
-  --bg-soft:      #111210;
-  --primary:      #4a6741;
-  --secondary:    #6b8f5e;
-  --text:         #f0ede6;
-  --text-dim:     #9a978f;
-  --text-faint:   #6b6862;
-  --card:         #1a1a1a;
-  --card-2:       #161616;
-  --border:       rgba(74, 103, 65, 0.20);
-  --border-soft:  rgba(240, 237, 230, 0.06);
-  --glow:         rgba(74, 103, 65, 0.35);
+  /* Cores — Midnight Finance */
+  --bg:           #0a0f1e;
+  --bg-soft:      #111827;
+  --primary:      #3b82f6;
+  --primary-hover:#2563eb;
+  --secondary:    #60a5fa;
+  --accent:       #f59e0b;
+  --text:         #f8fafc;
+  --text-dim:     rgba(248, 250, 252, 0.55);
+  --text-faint:   rgba(248, 250, 252, 0.35);
+  --card:         #111827;
+  --card-2:       #0f1629;
+  --border:       rgba(59, 130, 246, 0.15);
+  --border-soft:  rgba(248, 250, 252, 0.06);
+  --glow:         rgba(59, 130, 246, 0.35);
 
   /* Cores de categoria — vibrantes e distintas */
   --cat-alimentacao: #E17055;
@@ -75,7 +77,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(900px 500px at 50% -10%, rgba(74,103,65,0.10), transparent 60%);
+    radial-gradient(900px 500px at 50% -10%, rgba(59,130,246,0.10), transparent 60%);
   z-index: 0;
 }
 
@@ -146,7 +148,7 @@ ul { list-style: none; }
 
 /* ---------- Cards ---------- */
 .card {
-  background: linear-gradient(180deg, rgba(26,26,26,0.92), rgba(20,20,20,0.92));
+  background: linear-gradient(180deg, rgba(17,24,39,0.94), rgba(15,20,35,0.94));
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border);
@@ -155,7 +157,7 @@ ul { list-style: none; }
   box-shadow: var(--shadow-soft);
   transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
-.card.interactive:hover { transform: translateY(-3px); border-color: rgba(74,103,65,0.45); }
+.card.interactive:hover { transform: translateY(-3px); border-color: rgba(59,130,246,0.45); }
 .card.interactive:active { transform: translateY(-1px) scale(0.995); }
 
 /* ---------- Botões ---------- */
@@ -176,16 +178,16 @@ ul { list-style: none; }
 .btn:active { transform: scale(0.96); }
 .btn-primary {
   background: linear-gradient(180deg, var(--secondary), var(--primary));
-  color: #0c130a;
+  color: #f8fafc;
   box-shadow: var(--shadow-glow);
 }
 .btn-primary:hover { filter: brightness(1.06); box-shadow: 0 10px 30px var(--glow); }
 .btn-ghost {
-  background: rgba(240,237,230,0.04);
+  background: rgba(248,250,252,0.04);
   border: 1px solid var(--border);
   color: var(--text);
 }
-.btn-ghost:hover { border-color: rgba(74,103,65,0.5); background: rgba(74,103,65,0.08); }
+.btn-ghost:hover { border-color: rgba(59,130,246,0.5); background: rgba(59,130,246,0.08); }
 .btn-block { width: 100%; }
 .btn-danger { background: rgba(180, 70, 60, 0.14); border: 1px solid rgba(180,70,60,0.4); color: #e8a59c; }
 .btn-danger:hover { background: rgba(180,70,60,0.22); }
@@ -210,17 +212,17 @@ ul { list-style: none; }
   font-size: 13.5px;
   font-weight: 500;
   white-space: nowrap;
-  background: rgba(240,237,230,0.04);
+  background: rgba(248,250,252,0.04);
   border: 1px solid var(--border-soft);
   color: var(--text-dim);
   transition: all 0.2s var(--ease);
 }
 .pill:active { transform: scale(0.95); }
 .pill.active {
-  background: rgba(74,103,65,0.22);
+  background: rgba(59,130,246,0.18);
   border-color: var(--primary);
   color: var(--text);
-  box-shadow: 0 0 0 1px rgba(74,103,65,0.3), var(--shadow-glow);
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.3), var(--shadow-glow);
 }
 
 /* ---------- Campos de formulário ---------- */
@@ -249,7 +251,7 @@ ul { list-style: none; }
 .input:focus {
   outline: none;
   border-color: var(--secondary);
-  box-shadow: 0 0 0 3px rgba(74,103,65,0.18);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
 }
 textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: vertical; line-height: 1.5; }
 
@@ -265,7 +267,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   align-items: center;
-  background: rgba(14,14,14,0.82);
+  background: rgba(10,15,30,0.88);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border-top: 1px solid var(--border);
@@ -294,7 +296,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   background: linear-gradient(180deg, var(--secondary), var(--primary));
   border-radius: 50%;
   padding: 11px;
-  color: #0c130a;
+  color: #f8fafc;
   box-shadow: var(--shadow-glow);
 }
 
@@ -302,7 +304,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 .spinner {
   width: 34px; height: 34px;
   border-radius: 50%;
-  border: 3px solid rgba(74,103,65,0.22);
+  border: 3px solid rgba(59,130,246,0.22);
   border-top-color: var(--secondary);
   animation: spin 0.8s linear infinite;
 }
@@ -346,7 +348,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   bottom: calc(var(--nav-h) + 18px);
   transform: translate(-50%, 24px);
   background: linear-gradient(180deg, var(--secondary), var(--primary));
-  color: #0c130a;
+  color: #f8fafc;
   font-weight: 600;
   font-size: 14px;
   padding: 13px 22px;
@@ -395,7 +397,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 /* ---------- Splash screen ---------- */
 #ft-splash {
   position: fixed; inset: 0; z-index: 9999;
-  background: #0a0a0a;
+  background: #0a0f1e;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 14px;
   animation: splash-out 0.5s ease 2.0s forwards;
@@ -408,11 +410,11 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   line-height: 1;
   animation: splash-word 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-#ft-splash .s-fin   { color: #6b8f5e; }
-#ft-splash .s-track { color: #f0ede6; }
+#ft-splash .s-fin   { color: #3b82f6; }
+#ft-splash .s-track { color: #f8fafc; }
 #ft-splash .s-bar {
   height: 2px; width: 0; border-radius: 2px;
-  background: linear-gradient(90deg, #6b8f5e, #4a6741);
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
   animation: splash-bar 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
 }
 @keyframes splash-word {

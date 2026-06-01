@@ -5,8 +5,8 @@
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#0a0f1e",
+  "theme_color": "#0a0f1e",
   "icons": [
     {
       "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230a0a0a'/%3E%3Cpath d='M58 132V60h54v16H78v14h28v16H78v26z' fill='%236b8f5e'/%3E%3C/svg%3E",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="theme-color" content="#0a0f1e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -19,7 +19,7 @@
     .period button.nav {
       width: 40px; height: 40px; border-radius: 11px;
       display: grid; place-items: center;
-      background: rgba(240,237,230,0.04); border: 1px solid var(--border-soft);
+      background: rgba(248,250,252,0.04); border: 1px solid var(--border-soft);
       color: var(--text); transition: all 0.18s var(--ease);
     }
     .period button.nav:active { transform: scale(0.9); }
@@ -67,11 +67,11 @@
     .period-tabs { display: flex; gap: 6px; }
     .period-tab {
       flex: 1; height: 30px; border-radius: 8px; font-size: 12px; font-weight: 600;
-      background: rgba(240,237,230,0.04); border: 1px solid var(--border-soft);
+      background: rgba(248,250,252,0.04); border: 1px solid var(--border-soft);
       color: var(--text-dim); transition: all 0.18s var(--ease);
     }
     .period-tab.active {
-      background: rgba(74,103,65,0.22); border-color: var(--primary);
+      background: rgba(59,130,246,0.18); border-color: var(--primary);
       color: var(--text);
     }
 
@@ -157,7 +157,7 @@
       catMap = FinTrack.buildCatMap(categorias);
       if (FinTrack.isDemo()) {
         $('#notice-slot').innerHTML =
-          '<div class="notice">⚠️ <span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
+          '<div class="notice"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
       }
       render();
     }
@@ -275,7 +275,7 @@
           <div class="donut-wrap">
             <div class="donut">
               <svg viewBox="0 0 132 132" width="132" height="132">
-                <circle cx="66" cy="66" r="52" fill="none" stroke="rgba(240,237,230,0.05)" stroke-width="16"></circle>
+                <circle cx="66" cy="66" r="52" fill="none" stroke="rgba(248,250,252,0.05)" stroke-width="16"></circle>
                 ${segs}
               </svg>
               <div class="center"><div class="v">${cats.length}</div><div class="l">categorias</div></div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="theme-color" content="#0a0f1e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -16,7 +16,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 18px 20px;
       margin-bottom: 16px;
-      background: linear-gradient(180deg, rgba(74,103,65,0.16), rgba(26,26,26,0.7));
+      background: linear-gradient(180deg, rgba(59,130,246,0.12), rgba(17,24,39,0.7));
     }
     .total-bar .lbl { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
     .total-bar .val { font-family: var(--font-display); font-size: 38px; color: var(--secondary); line-height: 1; margin-top: 4px; }
@@ -40,7 +40,7 @@
       width: 44px; height: 44px; border-radius: 12px;
       display: grid; place-items: center;
       font-size: 21px;
-      background: rgba(240,237,230,0.04);
+      background: rgba(248,250,252,0.04);
       border: 1px solid var(--border-soft);
     }
     .gasto-item .body { flex: 1; min-width: 0; }
@@ -51,7 +51,7 @@
     .icon-btn {
       width: 34px; height: 34px; border-radius: 9px;
       display: grid; place-items: center;
-      background: rgba(240,237,230,0.04);
+      background: rgba(248,250,252,0.04);
       border: 1px solid var(--border-soft);
       color: var(--text-dim);
       transition: all 0.18s var(--ease);
@@ -68,7 +68,7 @@
     /* ---------- Modal inferior (bottom sheet) ---------- */
     .sheet-overlay {
       position: fixed; inset: 0; z-index: 300;
-      background: rgba(8,8,8,0.7);
+      background: rgba(10,15,30,0.80);
       backdrop-filter: blur(4px);
       opacity: 0; pointer-events: none;
       transition: opacity 0.3s var(--ease);
@@ -93,12 +93,12 @@
     .sheet .cat-cell {
       display: flex; flex-direction: column; align-items: center; gap: 6px;
       padding: 11px 4px; border-radius: 13px;
-      background: rgba(240,237,230,0.03); border: 1px solid var(--border-soft);
+      background: rgba(248,250,252,0.03); border: 1px solid var(--border-soft);
       transition: all 0.18s var(--ease);
     }
     .sheet .cat-cell .e { font-size: 20px; }
     .sheet .cat-cell .n { font-size: 10px; color: var(--text-dim); }
-    .sheet .cat-cell.active { background: rgba(74,103,65,0.2); border-color: var(--primary); }
+    .sheet .cat-cell.active { background: rgba(59,130,246,0.18); border-color: var(--primary); }
     .sheet .cat-cell.active .n { color: var(--text); }
   </style>
 </head>
@@ -262,7 +262,7 @@
 
       const slot = $('#lista-slot');
       if (!lista.length) {
-        slot.innerHTML = '<div class="empty"><div class="ic">🍃</div>Nenhum gasto encontrado.<br/>Que tal registrar um novo?</div>';
+        slot.innerHTML = '<div class="empty"><div class="ic"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></div>Nenhum gasto encontrado.<br/>Que tal registrar um novo?</div>';
         return;
       }
 
