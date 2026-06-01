@@ -6,7 +6,7 @@
   sessionStorage.setItem('ft-splash', '1');
   const el = document.createElement('div');
   el.id = 'ft-splash';
-  el.innerHTML = '<div class="s-mark">F</div><div class="s-name">FINTRACK</div><div class="s-bar"></div>';
+  el.innerHTML = '<div class="s-word"><span class="s-fin">Fin</span><span class="s-track">Track</span></div><div class="s-bar"></div>';
   document.body.prepend(el);
   el.addEventListener('animationend', (e) => { if (e.animationName === 'splash-out') el.remove(); });
 })();

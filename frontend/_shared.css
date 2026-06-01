@@ -5,7 +5,7 @@
    ===================================================================== */
 
 /* ---------- Fontes (Google Fonts) ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 /* ---------- Tokens de design (variáveis CSS) ---------- */
 :root {
@@ -33,7 +33,7 @@
   --cat-outros:      #74B9FF;
 
   /* Tipografia */
-  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Sora', system-ui, sans-serif;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
 
   /* Layout */
@@ -137,10 +137,10 @@ ul { list-style: none; }
 }
 .topbar h1 {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 38px;
-  letter-spacing: 0.5px;
-  line-height: 0.95;
+  font-weight: 700;
+  font-size: 34px;
+  letter-spacing: -0.03em;
+  line-height: 1.0;
 }
 .topbar .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
 
@@ -397,36 +397,31 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   position: fixed; inset: 0; z-index: 9999;
   background: #0a0a0a;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 18px;
-  animation: splash-out 0.45s cubic-bezier(0.55, 0, 1, 0.45) 1.9s forwards;
+  align-items: center; justify-content: center; gap: 14px;
+  animation: splash-out 0.5s ease 2.0s forwards;
 }
-#ft-splash .s-mark {
-  width: 80px; height: 80px; border-radius: 24px;
-  background: linear-gradient(160deg, #6b8f5e, #4a6741);
-  display: grid; place-items: center;
-  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 52px; font-weight: 700;
-  color: #0c130a;
-  box-shadow: 0 0 60px rgba(74,103,65,0.55), 0 0 140px rgba(74,103,65,0.18);
-  animation: splash-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+#ft-splash .s-word {
+  font-family: 'Sora', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 52px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  animation: splash-word 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-#ft-splash .s-name {
-  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 58px; font-weight: 600;
-  letter-spacing: 12px; color: #f0ede6; line-height: 1;
-  animation: splash-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
-}
+#ft-splash .s-fin   { color: #6b8f5e; }
+#ft-splash .s-track { color: #f0ede6; }
 #ft-splash .s-bar {
-  width: 48px; height: 2px; border-radius: 2px;
-  background: linear-gradient(90deg, #6b8f5e, transparent);
-  animation: splash-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+  height: 2px; width: 0; border-radius: 2px;
+  background: linear-gradient(90deg, #6b8f5e, #4a6741);
+  animation: splash-bar 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
 }
-@keyframes splash-pop {
-  0%   { transform: scale(0.2) rotate(-15deg); opacity: 0; }
-  65%  { transform: scale(1.1) rotate(2deg); }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+@keyframes splash-word {
+  from { opacity: 0; filter: blur(14px); transform: scale(0.88); }
+  to   { opacity: 1; filter: blur(0);    transform: scale(1); }
 }
-@keyframes splash-rise {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes splash-bar {
+  from { width: 0; }
+  to   { width: 72px; }
 }
 @keyframes splash-out {
   from { opacity: 1; }
