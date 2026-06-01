@@ -11,7 +11,10 @@ from database import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    criar_tabela()
+    try:
+        criar_tabela()
+    except Exception as e:
+        print(f"WARNING: DB init failed: {e}")
     yield
 
 app = FastAPI(title="Controle de Gastos API", lifespan=lifespan)
