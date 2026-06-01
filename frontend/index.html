@@ -1,207 +1,305 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>FINTRACK</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0A0A0A">
-<script>document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'))</script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FinTrack" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="FinTrack — controle seus gastos pessoais com clareza e leveza." />
+  <link rel="manifest" href="manifest.json" />
+  <title>FinTrack — Controle de Gastos</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* ---------- Estilos específicos da landing ---------- */
+    .landing { padding-bottom: 40px; }
 
-:root,[data-theme="dark"]{
-  --black:#0A0A0A;--yellow:#7EC85A;--yellow-dim:#5BA840;--white:#F4F5F0;
-  --grey:#141414;--grey2:#1A1A1A;--ease:cubic-bezier(0.4,0,0.2,1);
-  --text-dim:rgba(244,245,240,0.45);--border:rgba(255,255,255,0.07);
-  --accent-glow:rgba(126,200,90,0.15);
-}
-[data-theme="light"]{
-  --black:#F5F6F0;--yellow:#4E6B41;--yellow-dim:#3A5332;--white:#0D0D0D;
-  --grey:#EAEBE5;--grey2:#FFFFFF;
-  --text-dim:rgba(13,13,13,0.45);--border:rgba(0,0,0,0.09);
-  --accent-glow:rgba(78,107,65,0.15);
-}
+    /* HERO fullscreen */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 22px 40px;
+      overflow: hidden;
+    }
+    /* Gradiente sutil de fundo do hero */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(120% 70% at 50% 0%, rgba(107,143,94,0.22), transparent 55%),
+        radial-gradient(90% 60% at 80% 100%, rgba(74,103,65,0.18), transparent 60%);
+      z-index: 0;
+    }
+    /* Linhas finas decorativas */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(240,237,230,0.025) 1px, transparent 1px);
+      background-size: 100% 46px;
+      mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+      z-index: 0;
+    }
+    .hero > * { position: relative; z-index: 1; }
 
-html,body{height:100%;overflow-x:hidden;background:var(--black);color:var(--white)}
-body{font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: auto;
+    }
+    .logo-mark {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(180deg, var(--secondary), var(--primary));
+      display: grid; place-items: center;
+      font-family: var(--font-display);
+      font-size: 22px; color: #0c130a;
+      box-shadow: var(--shadow-glow);
+    }
+    .brand-row .name { font-family: var(--font-display); font-size: 24px; letter-spacing: 1px; }
 
-/* THEME TOGGLE */
-.theme-toggle{position:fixed;top:0.9rem;right:1.25rem;z-index:50;background:var(--grey2);border:1px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,transform 0.15s;padding:0}
-.theme-toggle:active{transform:scale(0.88)}
-.theme-toggle svg{width:18px;height:18px;stroke:var(--text-dim);fill:none;stroke-width:1.8}
-[data-theme="dark"] .icon-sun,[data-theme="light"] .icon-moon{display:block}
-[data-theme="dark"] .icon-moon,[data-theme="light"] .icon-sun{display:none}
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      align-self: flex-start;
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--secondary); font-weight: 600;
+      background: rgba(74,103,65,0.12);
+      border: 1px solid var(--border);
+      padding: 7px 13px; border-radius: 100px;
+      margin: 40px 0 22px;
+    }
+    .hero-tag .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--secondary); box-shadow: 0 0 8px var(--secondary); }
 
-/* HERO */
-.hero{min-height:100dvh;display:flex;flex-direction:column;justify-content:space-between;padding:0;position:relative;overflow:hidden}
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(58px, 21vw, 96px);
+      line-height: 0.86;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .hero h1 .accent {
+      background: linear-gradient(180deg, var(--secondary), var(--primary));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p.lead {
+      margin: 22px 0 32px;
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 34ch;
+    }
+    .hero-cta { display: flex; flex-direction: column; gap: 12px; }
 
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,var(--accent-glow) 0%,transparent 65%);pointer-events:none}
-.hero-grain{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;opacity:.4}
+    .scroll-hint {
+      margin-top: 34px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .scroll-hint .line { width: 30px; height: 1px; background: var(--text-faint); }
 
-.nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 1.25rem;position:relative;z-index:10}
-.nav-logo{font-family:'Anton',sans-serif;font-size:1.4rem;letter-spacing:0.08em;color:var(--yellow)}
-.nav-badge{font-size:0.62rem;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--white);opacity:0.32;padding:0.28rem 0.75rem;border:1px solid var(--border);border-radius:999px}
+    /* Seção explicativa */
+    .section { padding: 18px 22px 0; }
+    .section-head { margin-bottom: 22px; }
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-size: 40px; line-height: 0.92; letter-spacing: 0.5px;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-head p { color: var(--text-dim); font-size: 15px; }
 
-.hero-content{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2rem 1.25rem;position:relative;z-index:10}
+    /* Faixa de números */
+    .stats-band {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px; margin: 8px 22px 36px;
+    }
+    .stat-mini {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 12px; text-align: center;
+    }
+    .stat-mini .n { font-family: var(--font-display); font-size: 32px; color: var(--secondary); line-height: 1; }
+    .stat-mini .l { font-size: 11px; color: var(--text-dim); margin-top: 6px; letter-spacing: 0.04em; }
 
-.hero-tag{font-size:0.68rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--yellow);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.75rem;opacity:0;animation:fadeUp 0.6s 0.2s var(--ease) forwards}
-.hero-tag::before{content:'';width:20px;height:1px;background:var(--yellow);opacity:0.7}
+    /* Cards de funcionalidades */
+    .features { display: flex; flex-direction: column; gap: 14px; padding: 0 22px; }
+    .feature {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 20px;
+    }
+    .feature .ficon {
+      flex: 0 0 auto;
+      width: 46px; height: 46px; border-radius: 13px;
+      display: grid; place-items: center;
+      background: rgba(74,103,65,0.14);
+      border: 1px solid var(--border);
+      color: var(--secondary);
+    }
+    .feature .ficon svg { width: 24px; height: 24px; }
+    .feature h3 { font-size: 17px; font-weight: 600; margin-bottom: 5px; }
+    .feature p { font-size: 14px; color: var(--text-dim); }
 
-.hero-title{font-family:'Anton',sans-serif;font-size:clamp(4rem,22vw,7rem);line-height:0.88;text-transform:uppercase;letter-spacing:-0.02em;margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.6s 0.35s var(--ease) forwards}
-.hero-title .line-yellow{color:var(--yellow);font-style:italic;display:block}
-.hero-title .line-outline{-webkit-text-stroke:2px var(--white);color:transparent;display:block}
+    /* Navegação por botões para cada página */
+    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 22px; margin-top: 14px; }
+    .nav-card {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 18px; text-align: left;
+      transition: transform 0.25s var(--ease), border-color 0.25s var(--ease);
+    }
+    .nav-card:hover { transform: translateY(-3px); border-color: rgba(74,103,65,0.5); }
+    .nav-card:active { transform: scale(0.98); }
+    .nav-card svg { width: 26px; height: 26px; color: var(--secondary); }
+    .nav-card .t { font-weight: 600; font-size: 15.5px; }
+    .nav-card .d { font-size: 12.5px; color: var(--text-faint); }
 
-.hero-desc{font-size:0.95rem;color:var(--text-dim);line-height:1.65;max-width:320px;margin-bottom:2.5rem;opacity:0;animation:fadeUp 0.6s 0.5s var(--ease) forwards;font-weight:300}
+    /* CTA final */
+    .final-cta {
+      margin: 40px 22px 10px;
+      padding: 34px 24px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(74,103,65,0.16), rgba(26,26,26,0.6));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+    }
+    .final-cta h2 { font-family: var(--font-display); font-size: 38px; line-height: 0.95; margin-bottom: 10px; }
+    .final-cta p { color: var(--text-dim); font-size: 14px; margin-bottom: 22px; }
 
-.hero-cta{display:flex;flex-direction:column;gap:0.75rem;opacity:0;animation:fadeUp 0.6s 0.65s var(--ease) forwards}
-.btn-primary{background:var(--yellow);color:var(--black);padding:1rem 2rem;border-radius:6px;font-family:'Anton',sans-serif;font-size:1.1rem;letter-spacing:0.1em;text-decoration:none;text-align:center;text-transform:uppercase;transition:transform 0.18s var(--ease),background 0.18s,box-shadow 0.18s;display:block;box-shadow:0 4px 20px var(--accent-glow)}
-.btn-primary:active{transform:scale(0.97);background:var(--yellow-dim);box-shadow:none}
-.btn-secondary{background:transparent;color:var(--white);padding:1rem 2rem;border-radius:6px;border:1px solid var(--border);font-size:0.9rem;text-decoration:none;text-align:center;letter-spacing:0.1em;text-transform:uppercase;transition:border-color 0.18s;display:block}
-.btn-secondary:active{border-color:var(--yellow)}
-
-.hero-bottom{padding:1.25rem;display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:10;opacity:0;animation:fadeUp 0.6s 0.8s var(--ease) forwards}
-.hero-signature{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--yellow);opacity:0.22;letter-spacing:0.05em}
-.hero-scroll{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:0.5rem}
-.hero-scroll::after{content:'↓';animation:bounce 1.6s ease infinite}
-
-/* FEATURES */
-.features{background:var(--black);padding:4rem 1.25rem;border-top:1px solid var(--border)}
-.features-label{font-size:0.62rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--yellow);margin-bottom:2rem;display:flex;align-items:center;gap:0.75rem;opacity:0.85}
-.features-label::before{content:'01'}
-
-.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border)}
-.feature-item{background:var(--black);padding:1.5rem 1.25rem;transition:background 0.2s var(--ease)}
-.feature-item:active{background:var(--grey2)}
-.feature-icon{font-size:1.5rem;margin-bottom:1rem}
-.feature-title{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;color:var(--white)}
-.feature-desc{font-size:0.78rem;color:var(--text-dim);line-height:1.55;font-weight:300}
-
-/* STATS */
-.stats{background:var(--yellow);padding:3.5rem 1.25rem}
-.stats-title{font-family:'Anton',sans-serif;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--black);margin-bottom:2rem;opacity:0.5}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem}
-.stat-number{font-family:'Anton',sans-serif;font-size:2.8rem;color:var(--black);line-height:1;letter-spacing:-0.02em}
-.stat-label{font-size:0.7rem;color:var(--black);opacity:0.44;letter-spacing:0.12em;text-transform:uppercase;margin-top:0.3rem}
-
-/* CTA SECTION */
-.cta-section{background:var(--grey);padding:4.5rem 1.25rem;text-align:center}
-.cta-title{font-family:'Anton',sans-serif;font-size:clamp(2.5rem,12vw,4rem);text-transform:uppercase;line-height:0.9;margin-bottom:1.5rem;letter-spacing:-0.02em}
-.cta-title span{color:var(--yellow)}
-.cta-desc{font-size:0.9rem;color:var(--text-dim);margin-bottom:2.5rem;line-height:1.65;font-weight:300}
-.cta-btn{display:inline-block;background:var(--yellow);color:var(--black);padding:1rem 2.5rem;border-radius:6px;font-family:'Anton',sans-serif;font-size:1.1rem;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;box-shadow:0 4px 24px var(--accent-glow);transition:transform 0.18s var(--ease),box-shadow 0.18s,background 0.18s}
-.cta-btn:active{transform:scale(0.97);box-shadow:none;background:var(--yellow-dim)}
-
-/* FOOTER */
-footer{background:var(--black);padding:2rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.footer-logo{font-family:'Anton',sans-serif;font-size:1.2rem;color:var(--yellow);letter-spacing:0.08em;opacity:0.65}
-.footer-copy{font-size:0.65rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
-</style>
+    footer.site-foot {
+      text-align: center; padding: 30px 22px 18px;
+      color: var(--text-faint); font-size: 12px;
+    }
+    footer.site-foot .name { font-family: var(--font-display); font-size: 18px; color: var(--text-dim); letter-spacing: 1px; }
+  </style>
 </head>
 <body>
+  <main class="app landing">
 
-<button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
-  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-</button>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="brand-row">
+        <span class="logo-mark">F</span>
+        <span class="name">FinTrack</span>
+      </div>
 
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grain"></div>
+      <span class="hero-tag"><span class="dot"></span>Controle de gastos pessoais</span>
 
-  <nav class="nav">
-    <div class="nav-logo">FINTRACK</div>
-    <div class="nav-badge">v1.0</div>
-  </nav>
+      <h1>Cada<br /><span class="accent">Real</span><br />no Lugar</h1>
 
-  <div class="hero-content">
-    <div class="hero-tag">Controle seus gastos</div>
-    <h1 class="hero-title">
-      <span class="line-yellow">Fin</span>
-      <span>Track</span>
-      <span class="line-outline">360°</span>
-    </h1>
-    <p class="hero-desc">Seu dinheiro. Seu controle. Visualize, organize e domine seus gastos em tempo real.</p>
-    <div class="hero-cta">
-      <a href="dashboard.html" class="btn-primary">Acessar o app →</a>
-      <a href="gastos.html" class="btn-secondary">Ver meus gastos</a>
+      <p class="lead">Acompanhe para onde seu dinheiro vai, mês a mês — com uma interface leve, rápida e sem ruído.</p>
+
+      <div class="hero-cta">
+        <a href="dashboard.html" class="btn btn-primary btn-block">Abrir meu painel</a>
+        <a href="adicionar.html" class="btn btn-ghost btn-block">Registrar um gasto</a>
+      </div>
+
+      <div class="scroll-hint"><span class="line"></span>Role para conhecer</div>
+    </section>
+
+    <!-- ============ O QUE É ============ -->
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">O que é o FinTrack</span>
+        <h2 style="margin-top:10px;">Clareza sobre<br />seu dinheiro</h2>
+        <p>O FinTrack reúne todos os seus gastos em um só lugar e transforma números soltos em decisões. Registre em segundos, visualize por categoria e entenda sua evolução ao longo dos meses — tudo pensado para o celular.</p>
+      </div>
+    </section>
+
+    <div class="stats-band stagger">
+      <div class="stat-mini"><div class="n">7</div><div class="l">Categorias</div></div>
+      <div class="stat-mini"><div class="n">10s</div><div class="l">Para registrar</div></div>
+      <div class="stat-mini"><div class="n">6m</div><div class="l">De histórico</div></div>
     </div>
-  </div>
 
-  <div class="hero-bottom">
-    <div class="hero-signature">FT.</div>
-    <div class="hero-scroll">arraste</div>
-  </div>
-</section>
+    <!-- ============ FUNCIONALIDADES ============ -->
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">Funcionalidades</span>
+        <h2 style="margin-top:10px;">Feito para o dia a dia</h2>
+      </div>
+    </section>
 
-<section class="features">
-  <div class="features-label">Funcionalidades</div>
-  <div class="feature-grid">
-    <div class="feature-item">
-      <div class="feature-icon">📊</div>
-      <div class="feature-title">Dashboard</div>
-      <div class="feature-desc">Gráficos e relatórios mensais</div>
-    </div>
-    <div class="feature-item">
-      <div class="feature-icon">➕</div>
-      <div class="feature-title">Adicionar</div>
-      <div class="feature-desc">Registre gastos rapidamente</div>
-    </div>
-    <div class="feature-item">
-      <div class="feature-icon">🏷️</div>
-      <div class="feature-title">Categorias</div>
-      <div class="feature-desc">Organize por tipo de gasto</div>
-    </div>
-    <div class="feature-item">
-      <div class="feature-icon">📋</div>
-      <div class="feature-title">Histórico</div>
-      <div class="feature-desc">Todos os seus gastos</div>
-    </div>
-  </div>
-</section>
+    <div class="features stagger">
+      <article class="card feature">
+        <span class="ficon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7"/><rect x="12" y="7" width="3" height="11"/><rect x="17" y="13" width="3" height="5"/></svg>
+        </span>
+        <div>
+          <h3>Painel com gráficos</h3>
+          <p>Veja o total do mês, seu maior gasto e a evolução dos últimos 6 meses em gráficos animados.</p>
+        </div>
+      </article>
 
-<section class="stats">
-  <div class="stats-title">Em números</div>
-  <div class="stats-grid">
-    <div>
-      <div class="stat-number">7</div>
-      <div class="stat-label">Categorias</div>
-    </div>
-    <div>
-      <div class="stat-number">∞</div>
-      <div class="stat-label">Registros</div>
-    </div>
-    <div>
-      <div class="stat-number">100%</div>
-      <div class="stat-label">Gratuito</div>
-    </div>
-    <div>
-      <div class="stat-number">24/7</div>
-      <div class="stat-label">Disponível</div>
-    </div>
-  </div>
-</section>
+      <article class="card feature">
+        <span class="ficon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>
+        <div>
+          <h3>Registro em segundos</h3>
+          <p>Valor em destaque, categoria visual e data — adicionar um gasto leva menos que um café.</p>
+        </div>
+      </article>
 
-<section class="cta-section">
-  <h2 class="cta-title">COMECE<br><span>AGORA.</span></h2>
-  <p class="cta-desc">Pare de perder dinheiro sem saber onde foi.</p>
-  <a href="adicionar.html" class="cta-btn">Registrar gasto</a>
-</section>
+      <article class="card feature">
+        <span class="ficon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15.5A9 9 0 1 1 8.5 3"/><path d="M21 8a8.5 8.5 0 0 0-5-5l-1 4 4 1z"/></svg>
+        </span>
+        <div>
+          <h3>Gastos por categoria</h3>
+          <p>Descubra quanto pesa cada categoria e onde dá para economizar de verdade.</p>
+        </div>
+      </article>
+    </div>
 
-<footer>
-  <div class="footer-logo">FINTRACK</div>
-  <div class="footer-copy">© 2026</div>
-</footer>
+    <!-- ============ NAVEGAÇÃO PARA AS PÁGINAS ============ -->
+    <section class="section" style="margin-top:36px;">
+      <div class="section-head">
+        <span class="eyebrow">Navegue</span>
+        <h2 style="margin-top:10px;">Por onde começar</h2>
+      </div>
+    </section>
 
-<script>
-function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t)}
-</script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+    <div class="nav-grid stagger">
+      <a href="dashboard.html" class="card nav-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>
+        <div class="t">Dashboard</div>
+        <div class="d">Gráficos e relatórios</div>
+      </a>
+      <a href="adicionar.html" class="card nav-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        <div class="t">Adicionar</div>
+        <div class="d">Novo gasto</div>
+      </a>
+      <a href="gastos.html" class="card nav-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        <div class="t">Gastos</div>
+        <div class="d">Listar e editar</div>
+      </a>
+      <a href="categorias.html" class="card nav-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+        <div class="t">Categorias</div>
+        <div class="d">Gastos por tipo</div>
+      </a>
+    </div>
+
+    <!-- ============ CTA FINAL ============ -->
+    <section class="final-cta rise">
+      <h2>Comece agora</h2>
+      <p>Sem cadastro complicado. Abra o painel e registre seu primeiro gasto.</p>
+      <a href="dashboard.html" class="btn btn-primary btn-block">Entrar no FinTrack</a>
+    </section>
+
+    <footer class="site-foot">
+      <div class="name">FinTrack</div>
+      <div style="margin-top:6px;">Controle de gastos pessoais · 2026</div>
+    </footer>
+
+  </main>
 </body>
 </html>

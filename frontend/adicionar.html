@@ -1,165 +1,310 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Adicionar — FINTRACK</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="_shared.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0A0A0A">
-<script>document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'))</script>
-<style>
-.form-wrap{padding:1.5rem 1.25rem}
-.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.5rem}
-.cat-btn{background:var(--grey2);border:1px solid var(--border);border-radius:10px;padding:0.9rem 0.5rem;display:flex;flex-direction:column;align-items:center;gap:0.4rem;cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1)}
-.cat-btn:active{transform:scale(0.95)}
-.cat-btn.selected{border-color:var(--yellow);background:var(--accent-bg);box-shadow:0 0 0 1px var(--accent-border)}
-.cat-icon{font-size:1.3rem;transition:transform 0.2s}
-.cat-btn.selected .cat-icon{transform:scale(1.15)}
-.cat-name{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);transition:color 0.18s}
-.cat-btn.selected .cat-name{color:var(--yellow)}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Adicionar gasto — FinTrack</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* ---------- Campo de valor grande em destaque ---------- */
+    .value-stage {
+      text-align: center;
+      padding: 26px 0 18px;
+    }
+    .value-stage .label { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
+    .value-input-wrap {
+      display: inline-flex; align-items: baseline; gap: 6px;
+      margin-top: 12px;
+    }
+    .value-input-wrap .cur {
+      font-family: var(--font-display); font-size: 34px; color: var(--secondary);
+    }
+    #valor {
+      font-family: var(--font-display);
+      font-size: clamp(64px, 22vw, 92px);
+      line-height: 0.9;
+      background: none; border: none; outline: none;
+      color: var(--text);
+      width: 100%;
+      max-width: 4.5em;
+      text-align: center;
+      caret-color: var(--secondary);
+      transition: text-shadow 0.3s var(--ease);
+    }
+    #valor.glow { text-shadow: 0 0 26px var(--glow); }
+    #valor::placeholder { color: var(--text-faint); }
 
-.valor-input{font-family:'Anton',sans-serif;font-size:2.5rem;background:none;border:none;color:var(--yellow);width:100%;text-align:center;padding:1.5rem 0;letter-spacing:-0.02em}
-.valor-input:focus{outline:none}
-.valor-input::placeholder{color:var(--accent-bg)}
-.valor-wrap{border-bottom:2px solid var(--accent-border);margin-bottom:2rem;position:relative;transition:border-color 0.2s}
-.valor-wrap:focus-within{border-color:var(--focus-border)}
-.valor-prefix{position:absolute;left:0;top:50%;transform:translateY(-50%);font-family:'Anton',sans-serif;font-size:1.2rem;color:var(--yellow);opacity:0.45}
+    /* ---------- Grid de categorias ---------- */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .cat-cell {
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      padding: 13px 6px;
+      border-radius: 15px;
+      background: rgba(240,237,230,0.03);
+      border: 1px solid var(--border-soft);
+      transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+    }
+    .cat-cell .e { font-size: 24px; line-height: 1; }
+    .cat-cell .n { font-size: 10.5px; color: var(--text-dim); text-align: center; line-height: 1.15; }
+    .cat-cell:active { transform: scale(0.92); }
+    .cat-cell.active {
+      background: rgba(74,103,65,0.2);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+    .cat-cell.active .n { color: var(--text); font-weight: 600; }
 
-.success-screen{display:none;position:fixed;inset:0;background:var(--black);z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}
-.success-screen.show{display:flex}
-.success-icon{font-size:4rem;animation:pop 0.45s cubic-bezier(0.34,1.56,0.64,1)}
-.success-title{font-family:'Anton',sans-serif;font-size:2.5rem;text-transform:uppercase;color:var(--yellow);letter-spacing:-0.02em}
-.success-sub{color:var(--text-dim);font-size:0.82rem;letter-spacing:0.18em;text-transform:uppercase}
-@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.12)}100%{transform:scale(1)}}
-</style>
+    /* Linha de atalhos rápidos de valor */
+    .quick-vals { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
+    .quick-vals button {
+      font-size: 13px; color: var(--text-dim); font-weight: 600;
+      padding: 7px 14px; border-radius: 100px;
+      border: 1px solid var(--border-soft);
+      background: rgba(240,237,230,0.03);
+      transition: all 0.2s var(--ease);
+    }
+    .quick-vals button:active { transform: scale(0.94); }
+    .quick-vals button:hover { border-color: var(--primary); color: var(--text); }
+
+    /* ---------- Tela de confirmação animada ---------- */
+    .confirm-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      display: none;
+      align-items: center; justify-content: center;
+      background: rgba(8,8,8,0.86);
+      backdrop-filter: blur(8px);
+      padding: 30px;
+    }
+    .confirm-overlay.show { display: flex; }
+    .confirm-card { text-align: center; max-width: 320px; }
+    .check-ring {
+      width: 96px; height: 96px; margin: 0 auto 22px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: rgba(74,103,65,0.16);
+      border: 2px solid var(--primary);
+      animation: pop 0.5s var(--ease) both;
+    }
+    .check-ring svg { width: 48px; height: 48px; color: var(--secondary); }
+    .check-ring svg path {
+      stroke-dasharray: 40; stroke-dashoffset: 40;
+      animation: draw 0.5s 0.18s var(--ease) forwards;
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .confirm-card h2 { font-family: var(--font-display); font-size: 40px; margin-bottom: 8px; animation: rise 0.5s 0.1s var(--ease) both; }
+    .confirm-card .amt { font-size: 16px; color: var(--secondary); font-weight: 600; margin-bottom: 4px; animation: rise 0.5s 0.16s var(--ease) both; }
+    .confirm-card .meta { color: var(--text-dim); font-size: 14px; margin-bottom: 28px; animation: rise 0.5s 0.22s var(--ease) both; }
+    .confirm-actions { display: flex; flex-direction: column; gap: 10px; animation: rise 0.5s 0.28s var(--ease) both; }
+  </style>
 </head>
 <body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Novo registro</div>
+        <h1>Adicionar</h1>
+      </div>
+      <a href="dashboard.html" class="btn btn-ghost" style="height:42px;padding:0 16px;font-size:14px;">Cancelar</a>
+    </header>
 
-<button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
-  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-</button>
+    <div class="screen">
+      <form id="form-gasto" autocomplete="off">
 
-<div class="page-header">
-  <div class="page-tag">Novo registro</div>
-  <div class="page-title">ADICIONAR<br>GASTO</div>
-</div>
+        <!-- Valor em destaque -->
+        <div class="value-stage card" style="padding:24px 18px;">
+          <div class="label">Quanto você gastou?</div>
+          <div class="value-input-wrap">
+            <span class="cur">R$</span>
+            <input id="valor" inputmode="decimal" placeholder="0,00" aria-label="Valor" />
+          </div>
+          <div class="quick-vals">
+            <button type="button" data-add="10">+10</button>
+            <button type="button" data-add="25">+25</button>
+            <button type="button" data-add="50">+50</button>
+            <button type="button" data-add="100">+100</button>
+          </div>
+        </div>
 
-<div class="form-wrap">
-  <div class="valor-wrap">
-    <span class="valor-prefix">R$</span>
-    <input type="number" step="0.01" class="valor-input" id="valor" placeholder="0,00">
-  </div>
+        <!-- Categoria -->
+        <div class="field" style="margin-top:24px;">
+          <label>Categoria</label>
+          <div class="cat-grid" id="cat-grid"><!-- preenchido via JS --></div>
+        </div>
 
-  <div class="form-group">
-    <label class="form-label">Descrição</label>
-    <input type="text" class="form-input" id="descricao" placeholder="Ex: Almoço, Uber, Netflix...">
-  </div>
+        <!-- Descrição -->
+        <div class="field">
+          <label for="descricao">Descrição</label>
+          <input class="input" id="descricao" type="text" placeholder="Ex.: Mercado da semana" />
+        </div>
 
-  <div class="form-group">
-    <label class="form-label">Data</label>
-    <input type="date" class="form-input" id="data">
-  </div>
+        <!-- Data -->
+        <div class="field">
+          <label for="data">Data</label>
+          <input class="input" id="data" type="date" />
+        </div>
 
-  <div class="form-group">
-    <label class="form-label">Categoria</label>
-    <div class="cat-grid" id="cat-grid">
-      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+        <button type="submit" class="btn btn-primary btn-block" id="btn-salvar" style="margin-top:6px;">
+          <span class="lbl">Salvar gasto</span>
+        </button>
+      </form>
     </div>
-    <input type="hidden" id="categoria-id">
+
+    <!-- ============ Navegação inferior ============ -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        Início
+      </a>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>
+        Dashboard
+      </a>
+      <a href="adicionar.html" class="nav-item nav-add active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar
+      </a>
+      <a href="gastos.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        Gastos
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ Confirmação animada ============ -->
+  <div class="confirm-overlay" id="confirm">
+    <div class="confirm-card">
+      <div class="check-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>
+      </div>
+      <h2>Gasto salvo!</h2>
+      <div class="amt" id="confirm-amt">R$ 0,00</div>
+      <div class="meta" id="confirm-meta">—</div>
+      <div class="confirm-actions">
+        <a href="gastos.html" class="btn btn-primary btn-block">Ver meus gastos</a>
+        <button type="button" class="btn btn-ghost btn-block" id="btn-novo">Adicionar outro</button>
+      </div>
+    </div>
   </div>
 
-  <button class="btn btn-yellow" onclick="salvar()">Registrar gasto</button>
-</div>
+  <script src="_shared.js"></script>
+  <script>
+    /* ===== Estado ===== */
+    let categorias = [];
+    let selectedCat = null;
 
-<nav class="bottom-nav">
-  <a href="index.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-    Início
-  </a>
-  <a href="dashboard.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    Dashboard
-  </a>
-  <a href="adicionar.html" class="nav-item active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    Adicionar
-  </a>
-  <a href="gastos.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    Gastos
-  </a>
-</nav>
+    /* ===== Inicialização ===== */
+    const $ = (s) => document.querySelector(s);
+    const valorInput = $('#valor');
+    const dataInput  = $('#data');
 
-<div class="success-screen" id="success">
-  <div class="success-icon">✅</div>
-  <div class="success-title">Registrado!</div>
-  <div class="success-sub">Gasto adicionado com sucesso</div>
-</div>
+    // Data padrão = hoje (formato YYYY-MM-DD)
+    (function setHoje() {
+      const d = new Date();
+      const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      dataInput.value = iso;
+    })();
 
-<script>
-const API = 'https://app-controle-de-gastos-production.up.railway.app';
-const CAT_ICONS = {'Alimentação':'🍔','Transporte':'🚗','Lazer':'🎮','Moradia':'🏠','Saúde':'💊','Educação':'📚','Outros':'📦'};
-
-document.getElementById('data').value = new Date().toISOString().split('T')[0];
-
-function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t)}
-
-async function loadCategorias() {
-  const res = await fetch(`${API}/categorias`);
-  const cats = await res.json();
-  document.getElementById('cat-grid').innerHTML = cats.map(c => `
-    <div class="cat-btn" onclick="selectCat(${c.id}, this)">
-      <div class="cat-icon">${CAT_ICONS[c.nome] || '📦'}</div>
-      <div class="cat-name">${c.nome}</div>
-    </div>
-  `).join('');
-}
-
-function selectCat(id, el) {
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('categoria-id').value = id;
-}
-
-async function salvar() {
-  const descricao = document.getElementById('descricao').value.trim();
-  const valor = parseFloat(document.getElementById('valor').value);
-  const data = document.getElementById('data').value;
-  const categoria_id = parseInt(document.getElementById('categoria-id').value);
-
-  if (!descricao || !valor || !data || !categoria_id) {
-    alert('Preencha todos os campos!');
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API}/gastos`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({descricao, valor, data, categoria_id})
+    /* ===== Máscara simples de valor (números + vírgula) ===== */
+    valorInput.addEventListener('input', () => {
+      let v = valorInput.value.replace(/[^\d,]/g, '');
+      const parts = v.split(',');
+      if (parts.length > 2) v = parts[0] + ',' + parts.slice(1).join('');
+      if (parts[1]) v = parts[0] + ',' + parts[1].slice(0, 2);
+      valorInput.value = v;
+      valorInput.classList.toggle('glow', parseFloat(v.replace(',', '.')) > 0);
     });
 
-    if (res.ok) {
-      document.getElementById('success').classList.add('show');
-      setTimeout(() => {
-        document.getElementById('success').classList.remove('show');
-        document.getElementById('descricao').value = '';
-        document.getElementById('valor').value = '';
-        document.getElementById('categoria-id').value = '';
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
-      }, 2000);
-    }
-  } catch(e) {
-    alert('Erro ao registrar gasto');
-  }
-}
+    // Atalhos rápidos de valor
+    document.querySelectorAll('.quick-vals button').forEach((b) => {
+      b.addEventListener('click', () => {
+        const cur = parseFloat((valorInput.value || '0').replace(',', '.')) || 0;
+        const next = cur + Number(b.dataset.add);
+        valorInput.value = next.toFixed(2).replace('.', ',');
+        valorInput.classList.add('glow');
+      });
+    });
 
-loadCategorias();
-</script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+    /* ===== Render do grid de categorias ===== */
+    async function loadCategorias() {
+      categorias = await FinTrack.getCategorias();
+      const grid = $('#cat-grid');
+      grid.innerHTML = '';
+      categorias.forEach((c) => {
+        const meta = FinTrack.metaForCategoria(c.nome);
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = 'cat-cell';
+        cell.dataset.id = c.id;
+        cell.innerHTML = `<span class="e">${meta.emoji}</span><span class="n">${c.nome}</span>`;
+        cell.addEventListener('click', () => {
+          document.querySelectorAll('.cat-cell').forEach((x) => x.classList.remove('active'));
+          cell.classList.add('active');
+          selectedCat = c;
+        });
+        grid.appendChild(cell);
+      });
+    }
+    loadCategorias();
+
+    /* ===== Submissão ===== */
+    $('#form-gasto').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const valorNum = parseFloat((valorInput.value || '0').replace(',', '.'));
+      const descricao = $('#descricao').value.trim();
+
+      if (!valorNum || valorNum <= 0) { shake(valorInput.closest('.card')); return; }
+      if (!selectedCat) { shake($('#cat-grid')); return; }
+      if (!descricao) { shake($('#descricao')); return; }
+
+      const btn = $('#btn-salvar');
+      btn.innerHTML = '<span class="spinner" style="width:22px;height:22px;border-width:2.5px;"></span>';
+      btn.disabled = true;
+
+      const gasto = {
+        descricao,
+        valor: valorNum,
+        data: dataInput.value,
+        categoria_id: selectedCat.id,
+      };
+
+      await FinTrack.addGasto(gasto);
+
+      // Mostra confirmação animada
+      $('#confirm-amt').textContent = FinTrack.formatBRL(valorNum);
+      const meta = FinTrack.metaForCategoria(selectedCat.nome);
+      $('#confirm-meta').textContent = `${meta.emoji} ${selectedCat.nome} · ${FinTrack.formatData(dataInput.value)}`;
+      $('#confirm').classList.add('show');
+      btn.innerHTML = '<span class="lbl">Salvar gasto</span>';
+      btn.disabled = false;
+    });
+
+    /* ===== Adicionar outro (reseta o formulário) ===== */
+    $('#btn-novo').addEventListener('click', () => {
+      $('#confirm').classList.remove('show');
+      valorInput.value = '';
+      valorInput.classList.remove('glow');
+      $('#descricao').value = '';
+      document.querySelectorAll('.cat-cell').forEach((x) => x.classList.remove('active'));
+      selectedCat = null;
+      valorInput.focus();
+    });
+
+    /* ===== Micro feedback de erro ===== */
+    function shake(el) {
+      el.animate(
+        [{ transform: 'translateX(0)' }, { transform: 'translateX(-7px)' }, { transform: 'translateX(7px)' }, { transform: 'translateX(0)' }],
+        { duration: 320, easing: 'ease-in-out' }
+      );
+    }
+  </script>
 </body>
 </html>

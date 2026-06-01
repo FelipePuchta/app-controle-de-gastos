@@ -1,81 +1,591 @@
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root,[data-theme="dark"]{--black:#0A0A0A;--yellow:#7EC85A;--yellow-dim:#5BA840;--white:#F4F5F0;--grey:#141414;--grey2:#1A1A1A;--grey3:#252525;--surface:#141414;--text-dim:rgba(244,245,240,0.42);--border:rgba(255,255,255,0.07);--divider:rgba(255,255,255,0.04);--hover-bg:rgba(255,255,255,0.025);--shadow:rgba(0,0,0,0.4);--nav-blur-bg:rgba(10,10,10,0.93);--accent-glow:rgba(126,200,90,0.18);--accent-bg:rgba(126,200,90,0.1);--accent-border:rgba(126,200,90,0.2);--focus-border:rgba(126,200,90,0.55);--focus-glow:rgba(126,200,90,0.08);--spinner-track:rgba(126,200,90,0.12);--input-placeholder:rgba(244,245,240,0.18);--modal-bg:#1A1A1A;--ease:cubic-bezier(0.4,0,0.2,1)}
-[data-theme="light"]{--black:#F5F6F0;--yellow:#4E6B41;--yellow-dim:#3A5332;--white:#0D0D0D;--grey:#EAEBE5;--grey2:#FFFFFF;--grey3:#E0E1DB;--surface:#EAEBE5;--text-dim:rgba(13,13,13,0.45);--border:rgba(0,0,0,0.09);--divider:rgba(0,0,0,0.06);--hover-bg:rgba(0,0,0,0.025);--shadow:rgba(0,0,0,0.07);--nav-blur-bg:rgba(245,246,240,0.93);--accent-glow:rgba(78,107,65,0.15);--accent-bg:rgba(78,107,65,0.08);--accent-border:rgba(78,107,65,0.22);--focus-border:rgba(78,107,65,0.6);--focus-glow:rgba(78,107,65,0.1);--spinner-track:rgba(78,107,65,0.15);--input-placeholder:rgba(13,13,13,0.3);--modal-bg:#FFFFFF}
-html,body{height:100%;overflow-x:hidden;background:var(--black);color:var(--white)}
-body{font-family:'DM Sans',sans-serif;padding-bottom:80px;-webkit-font-smoothing:antialiased}
+/* =====================================================================
+   FinTrack — _shared.css
+   Estilos compartilhados por todas as páginas do app.
+   Paleta verde-musgo sobre preto profundo, mobile-first.
+   ===================================================================== */
 
-/* THEME TOGGLE */
-.theme-toggle{position:fixed;top:0.8rem;right:1.25rem;z-index:50;background:var(--grey2);border:1px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,transform 0.15s;padding:0}
-.theme-toggle:active{transform:scale(0.88)}
-.theme-toggle svg{width:18px;height:18px;stroke:var(--text-dim);fill:none}
-[data-theme="dark"] .icon-sun,[data-theme="light"] .icon-moon{display:block}
-[data-theme="dark"] .icon-moon,[data-theme="light"] .icon-sun{display:none}
+/* ---------- Fontes (Google Fonts) ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
-/* NAV BOTTOM */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav-blur-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:0.6rem 0 calc(0.6rem + env(safe-area-inset-bottom));z-index:100}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:0.25rem;text-decoration:none;color:var(--text-dim);font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s var(--ease);padding:0.4rem 0.9rem;position:relative;min-width:52px}
-.nav-item::after{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--yellow);border-radius:0 0 2px 2px;transition:width 0.22s var(--ease)}
-.nav-item.active{color:var(--yellow)}
-.nav-item.active::after{width:20px}
-.nav-item svg{width:20px;height:20px;stroke-width:1.5;transition:transform 0.2s var(--ease)}
-.nav-item.active svg{stroke:var(--yellow);transform:translateY(-1px)}
+/* ---------- Tokens de design (variáveis CSS) ---------- */
+:root {
+  /* Cores */
+  --bg:           #0a0a0a;   /* fundo principal — preto profundo  */
+  --bg-soft:      #111210;   /* fundo levemente elevado            */
+  --primary:      #4a6741;   /* verde musgo                        */
+  --secondary:    #6b8f5e;   /* verde claro                        */
+  --text:         #f0ede6;   /* off-white                          */
+  --text-dim:     #9a978f;   /* texto secundário                   */
+  --text-faint:   #6b6862;   /* texto terciário                    */
+  --card:         #1a1a1a;   /* cards                              */
+  --card-2:       #161616;   /* card alternativo                   */
+  --border:       rgba(74, 103, 65, 0.20);  /* bordas              */
+  --border-soft:  rgba(240, 237, 230, 0.06);
+  --glow:         rgba(74, 103, 65, 0.35);   /* sombra verde        */
 
-/* PAGE HEADER */
-.page-header{padding:3.5rem 1.25rem 1.75rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
-.page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-glow),transparent);pointer-events:none}
-.page-tag{font-size:0.62rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--yellow);margin-bottom:0.65rem;display:flex;align-items:center;gap:0.6rem;opacity:0.9}
-.page-tag::before{content:'';width:14px;height:1px;background:var(--yellow);flex-shrink:0;opacity:0.7}
-.page-title{font-family:'Anton',sans-serif;font-size:clamp(2.2rem,11vw,3.2rem);text-transform:uppercase;letter-spacing:-0.02em;line-height:0.88}
+  /* Cores de categoria (paleta terrosa harmônica para gráficos) */
+  --cat-alimentacao: #6b8f5e;
+  --cat-transporte:  #4a6741;
+  --cat-lazer:       #c9b27a;
+  --cat-moradia:     #7da38f;
+  --cat-saude:       #b98a5e;
+  --cat-educacao:    #8a9b6e;
+  --cat-outros:      #5a7d6a;
 
-/* CARDS */
-.card{background:var(--grey2);border-radius:10px;padding:1.25rem 1.35rem;border:1px solid var(--border);box-shadow:0 2px 16px var(--shadow)}
-.card-label{font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.65rem}
-.card-value{font-family:'Anton',sans-serif;font-size:2rem;letter-spacing:-0.02em;line-height:1}
-.card-value.yellow{color:var(--yellow)}
+  /* Tipografia */
+  --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
 
-/* FORM */
-.form-group{margin-bottom:1.5rem}
-.form-label{font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.65rem}
-.form-input,.form-select{width:100%;background:var(--grey2);border:1px solid var(--border);border-radius:8px;padding:0.95rem 1.1rem;color:var(--white);font-family:'DM Sans',sans-serif;font-size:1rem;appearance:none;-webkit-appearance:none;transition:border-color 0.2s var(--ease),box-shadow 0.2s var(--ease),background 0.2s}
-.form-input:focus,.form-select:focus{outline:none;border-color:var(--focus-border);background:var(--grey3);box-shadow:0 0 0 3px var(--focus-glow)}
-.form-input::placeholder{color:var(--input-placeholder)}
-.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(244,245,240,0.3)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center}
-[data-theme="light"] .form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(13,13,13,0.4)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")}
+  /* Layout */
+  --app-max:    480px;
+  --nav-h:      72px;
+  --radius:     18px;
+  --radius-sm:  12px;
 
-/* BUTTONS */
-.btn{width:100%;padding:1rem 1.25rem;border-radius:8px;font-family:'Anton',sans-serif;font-size:1.1rem;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;transition:transform 0.15s var(--ease),box-shadow 0.15s,opacity 0.15s;text-align:center;text-decoration:none;display:block}
-.btn:active{transform:scale(0.97)}
-.btn-yellow{background:var(--yellow);color:var(--black);box-shadow:0 4px 20px var(--accent-glow)}
-.btn-yellow:active{box-shadow:none;background:var(--yellow-dim)}
-.btn-outline{background:transparent;color:var(--white);border:1px solid var(--border)}
-.btn-outline:active{border-color:var(--accent-border)}
+  /* Sombras */
+  --shadow-soft: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 6px 22px var(--glow);
 
-/* LIST */
-.list-item{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--divider);gap:1rem;transition:background 0.15s}
-.list-item:last-child{border-bottom:none}
-.list-item:active{background:var(--hover-bg)}
-.list-item-left{flex:1;min-width:0}
-.list-item-title{font-size:0.95rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.list-item-sub{font-size:0.72rem;color:var(--text-dim);margin-top:0.2rem}
-.list-item-value{font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--yellow);white-space:nowrap}
+  /* Transições */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-/* TAG */
-.tag{display:inline-block;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;padding:0.22rem 0.6rem;border-radius:4px;background:var(--accent-bg);color:var(--yellow);border:1px solid var(--accent-border)}
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* SECTION TITLE */
-.section-title{font-family:'Anton',sans-serif;font-size:1.25rem;text-transform:uppercase;letter-spacing:0.05em;padding:1.5rem 1.25rem 0.75rem;display:flex;justify-content:space-between;align-items:center}
-.section-link{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--yellow);text-decoration:none;font-family:'DM Sans',sans-serif;opacity:0.8;transition:opacity 0.15s}
-.section-link:active{opacity:1}
+html { -webkit-text-size-adjust: 100%; }
 
-/* EMPTY STATE */
-.empty{text-align:center;padding:4.5rem 2rem;color:var(--text-dim)}
-.empty-icon{font-size:2.5rem;margin-bottom:1.25rem;opacity:0.4;display:block}
-.empty-text{font-size:0.88rem;line-height:1.7;letter-spacing:0.02em}
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  /* Centraliza o "telefone" em telas largas */
+  display: flex;
+  justify-content: center;
+}
 
-/* LOADING */
-.loading{text-align:center;padding:3.5rem;color:var(--text-dim);font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase}
-.spinner{width:26px;height:26px;border:1.5px solid var(--spinner-track);border-top-color:var(--yellow);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 1.25rem}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* Textura sutil de fundo para profundidade */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 500px at 50% -10%, rgba(74,103,65,0.10), transparent 60%);
+  z-index: 0;
+}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-.fade-up{opacity:0;animation:fadeUp 0.45s cubic-bezier(0.4,0,0.2,1) forwards}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* ---------- Container do app (largura de telefone) ---------- */
+.app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--app-max);
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
+}
+
+/* Área que rola, com espaço para a navegação inferior */
+.screen {
+  flex: 1;
+  padding: 0 20px calc(var(--nav-h) + 28px);
+  animation: page-in 0.5s var(--ease) both;
+}
+
+/* ---------- Tipografia utilitária ---------- */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  font-weight: 600;
+}
+.muted { color: var(--text-dim); }
+.faint { color: var(--text-faint); }
+
+/* ---------- Cabeçalho de página ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 26px 20px 16px;
+  background: linear-gradient(180deg, var(--bg) 70%, transparent);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+.topbar h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 38px;
+  letter-spacing: 1px;
+  line-height: 0.9;
+}
+.topbar .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+
+/* ---------- Cards (glassmorphism sutil) ---------- */
+.card {
+  background: linear-gradient(180deg, rgba(26,26,26,0.92), rgba(20,20,20,0.92));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.card.interactive:hover { transform: translateY(-3px); border-color: rgba(74,103,65,0.45); }
+.card.interactive:active { transform: translateY(-1px) scale(0.995); }
+
+/* ---------- Botões ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  height: 54px;
+  padding: 0 24px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  transition: transform 0.18s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease), filter 0.2s var(--ease);
+  user-select: none;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary {
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  color: #0c130a;
+  box-shadow: var(--shadow-glow);
+}
+.btn-primary:hover { filter: brightness(1.06); box-shadow: 0 10px 30px var(--glow); }
+.btn-ghost {
+  background: rgba(240,237,230,0.04);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-ghost:hover { border-color: rgba(74,103,65,0.5); background: rgba(74,103,65,0.08); }
+.btn-block { width: 100%; }
+.btn-danger { background: rgba(180, 70, 60, 0.14); border: 1px solid rgba(180,70,60,0.4); color: #e8a59c; }
+.btn-danger:hover { background: rgba(180,70,60,0.22); }
+
+/* ---------- Pills / chips de filtro ---------- */
+.pills {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 4px 0 8px;
+  scrollbar-width: none;
+}
+.pills::-webkit-scrollbar { display: none; }
+.pill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 15px;
+  border-radius: 100px;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: rgba(240,237,230,0.04);
+  border: 1px solid var(--border-soft);
+  color: var(--text-dim);
+  transition: all 0.2s var(--ease);
+}
+.pill:active { transform: scale(0.95); }
+.pill.active {
+  background: rgba(74,103,65,0.22);
+  border-color: var(--primary);
+  color: var(--text);
+  box-shadow: 0 0 0 1px rgba(74,103,65,0.3), var(--shadow-glow);
+}
+
+/* ---------- Campos de formulário ---------- */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 9px;
+  font-weight: 600;
+}
+.input {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 16px;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.input::placeholder { color: var(--text-faint); }
+.input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(74,103,65,0.18);
+}
+textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: vertical; line-height: 1.5; }
+
+/* ---------- Navegação inferior fixa ---------- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--app-max);
+  height: var(--nav-h);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  background: rgba(14,14,14,0.82);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 50;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  font-weight: 600;
+  transition: color 0.2s var(--ease);
+}
+.nav-item svg { width: 23px; height: 23px; transition: transform 0.25s var(--ease); }
+.nav-item:active svg { transform: scale(0.85); }
+.nav-item.active { color: var(--secondary); }
+.nav-item.active svg { filter: drop-shadow(0 0 8px var(--glow)); }
+
+/* O botão central "Adicionar" recebe destaque */
+.nav-item.nav-add svg {
+  width: 46px; height: 46px;
+  margin-top: -22px;
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  border-radius: 50%;
+  padding: 11px;
+  color: #0c130a;
+  box-shadow: var(--shadow-glow);
+}
+
+/* ---------- Spinner de carregamento (verde) ---------- */
+.spinner {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgba(74,103,65,0.22);
+  border-top-color: var(--secondary);
+  animation: spin 0.8s linear infinite;
+}
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+/* ---------- Estado vazio ---------- */
+.empty {
+  text-align: center;
+  padding: 54px 24px;
+  color: var(--text-dim);
+}
+.empty .ic { font-size: 38px; margin-bottom: 12px; opacity: 0.7; }
+
+/* ---------- Notice (API offline / demo) ---------- */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  color: var(--text-dim);
+  background: rgba(201,178,122,0.08);
+  border: 1px solid rgba(201,178,122,0.2);
+  border-radius: 10px;
+  padding: 9px 12px;
+  margin: 4px 0 14px;
+}
+.notice b { color: var(--cat-lazer); font-weight: 600; }
+
+/* ---------- Toast / feedback animado ao salvar ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--nav-h) + 18px);
+  transform: translate(-50%, 24px);
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  color: #0c130a;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 13px 22px;
+  border-radius: 100px;
+  box-shadow: var(--shadow-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease), transform 0.4s var(--ease);
+  z-index: 200;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Animações ---------- */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+/* Aplica entrada em cascata */
+.rise { animation: rise 0.55s var(--ease) both; }
+.stagger > * { animation: rise 0.5s var(--ease) both; }
+.stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.16s; }
+.stagger > *:nth-child(4) { animation-delay: 0.22s; }
+.stagger > *:nth-child(5) { animation-delay: 0.28s; }
+.stagger > *:nth-child(6) { animation-delay: 0.34s; }
+.stagger > *:nth-child(7) { animation-delay: 0.40s; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar { width: 0; height: 0; }
+Vou mostrar os demais arquivos a seguir.### 📄 _shared.js
+
+/* =====================================================================
+   FinTrack — _shared.js
+   Camada de dados (API) + categorias + utilitários compartilhados.
+   ---------------------------------------------------------------------
+   Estratégia: tentamos a API real (Railway). Se a rede/CORS falhar,
+   usamos dados de demonstração para que a interface continue navegável.
+   O objeto global window.FinTrack expõe tudo que as páginas precisam.
+   ===================================================================== */
+
+(function () {
+  'use strict';
+
+  const API_BASE = 'https://app-controle-de-gastos.railway.app';
+
+  /* ---------- Metadados das categorias (ícone + cor) ----------
+     A API devolve as categorias com id e nome. Casamos pelo nome
+     (normalizado) para anexar emoji e cor de gráfico.            */
+  const CAT_META = {
+    alimentacao: { emoji: '🍔', cor: 'var(--cat-alimentacao)', hex: '#6b8f5e' },
+    transporte:  { emoji: '🚗', cor: 'var(--cat-transporte)',  hex: '#4a6741' },
+    lazer:       { emoji: '🎮', cor: 'var(--cat-lazer)',       hex: '#c9b27a' },
+    moradia:     { emoji: '🏠', cor: 'var(--cat-moradia)',     hex: '#7da38f' },
+    saude:       { emoji: '💊', cor: 'var(--cat-saude)',       hex: '#b98a5e' },
+    educacao:    { emoji: '📚', cor: 'var(--cat-educacao)',    hex: '#8a9b6e' },
+    outros:      { emoji: '📦', cor: 'var(--cat-outros)',      hex: '#5a7d6a' },
+  };
+
+  /* Lista padrão de categorias (fallback e ordem visual) */
+  const CAT_DEFAULT = [
+    { id: 1, nome: 'Alimentação' },
+    { id: 2, nome: 'Transporte' },
+    { id: 3, nome: 'Lazer' },
+    { id: 4, nome: 'Moradia' },
+    { id: 5, nome: 'Saúde' },
+    { id: 6, nome: 'Educação' },
+    { id: 7, nome: 'Outros' },
+  ];
+
+  /* Dados de demonstração (usados quando a API está inacessível) */
+  function demoGastos() {
+    const hoje = new Date();
+    const y = hoje.getFullYear();
+    const m = String(hoje.getMonth() + 1).padStart(2, '0');
+    const d = (n) => `${y}-${m}-${String(n).padStart(2, '0')}`;
+    return [
+      { id: 1,  descricao: 'Mercado da semana',     valor: 287.4,  data: d(3),  categoria_id: 1 },
+      { id: 2,  descricao: 'Combustível',            valor: 210.0,  data: d(4),  categoria_id: 2 },
+      { id: 3,  descricao: 'Cinema com amigos',      valor: 68.0,   data: d(6),  categoria_id: 3 },
+      { id: 4,  descricao: 'Aluguel',                valor: 1450.0, data: d(5),  categoria_id: 4 },
+      { id: 5,  descricao: 'Farmácia',               valor: 92.3,   data: d(8),  categoria_id: 5 },
+      { id: 6,  descricao: 'Curso online',           valor: 149.9,  data: d(9),  categoria_id: 6 },
+      { id: 7,  descricao: 'Café da manhã padaria',  valor: 24.5,   data: d(10), categoria_id: 1 },
+      { id: 8,  descricao: 'Uber centro',            valor: 31.8,   data: d(11), categoria_id: 2 },
+      { id: 9,  descricao: 'Assinatura streaming',   valor: 39.9,   data: d(12), categoria_id: 3 },
+      { id: 10, descricao: 'Conta de luz',           valor: 178.6,  data: d(13), categoria_id: 4 },
+      { id: 11, descricao: 'Jantar restaurante',     valor: 134.0,  data: d(15), categoria_id: 1 },
+      { id: 12, descricao: 'Material escolar',       valor: 56.2,   data: d(16), categoria_id: 6 },
+    ];
+  }
+
+  let usingDemo = false;
+  const isDemo = () => usingDemo;
+
+  /* ---------- Helper de fetch com timeout ---------- */
+  async function api(path, options = {}) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 7000);
+    try {
+      const res = await fetch(API_BASE + path, {
+        headers: { 'Content-Type': 'application/json' },
+        signal: ctrl.signal,
+        ...options,
+      });
+      clearTimeout(t);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const txt = await res.text();
+      return txt ? JSON.parse(txt) : null;
+    } catch (err) {
+      clearTimeout(t);
+      throw err;
+    }
+  }
+
+  /* ---------- Operações de gastos ---------- */
+  async function getGastos() {
+    try {
+      const data = await api('/gastos');
+      usingDemo = false;
+      return Array.isArray(data) ? data : (data?.gastos || []);
+    } catch (e) {
+      usingDemo = true;
+      return demoGastos();
+    }
+  }
+
+  async function addGasto(gasto) {
+    try {
+      return await api('/gastos', { method: 'POST', body: JSON.stringify(gasto) });
+    } catch (e) {
+      usingDemo = true;
+      // Em modo demo, devolvemos o objeto como se tivesse sido salvo.
+      return { ...gasto, id: Date.now() };
+    }
+  }
+
+  async function updateGasto(id, gasto) {
+    try {
+      return await api('/gastos/' + id, { method: 'PUT', body: JSON.stringify(gasto) });
+    } catch (e) {
+      usingDemo = true;
+      return { ...gasto, id };
+    }
+  }
+
+  async function deleteGasto(id) {
+    try {
+      await api('/gastos/' + id, { method: 'DELETE' });
+      return true;
+    } catch (e) {
+      usingDemo = true;
+      return true;
+    }
+  }
+
+  async function getCategorias() {
+    try {
+      const data = await api('/categorias');
+      const list = Array.isArray(data) ? data : (data?.categorias || []);
+      usingDemo = false;
+      return list.length ? list : CAT_DEFAULT;
+    } catch (e) {
+      usingDemo = true;
+      return CAT_DEFAULT;
+    }
+  }
+
+  /* ---------- Utilitários ---------- */
+
+  // Normaliza nome de categoria -> chave de CAT_META (sem acento/minúsculo)
+  function normKey(nome) {
+    return String(nome || '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z]/g, '');
+  }
+
+  function metaForCategoria(nome) {
+    return CAT_META[normKey(nome)] || { emoji: '📦', cor: 'var(--cat-outros)', hex: '#5a7d6a' };
+  }
+
+  // Constrói mapa id -> {nome, emoji, cor, hex}
+  function buildCatMap(categorias) {
+    const map = {};
+    (categorias || CAT_DEFAULT).forEach((c) => {
+      map[c.id] = { ...c, ...metaForCategoria(c.nome) };
+    });
+    return map;
+  }
+
+  // Formata moeda em Real brasileiro
+  function formatBRL(v) {
+    const n = Number(v) || 0;
+    return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  // Formata data evitando bug de fuso horário (padrão pedido no brief)
+  function formatData(dataStr) {
+    if (!dataStr) return '';
+    const [ano, mes, dia] = String(dataStr).split('T')[0].split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  // Nome curto do mês a partir de "YYYY-MM-DD"
+  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const MESES_LONGO = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  function mesAnoDe(dataStr) {
+    const [ano, mes] = String(dataStr).split('T')[0].split('-');
+    return { mes: parseInt(mes, 10), ano: parseInt(ano, 10) };
+  }
+
+  /* ---------- Exporta tudo ---------- */
+  window.FinTrack = {
+    API_BASE,
+    CAT_META, CAT_DEFAULT, MESES, MESES_LONGO,
+    getGastos, addGasto, updateGasto, deleteGasto, getCategorias,
+    metaForCategoria, buildCatMap, normKey,
+    formatBRL, formatData, mesAnoDe,
+    isDemo,
+  };
+})();

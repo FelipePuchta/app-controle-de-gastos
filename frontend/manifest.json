@@ -1,14 +1,17 @@
 {
-  "name": "FinTrack",
+  "name": "FinTrack — Controle de Gastos",
   "short_name": "FinTrack",
-  "description": "Controle seus gastos pessoais",
-  "start_url": "/index.html",
+  "description": "Controle seus gastos pessoais com clareza.",
+  "start_url": "./dashboard.html",
   "display": "standalone",
-  "background_color": "#080808",
-  "theme_color": "#f5c518",
   "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230a0a0a'/%3E%3Cpath d='M58 132V60h54v16H78v14h28v16H78v26z' fill='%236b8f5e'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
   ]
 }

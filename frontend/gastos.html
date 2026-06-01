@@ -1,251 +1,394 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Gastos — FINTRACK</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="_shared.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0A0A0A">
-<script>document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'))</script>
-<style>
-.search-bar{padding:0.75rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border)}
-.search-input{width:100%;background:var(--grey3);border:1px solid var(--border);border-radius:8px;padding:0.8rem 1rem;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.95rem;transition:border-color 0.2s,box-shadow 0.2s}
-.search-input:focus{outline:none;border-color:var(--focus-border);box-shadow:0 0 0 3px var(--focus-glow)}
-.search-input::placeholder{color:var(--text-dim)}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Meus gastos — FinTrack</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* ---------- Total no topo ---------- */
+    .total-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, rgba(74,103,65,0.16), rgba(26,26,26,0.7));
+    }
+    .total-bar .lbl { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
+    .total-bar .val { font-family: var(--font-display); font-size: 38px; color: var(--secondary); line-height: 1; margin-top: 4px; }
+    .total-bar .count { font-size: 13px; color: var(--text-dim); text-align: right; }
+    .total-bar .count b { font-family: var(--font-display); font-size: 26px; color: var(--text); display: block; }
 
-.filter-pills{display:flex;gap:0.5rem;padding:0.75rem 1.25rem;overflow-x:auto;scrollbar-width:none}
-.filter-pills::-webkit-scrollbar{display:none}
-.pill{flex-shrink:0;padding:0.38rem 0.9rem;border-radius:999px;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--border);color:var(--text-dim);background:none;cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1)}
-.pill.active{background:var(--yellow);color:var(--black);border-color:var(--yellow)}
+    /* ---------- Busca ---------- */
+    .search-wrap { position: relative; margin-bottom: 14px; }
+    .search-wrap svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; color: var(--text-faint); }
+    .search-wrap input { padding-left: 44px; }
 
-.gastos-list{background:var(--surface);margin:0 1.25rem;border-radius:10px;border:1px solid var(--border);overflow:hidden;box-shadow:0 2px 16px var(--shadow)}
+    /* ---------- Lista de gastos ---------- */
+    .gasto-list { display: flex; flex-direction: column; gap: 10px; }
+    .gasto-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      animation: rise 0.4s var(--ease) both;
+    }
+    .gasto-item .ic {
+      flex: 0 0 auto;
+      width: 44px; height: 44px; border-radius: 12px;
+      display: grid; place-items: center;
+      font-size: 21px;
+      background: rgba(240,237,230,0.04);
+      border: 1px solid var(--border-soft);
+    }
+    .gasto-item .body { flex: 1; min-width: 0; }
+    .gasto-item .desc { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gasto-item .sub { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
+    .gasto-item .amt { font-family: var(--font-display); font-size: 24px; color: var(--text); letter-spacing: 0.5px; }
+    .gasto-item .actions { display: flex; gap: 6px; margin-left: 4px; }
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: grid; place-items: center;
+      background: rgba(240,237,230,0.04);
+      border: 1px solid var(--border-soft);
+      color: var(--text-dim);
+      transition: all 0.18s var(--ease);
+    }
+    .icon-btn svg { width: 16px; height: 16px; }
+    .icon-btn:active { transform: scale(0.9); }
+    .icon-btn.edit:hover { color: var(--secondary); border-color: var(--primary); }
+    .icon-btn.del:hover { color: #e8a59c; border-color: rgba(180,70,60,0.5); }
 
-.gasto-item{display:flex;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid var(--divider);gap:1rem;animation:fadeUp 0.3s ease forwards;opacity:0;transition:background 0.15s}
-.gasto-item:last-child{border-bottom:none}
-.gasto-item:active{background:var(--hover-bg)}
-.gasto-icon{width:40px;height:40px;background:var(--accent-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;border:1px solid var(--accent-border)}
-.gasto-info{flex:1;min-width:0}
-.gasto-desc{font-size:0.95rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gasto-meta{font-size:0.72rem;color:var(--text-dim);margin-top:0.2rem;display:flex;align-items:center;gap:0.5rem}
-.gasto-right{display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem}
-.gasto-valor{font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--yellow)}
-.gasto-actions{display:flex;gap:0.4rem}
-.action-btn{background:none;border:1px solid var(--border);border-radius:5px;color:var(--text-dim);font-size:0.62rem;padding:0.28rem 0.55rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.15s}
-.action-btn:active{transform:scale(0.93)}
-.action-btn.del{border-color:rgba(255,60,60,0.25);color:rgba(255,100,100,0.6)}
-.action-btn.del:active{background:rgba(255,60,60,0.08)}
+    /* Cabeçalho de grupo por data */
+    .day-head { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 18px 4px 8px; font-weight: 600; }
+    .day-head:first-child { margin-top: 4px; }
 
-.total-bar{background:var(--yellow);color:var(--black);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;margin:1.25rem;border-radius:8px}
-.total-bar-label{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;font-weight:500}
-.total-bar-value{font-family:'Anton',sans-serif;font-size:1.3rem;letter-spacing:-0.01em}
-
-/* MODAL EDIT */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:flex-end}
-.modal-overlay.open{display:flex}
-.modal{background:var(--modal-bg);border-radius:20px 20px 0 0;padding:1.5rem 1.25rem;width:100%;max-height:80dvh;overflow-y:auto;border-top:1px solid var(--border)}
-.modal-title{font-family:'Anton',sans-serif;font-size:1.5rem;text-transform:uppercase;margin-bottom:1.5rem;letter-spacing:0.05em}
-.modal-close{float:right;background:var(--grey3);border:1px solid var(--border);border-radius:6px;color:var(--text-dim);font-size:1.3rem;cursor:pointer;line-height:1;padding:0.15rem 0.5rem;transition:background 0.15s}
-.modal-close:active{background:var(--hover-bg)}
-</style>
+    /* ---------- Modal inferior (bottom sheet) ---------- */
+    .sheet-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(8,8,8,0.7);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s var(--ease);
+    }
+    .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+    .sheet {
+      position: fixed; left: 50%; bottom: 0; transform: translateX(-50%) translateY(100%);
+      width: 100%; max-width: var(--app-max);
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 24px 24px 0 0;
+      padding: 10px 22px calc(28px + env(safe-area-inset-bottom, 0));
+      z-index: 301;
+      transition: transform 0.4s var(--ease);
+      max-height: 88vh; overflow-y: auto;
+    }
+    .sheet.show { transform: translateX(-50%) translateY(0); }
+    .sheet .grab { width: 40px; height: 4px; border-radius: 100px; background: var(--text-faint); margin: 4px auto 18px; opacity: 0.5; }
+    .sheet h2 { font-family: var(--font-display); font-size: 30px; margin-bottom: 18px; }
+    .sheet .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .sheet .cat-cell {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 11px 4px; border-radius: 13px;
+      background: rgba(240,237,230,0.03); border: 1px solid var(--border-soft);
+      transition: all 0.18s var(--ease);
+    }
+    .sheet .cat-cell .e { font-size: 20px; }
+    .sheet .cat-cell .n { font-size: 10px; color: var(--text-dim); }
+    .sheet .cat-cell.active { background: rgba(74,103,65,0.2); border-color: var(--primary); }
+    .sheet .cat-cell.active .n { color: var(--text); }
+  </style>
 </head>
 <body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Histórico</div>
+        <h1>Meus gastos</h1>
+      </div>
+    </header>
 
-<button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
-  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-</button>
+    <div class="screen">
+      <div id="notice-slot"></div>
 
-<div class="page-header">
-  <div class="page-tag">Histórico</div>
-  <div class="page-title">MEUS<br>GASTOS</div>
-</div>
+      <!-- Total -->
+      <div class="total-bar card">
+        <div>
+          <div class="lbl">Total exibido</div>
+          <div class="val" id="total-val">R$ 0,00</div>
+        </div>
+        <div class="count"><b id="total-count">0</b>gastos</div>
+      </div>
 
-<div class="search-bar">
-  <input type="text" class="search-input" placeholder="Buscar gasto..." id="search" oninput="filterGastos()">
-</div>
+      <!-- Busca -->
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input class="input" id="busca" type="text" placeholder="Buscar por descrição..." />
+      </div>
 
-<div class="filter-pills" id="pills">
-  <button class="pill active" onclick="filterCat(null, this)">Todos</button>
-</div>
+      <!-- Filtros por categoria -->
+      <div class="pills" id="filtros"></div>
 
-<div id="total-bar"></div>
-
-<div class="gastos-list" id="list">
-  <div class="loading"><div class="spinner"></div>Carregando...</div>
-</div>
-
-<nav class="bottom-nav">
-  <a href="index.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-    Início
-  </a>
-  <a href="dashboard.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    Dashboard
-  </a>
-  <a href="adicionar.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    Adicionar
-  </a>
-  <a href="gastos.html" class="nav-item active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    Gastos
-  </a>
-</nav>
-
-<!-- MODAL EDITAR -->
-<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <div class="modal-title">Editar</div>
-    <input type="hidden" id="edit-id">
-    <div class="form-group">
-      <label class="form-label">Valor</label>
-      <input type="number" step="0.01" class="form-input" id="edit-valor" placeholder="0,00">
+      <!-- Lista -->
+      <div id="lista-slot">
+        <div class="loading-wrap"><div class="spinner"></div>Carregando gastos...</div>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Data</label>
-      <input type="date" class="form-input" id="edit-data">
-    </div>
-    <button class="btn btn-yellow" onclick="salvarEdicao()">Salvar</button>
+
+    <!-- ============ Navegação inferior ============ -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        Início
+      </a>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>
+        Dashboard
+      </a>
+      <a href="adicionar.html" class="nav-item nav-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar
+      </a>
+      <a href="gastos.html" class="nav-item active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        Gastos
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ Bottom sheet de edição ============ -->
+  <div class="sheet-overlay" id="sheet-overlay"></div>
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <h2>Editar gasto</h2>
+    <form id="form-edit">
+      <input type="hidden" id="edit-id" />
+      <div class="field">
+        <label for="edit-valor">Valor (R$)</label>
+        <input class="input" id="edit-valor" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="edit-desc">Descrição</label>
+        <input class="input" id="edit-desc" type="text" />
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <div class="cat-grid" id="edit-cats"></div>
+      </div>
+      <div class="field">
+        <label for="edit-data">Data</label>
+        <input class="input" id="edit-data" type="date" />
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button type="button" class="btn btn-ghost" id="edit-cancel" style="flex:1;">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="edit-save" style="flex:2;">Salvar alterações</button>
+      </div>
+    </form>
   </div>
-</div>
 
-<script>
-const API = 'https://app-controle-de-gastos-production.up.railway.app';
-const CAT_ICONS = {'Alimentação':'🍔','Transporte':'🚗','Lazer':'🎮','Moradia':'🏠','Saúde':'💊','Educação':'📚','Outros':'📦'};
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
-let allGastos = [];
-let categorias = [];
-let activeCat = null;
+  <script src="_shared.js"></script>
+  <script>
+    const $ = (s) => document.querySelector(s);
+    let gastos = [];
+    let categorias = [];
+    let catMap = {};
+    let filtroCat = 'todas';
+    let termo = '';
+    let editSelectedCat = null;
 
-function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t)}
+    /* ===== Carregamento ===== */
+    async function init() {
+      [gastos, categorias] = await Promise.all([FinTrack.getGastos(), FinTrack.getCategorias()]);
+      catMap = FinTrack.buildCatMap(categorias);
+      gastos.sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+      if (FinTrack.isDemo()) showNotice();
+      renderFiltros();
+      render();
+    }
 
-async function loadGastos() {
-  try {
-    const [gRes, cRes] = await Promise.all([
-      fetch(`${API}/gastos`),
-      fetch(`${API}/categorias`)
-    ]);
-    allGastos = await gRes.json();
-    categorias = await cRes.json();
+    function showNotice() {
+      $('#notice-slot').innerHTML =
+        '<div class="notice">⚠️ <span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
+    }
 
-    const pills = document.getElementById('pills');
-    categorias.forEach(c => {
-      const b = document.createElement('button');
-      b.className = 'pill';
-      b.textContent = c.nome;
-      b.onclick = () => filterCat(c.id, b);
-      pills.appendChild(b);
+    /* ===== Filtros (pills) ===== */
+    function renderFiltros() {
+      const box = $('#filtros');
+      box.innerHTML = '';
+      const todas = document.createElement('button');
+      todas.className = 'pill active';
+      todas.textContent = 'Todas';
+      todas.onclick = () => setFiltro('todas', todas);
+      box.appendChild(todas);
+      categorias.forEach((c) => {
+        const meta = FinTrack.metaForCategoria(c.nome);
+        const p = document.createElement('button');
+        p.className = 'pill';
+        p.innerHTML = `${meta.emoji} ${c.nome}`;
+        p.onclick = () => setFiltro(c.id, p);
+        box.appendChild(p);
+      });
+    }
+    function setFiltro(id, el) {
+      filtroCat = id;
+      document.querySelectorAll('#filtros .pill').forEach((x) => x.classList.remove('active'));
+      el.classList.add('active');
+      render();
+    }
+
+    /* ===== Busca ===== */
+    $('#busca').addEventListener('input', (e) => { termo = e.target.value.toLowerCase().trim(); render(); });
+
+    /* ===== Render da lista ===== */
+    function filtrar() {
+      return gastos.filter((g) => {
+        const okCat = filtroCat === 'todas' || g.categoria_id === filtroCat;
+        const okTermo = !termo || (g.descricao || '').toLowerCase().includes(termo);
+        return okCat && okTermo;
+      });
+    }
+
+    function render() {
+      const lista = filtrar();
+      const total = lista.reduce((s, g) => s + (Number(g.valor) || 0), 0);
+      $('#total-val').textContent = FinTrack.formatBRL(total);
+      $('#total-count').textContent = lista.length;
+
+      const slot = $('#lista-slot');
+      if (!lista.length) {
+        slot.innerHTML = '<div class="empty"><div class="ic">🍃</div>Nenhum gasto encontrado.<br/>Que tal registrar um novo?</div>';
+        return;
+      }
+
+      // Agrupa por data
+      const grupos = {};
+      lista.forEach((g) => { (grupos[g.data] = grupos[g.data] || []).push(g); });
+
+      let html = '<div class="gasto-list">';
+      Object.keys(grupos).sort((a, b) => b.localeCompare(a)).forEach((data) => {
+        html += `<div class="day-head">${FinTrack.formatData(data)}</div>`;
+        grupos[data].forEach((g) => {
+          const meta = catMap[g.categoria_id] || FinTrack.metaForCategoria('');
+          html += `
+            <div class="card gasto-item">
+              <div class="ic">${meta.emoji}</div>
+              <div class="body">
+                <div class="desc">${escapeHtml(g.descricao)}</div>
+                <div class="sub">${meta.nome || 'Outros'}</div>
+              </div>
+              <div class="amt">${FinTrack.formatBRL(g.valor)}</div>
+              <div class="actions">
+                <button class="icon-btn edit" data-id="${g.id}" aria-label="Editar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                </button>
+                <button class="icon-btn del" data-id="${g.id}" aria-label="Excluir">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                </button>
+              </div>
+            </div>`;
+        });
+      });
+      html += '</div>';
+      slot.innerHTML = html;
+
+      slot.querySelectorAll('.icon-btn.edit').forEach((b) => b.onclick = () => openEdit(Number(b.dataset.id)));
+      slot.querySelectorAll('.icon-btn.del').forEach((b) => b.onclick = () => remover(Number(b.dataset.id), b));
+    }
+
+    /* ===== Excluir ===== */
+    async function remover(id, btn) {
+      const item = btn.closest('.gasto-item');
+      item.style.transition = 'opacity .3s, transform .3s';
+      item.style.opacity = '0';
+      item.style.transform = 'translateX(40px)';
+      await FinTrack.deleteGasto(id);
+      gastos = gastos.filter((g) => g.id !== id);
+      setTimeout(() => { render(); toast('Gasto excluído'); }, 280);
+    }
+
+    /* ===== Editar (bottom sheet) ===== */
+    function openEdit(id) {
+      const g = gastos.find((x) => x.id === id);
+      if (!g) return;
+      $('#edit-id').value = g.id;
+      $('#edit-valor').value = String(g.valor).replace('.', ',');
+      $('#edit-desc').value = g.descricao;
+      $('#edit-data').value = String(g.data).split('T')[0];
+      editSelectedCat = categorias.find((c) => c.id === g.categoria_id) || null;
+
+      // Grid de categorias do sheet
+      const box = $('#edit-cats');
+      box.innerHTML = '';
+      categorias.forEach((c) => {
+        const meta = FinTrack.metaForCategoria(c.nome);
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = 'cat-cell' + (editSelectedCat && c.id === editSelectedCat.id ? ' active' : '');
+        cell.innerHTML = `<span class="e">${meta.emoji}</span><span class="n">${c.nome}</span>`;
+        cell.onclick = () => {
+          box.querySelectorAll('.cat-cell').forEach((x) => x.classList.remove('active'));
+          cell.classList.add('active');
+          editSelectedCat = c;
+        };
+        box.appendChild(cell);
+      });
+
+      $('#sheet-overlay').classList.add('show');
+      $('#sheet').classList.add('show');
+    }
+    function closeEdit() {
+      $('#sheet-overlay').classList.remove('show');
+      $('#sheet').classList.remove('show');
+    }
+    $('#sheet-overlay').onclick = closeEdit;
+    $('#edit-cancel').onclick = closeEdit;
+
+    $('#form-edit').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = Number($('#edit-id').value);
+      const valor = parseFloat(($('#edit-valor').value || '0').replace(',', '.'));
+      const payload = {
+        descricao: $('#edit-desc').value.trim(),
+        valor,
+        data: $('#edit-data').value,
+        categoria_id: editSelectedCat ? editSelectedCat.id : null,
+      };
+      const btn = $('#edit-save');
+      const old = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2.5px;"></span>';
+      btn.disabled = true;
+
+      await FinTrack.updateGasto(id, payload);
+      const idx = gastos.findIndex((g) => g.id === id);
+      if (idx >= 0) gastos[idx] = { ...gastos[idx], ...payload };
+
+      btn.innerHTML = old; btn.disabled = false;
+      closeEdit();
+      render();
+      toast('Alterações salvas');
     });
 
-    renderGastos(allGastos);
-  } catch(e) {
-    document.getElementById('list').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">API offline</div></div>';
-  }
-}
+    /* ===== Toast ===== */
+    let toastTimer;
+    function toast(msg) {
+      const t = $('#toast');
+      t.innerHTML = '✓ ' + msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+    }
 
-function getCatNome(id) {
-  const c = categorias.find(c => c.id === id);
-  return c ? c.nome : 'Outros';
-}
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    }
 
-function getCatIcon(id) {
-  const nome = getCatNome(id);
-  return CAT_ICONS[nome] || '📦';
-}
-
-function filterCat(id, btn) {
-  activeCat = id;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  filterGastos();
-}
-
-function filterGastos() {
-  const q = document.getElementById('search').value.toLowerCase();
-  let filtered = allGastos;
-  if (activeCat) filtered = filtered.filter(g => g.categoria_id === activeCat);
-  if (q) filtered = filtered.filter(g => g.descricao.toLowerCase().includes(q));
-  renderGastos(filtered);
-}
-
-function renderGastos(list) {
-  const total = list.reduce((s, g) => s + g.valor, 0);
-  document.getElementById('total-bar').innerHTML = list.length ? `
-    <div class="total-bar">
-      <div class="total-bar-label">${list.length} gasto${list.length !== 1 ? 's' : ''}</div>
-      <div class="total-bar-value">R$ ${total.toFixed(2).replace('.',',')}</div>
-    </div>
-  ` : '';
-
-  if (!list.length) {
-    document.getElementById('list').innerHTML = '<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum gasto encontrado</div></div>';
-    return;
-  }
-
-  const sorted = [...list].sort((a, b) => new Date(b.data) - new Date(a.data));
-  document.getElementById('list').innerHTML = sorted.map((g, i) => `
-    <div class="gasto-item" style="animation-delay:${i * 0.04}s">
-      <div class="gasto-icon">${getCatIcon(g.categoria_id)}</div>
-      <div class="gasto-info">
-        <div class="gasto-desc">${g.descricao}</div>
-        <div class="gasto-meta">
-          <span>${new Date(g.data).toLocaleDateString('pt-BR')}</span>
-          <span>·</span>
-          <span>${getCatNome(g.categoria_id)}</span>
-        </div>
-      </div>
-      <div class="gasto-right">
-        <div class="gasto-valor">R$ ${g.valor.toFixed(2).replace('.',',')}</div>
-        <div class="gasto-actions">
-          <button class="action-btn" onclick="editarGasto(${g.id}, ${g.valor}, '${g.data}')">Edit</button>
-          <button class="action-btn del" onclick="deletarGasto(${g.id})">Del</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function editarGasto(id, valor, data) {
-  document.getElementById('edit-id').value = id;
-  document.getElementById('edit-valor').value = valor;
-  document.getElementById('edit-data').value = data;
-  document.getElementById('modal').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-}
-
-async function salvarEdicao() {
-  const id = document.getElementById('edit-id').value;
-  const valor = parseFloat(document.getElementById('edit-valor').value);
-  const data = document.getElementById('edit-data').value;
-  try {
-    await fetch(`${API}/gastos/${id}`, {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({valor, data})
-    });
-    closeModal();
-    loadGastos();
-  } catch(e) { alert('Erro ao atualizar'); }
-}
-
-async function deletarGasto(id) {
-  if (!confirm('Deletar este gasto?')) return;
-  try {
-    await fetch(`${API}/gastos/${id}`, {method: 'DELETE'});
-    loadGastos();
-  } catch(e) { alert('Erro ao deletar'); }
-}
-
-loadGastos();
-</script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+    init();
+  </script>
 </body>
 </html>

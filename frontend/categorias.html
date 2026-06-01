@@ -1,139 +1,200 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Categorias — FINTRACK</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="_shared.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0A0A0A">
-<script>document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'))</script>
-<style>
-.cat-section{margin:1.25rem;border-radius:10px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 16px var(--shadow)}
-.cat-header{background:var(--grey2);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-.cat-header-left{display:flex;align-items:center;gap:0.75rem}
-.cat-icon-big{font-size:1.5rem}
-.cat-nome{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.05em}
-.cat-total{font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--yellow)}
-.cat-gastos{background:var(--black)}
-.cat-gasto-item{display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1.25rem;border-bottom:1px solid var(--divider);transition:background 0.15s}
-.cat-gasto-item:last-child{border-bottom:none}
-.cat-gasto-item:active{background:var(--hover-bg)}
-.cat-gasto-desc{font-size:0.9rem;flex:1}
-.cat-gasto-meta{font-size:0.7rem;color:var(--text-dim);margin-top:0.15rem}
-.cat-gasto-valor{font-size:0.9rem;font-weight:500;color:var(--white);opacity:0.65}
-.cat-empty{padding:1.5rem;text-align:center;color:var(--text-dim);font-size:0.82rem;letter-spacing:0.05em}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Categorias — FinTrack</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    .cat-block { padding: 0; overflow: hidden; margin-bottom: 12px; animation: rise 0.45s var(--ease) both; }
+    .cat-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px;
+      transition: background 0.2s var(--ease);
+    }
+    .cat-row:active { background: rgba(74,103,65,0.08); }
+    .cat-row .ic {
+      flex: 0 0 auto; width: 46px; height: 46px; border-radius: 13px;
+      display: grid; place-items: center; font-size: 23px;
+      background: rgba(240,237,230,0.04); border: 1px solid var(--border-soft);
+    }
+    .cat-row .body { flex: 1; min-width: 0; }
+    .cat-row .nm { font-weight: 600; font-size: 15.5px; display: flex; align-items: center; gap: 8px; }
+    .cat-row .cnt { font-size: 12.5px; color: var(--text-faint); margin-top: 2px; }
+    .cat-row .right { text-align: right; }
+    .cat-row .amt { font-family: var(--font-display); font-size: 26px; letter-spacing: 0.5px; line-height: 1; }
+    .cat-row .pc { font-size: 11.5px; color: var(--text-dim); margin-top: 3px; }
+    .chev { width: 18px; height: 18px; color: var(--text-faint); transition: transform 0.3s var(--ease); flex: 0 0 auto; }
+    .cat-block.open .chev { transform: rotate(90deg); }
 
-.summary-bar{background:var(--yellow);padding:1.1rem 1.25rem;margin:1.25rem;border-radius:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px var(--accent-glow)}
-.summary-label{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--black);opacity:0.52;font-weight:500}
-.summary-value{font-family:'Anton',sans-serif;font-size:1.4rem;color:var(--black);letter-spacing:-0.01em}
-</style>
+    /* Barra de proporção */
+    .cat-meter { height: 4px; background: rgba(240,237,230,0.05); }
+    .cat-meter span { display: block; height: 100%; width: 0; transition: width 0.9s var(--ease); border-radius: 0 3px 3px 0; }
+
+    /* Sub-lista (expandida) */
+    .cat-sub { max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease); }
+    .cat-block.open .cat-sub { max-height: 800px; }
+    .sub-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 16px 12px 76px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 14px;
+    }
+    .sub-item .d { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sub-item .dt { font-size: 11.5px; color: var(--text-faint); }
+    .sub-item .v { font-weight: 600; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+
+    .summary-card { padding: 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .summary-card .lbl { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
+    .summary-card .v { font-family: var(--font-display); font-size: 40px; color: var(--secondary); line-height: 1; margin-top: 4px; }
+    .summary-card .badge { font-size: 12.5px; color: var(--text-dim); text-align: right; }
+    .summary-card .badge b { font-family: var(--font-display); font-size: 24px; color: var(--text); display: block; }
+  </style>
 </head>
 <body>
-
-<button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
-  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-</button>
-
-<div class="page-header">
-  <div class="page-tag">Organização</div>
-  <div class="page-title">CATEGO<br>RIAS</div>
-</div>
-
-<div id="summary"></div>
-<div id="content">
-  <div class="loading"><div class="spinner"></div>Carregando...</div>
-</div>
-
-<nav class="bottom-nav">
-  <a href="index.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-    Início
-  </a>
-  <a href="dashboard.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    Dashboard
-  </a>
-  <a href="adicionar.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    Adicionar
-  </a>
-  <a href="gastos.html" class="nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    Gastos
-  </a>
-</nav>
-
-<script>
-const API = 'https://app-controle-de-gastos-production.up.railway.app';
-const CAT_ICONS = {'Alimentação':'🍔','Transporte':'🚗','Lazer':'🎮','Moradia':'🏠','Saúde':'💊','Educação':'📚','Outros':'📦'};
-
-function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t)}
-
-async function load() {
-  try {
-    const [cRes, gRes, totRes] = await Promise.all([
-      fetch(`${API}/categorias`),
-      fetch(`${API}/gastos`),
-      fetch(`${API}/gastos/total/categoria`)
-    ]);
-
-    const cats = await cRes.json();
-    const gastos = await gRes.json();
-    const totais = await totRes.json();
-
-    const totalGeral = totais.reduce((s, t) => s + (t.total || 0), 0);
-
-    document.getElementById('summary').innerHTML = `
-      <div class="summary-bar">
-        <div class="summary-label">Total geral</div>
-        <div class="summary-value">R$ ${totalGeral.toFixed(2).replace('.',',')}</div>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Distribuição</div>
+        <h1>Categorias</h1>
       </div>
-    `;
+    </header>
 
-    const html = cats.map(cat => {
-      const gastosCat = gastos.filter(g => g.categoria_id === cat.id);
-      const totalCat = totais.find(t => t.categoria === cat.nome);
-      const total = totalCat ? totalCat.total : 0;
+    <div class="screen">
+      <div id="notice-slot"></div>
+      <div id="content">
+        <div class="loading-wrap"><div class="spinner"></div>Carregando categorias...</div>
+      </div>
+    </div>
 
-      const gastosHtml = gastosCat.length ? gastosCat
-        .sort((a,b) => new Date(b.data) - new Date(a.data))
-        .slice(0, 5)
-        .map(g => `
-          <div class="cat-gasto-item">
-            <div>
-              <div class="cat-gasto-desc">${g.descricao}</div>
-              <div class="cat-gasto-meta">${new Date(g.data).toLocaleDateString('pt-BR')}</div>
-            </div>
-            <div class="cat-gasto-valor">R$ ${g.valor.toFixed(2).replace('.',',')}</div>
+    <!-- ============ Navegação inferior ============ -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        Início
+      </a>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>
+        Dashboard
+      </a>
+      <a href="adicionar.html" class="nav-item nav-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar
+      </a>
+      <a href="gastos.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        Gastos
+      </a>
+    </nav>
+  </main>
+
+  <script src="_shared.js"></script>
+  <script>
+    const $ = (s) => document.querySelector(s);
+    let gastos = [];
+    let categorias = [];
+    let catMap = {};
+
+    async function init() {
+      [gastos, categorias] = await Promise.all([FinTrack.getGastos(), FinTrack.getCategorias()]);
+      catMap = FinTrack.buildCatMap(categorias);
+      if (FinTrack.isDemo()) {
+        $('#notice-slot').innerHTML =
+          '<div class="notice">⚠️ <span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
+      }
+      render();
+    }
+
+    function render() {
+      const total = gastos.reduce((s, g) => s + (Number(g.valor) || 0), 0);
+
+      // Agrupa por categoria
+      const grupos = {};
+      gastos.forEach((g) => {
+        (grupos[g.categoria_id] = grupos[g.categoria_id] || []).push(g);
+      });
+
+      // Monta lista ordenada (inclui todas as categorias, mesmo zeradas)
+      const linhas = categorias.map((c) => {
+        const itens = (grupos[c.id] || []).slice().sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+        const t = itens.reduce((s, g) => s + (Number(g.valor) || 0), 0);
+        return { cat: c, meta: catMap[c.id], itens, total: t };
+      }).sort((a, b) => b.total - a.total);
+
+      const maxTotal = Math.max(...linhas.map((l) => l.total), 1);
+
+      let html = `
+        <div class="card summary-card rise">
+          <div>
+            <div class="lbl">Total geral</div>
+            <div class="v">${FinTrack.formatBRL(total)}</div>
           </div>
-        `).join('') : '<div class="cat-empty">Nenhum gasto nesta categoria</div>';
+          <div class="badge"><b>${categorias.length}</b>categorias</div>
+        </div>`;
 
-      return `
-        <div class="cat-section fade-up">
-          <div class="cat-header">
-            <div class="cat-header-left">
-              <div class="cat-icon-big">${CAT_ICONS[cat.nome] || '📦'}</div>
-              <div class="cat-nome">${cat.nome}</div>
+      linhas.forEach((l, i) => {
+        const pc = total ? Math.round((l.total / total) * 100) : 0;
+        const meterW = Math.round((l.total / maxTotal) * 100);
+        let sub = '';
+        if (l.itens.length) {
+          l.itens.forEach((g) => {
+            sub += `
+              <div class="sub-item">
+                <div style="min-width:0;">
+                  <div class="d">${escapeHtml(g.descricao)}</div>
+                  <div class="dt">${FinTrack.formatData(g.data)}</div>
+                </div>
+                <div class="v">${FinTrack.formatBRL(g.valor)}</div>
+              </div>`;
+          });
+        } else {
+          sub = '<div class="sub-item"><div class="d faint">Nenhum gasto nesta categoria</div></div>';
+        }
+
+        html += `
+          <div class="card cat-block" style="animation-delay:${i * 0.05}s">
+            <div class="cat-row" data-toggle>
+              <div class="ic">${l.meta.emoji}</div>
+              <div class="body">
+                <div class="nm">${l.cat.nome}</div>
+                <div class="cnt">${l.itens.length} ${l.itens.length === 1 ? 'gasto' : 'gastos'}</div>
+              </div>
+              <div class="right">
+                <div class="amt" style="color:${l.meta.hex}">${FinTrack.formatBRL(l.total)}</div>
+                <div class="pc">${pc}% do total</div>
+              </div>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
             </div>
-            <div class="cat-total">R$ ${total.toFixed(2).replace('.',',')}</div>
-          </div>
-          <div class="cat-gastos">${gastosHtml}</div>
-        </div>
-      `;
-    }).join('');
+            <div class="cat-meter"><span data-w="${meterW}" style="background:${l.meta.hex}"></span></div>
+            <div class="cat-sub">${sub}</div>
+          </div>`;
+      });
 
-    document.getElementById('content').innerHTML = html;
-  } catch(e) {
-    document.getElementById('content').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">API offline</div></div>';
-  }
-}
+      $('#content').innerHTML = html;
 
-load();
-</script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+      // Anima as barras de proporção
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.querySelectorAll('.cat-meter span').forEach((s) => { s.style.width = s.dataset.w + '%'; });
+        }, 120);
+      });
+
+      // Expandir/colapsar
+      document.querySelectorAll('[data-toggle]').forEach((row) => {
+        row.addEventListener('click', () => row.closest('.cat-block').classList.toggle('open'));
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    }
+
+    init();
+  </script>
 </body>
 </html>
