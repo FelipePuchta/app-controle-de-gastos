@@ -10,7 +10,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = 'https://app-controle-de-gastos.railway.app';
+  const API_BASE = 'https://harmonious-unity-production-e26f.up.railway.app';
 
   /* ---------- Metadados das categorias (ícone + cor) ----------
      A API devolve as categorias com id e nome. Casamos pelo nome
