@@ -8,13 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="_shared.css">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f5c518">
+<meta name="theme-color" content="#0A0A0A">
+<script>document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'))</script>
 <style>
 .form-wrap{padding:1.5rem 1.25rem}
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.5rem}
-.cat-btn{background:#181818;border:1px solid var(--border);border-radius:10px;padding:0.9rem 0.5rem;display:flex;flex-direction:column;align-items:center;gap:0.4rem;cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1)}
+.cat-btn{background:var(--grey2);border:1px solid var(--border);border-radius:10px;padding:0.9rem 0.5rem;display:flex;flex-direction:column;align-items:center;gap:0.4rem;cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1)}
 .cat-btn:active{transform:scale(0.95)}
-.cat-btn.selected{border-color:var(--yellow);background:rgba(245,197,24,0.08);box-shadow:0 0 0 1px rgba(245,197,24,0.2)}
+.cat-btn.selected{border-color:var(--yellow);background:var(--accent-bg);box-shadow:0 0 0 1px var(--accent-border)}
 .cat-icon{font-size:1.3rem;transition:transform 0.2s}
 .cat-btn.selected .cat-icon{transform:scale(1.15)}
 .cat-name{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);transition:color 0.18s}
@@ -22,10 +23,10 @@
 
 .valor-input{font-family:'Anton',sans-serif;font-size:2.5rem;background:none;border:none;color:var(--yellow);width:100%;text-align:center;padding:1.5rem 0;letter-spacing:-0.02em}
 .valor-input:focus{outline:none}
-.valor-input::placeholder{color:rgba(245,197,24,0.18)}
-.valor-wrap{border-bottom:2px solid rgba(245,197,24,0.25);margin-bottom:2rem;position:relative;transition:border-color 0.2s}
-.valor-wrap:focus-within{border-color:rgba(245,197,24,0.6)}
-.valor-prefix{position:absolute;left:0;top:50%;transform:translateY(-50%);font-family:'Anton',sans-serif;font-size:1.2rem;color:rgba(245,197,24,0.4)}
+.valor-input::placeholder{color:var(--accent-bg)}
+.valor-wrap{border-bottom:2px solid var(--accent-border);margin-bottom:2rem;position:relative;transition:border-color 0.2s}
+.valor-wrap:focus-within{border-color:var(--focus-border)}
+.valor-prefix{position:absolute;left:0;top:50%;transform:translateY(-50%);font-family:'Anton',sans-serif;font-size:1.2rem;color:var(--yellow);opacity:0.45}
 
 .success-screen{display:none;position:fixed;inset:0;background:var(--black);z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}
 .success-screen.show{display:flex}
@@ -36,6 +37,11 @@
 </style>
 </head>
 <body>
+
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+</button>
 
 <div class="page-header">
   <div class="page-tag">Novo registro</div>
@@ -98,8 +104,9 @@
 const API = 'https://app-controle-de-gastos-production.up.railway.app';
 const CAT_ICONS = {'Alimentação':'🍔','Transporte':'🚗','Lazer':'🎮','Moradia':'🏠','Saúde':'💊','Educação':'📚','Outros':'📦'};
 
-// Data de hoje
 document.getElementById('data').value = new Date().toISOString().split('T')[0];
+
+function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t)}
 
 async function loadCategorias() {
   const res = await fetch(`${API}/categorias`);
