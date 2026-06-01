@@ -1,5 +1,5 @@
 const CACHE = 'fintrack-v1';
-const FILES = ['/', '/dashboard.html', '/gastos.html', '/adicionar.html', '/categorias.html', '/_shared.css'];
+const FILES = ['/', '/index.html', '/dashboard.html', '/gastos.html', '/adicionar.html', '/categorias.html', '/_shared.css'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));

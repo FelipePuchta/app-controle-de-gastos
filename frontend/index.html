@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5c518">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--black:#080808;--yellow:#f5c518;--yellow-dim:#c49a10;--white:#f0ede6;--grey:#1a1a1a;--grey2:#2a2a2a}
@@ -168,6 +170,6 @@ footer{background:var(--black);padding:2rem 1.25rem;border-top:1px solid rgba(25
   <div class="footer-logo">FINTRACK</div>
   <div class="footer-copy">© 2026</div>
 </footer>
-
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>
