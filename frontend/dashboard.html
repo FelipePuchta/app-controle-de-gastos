@@ -10,28 +10,30 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f5c518">
 <style>
-.month-selector{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--grey2);border-bottom:1px solid rgba(255,255,255,0.06)}
-.month-btn{background:none;border:none;color:var(--yellow);font-size:1.2rem;cursor:pointer;padding:0.5rem;line-height:1}
-.month-label{font-family:'Anton',sans-serif;font-size:1rem;letter-spacing:0.1em;text-transform:uppercase}
+.month-selector{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1.25rem;background:#141414;border-bottom:1px solid var(--border)}
+.month-btn{background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.15);border-radius:6px;color:var(--yellow);font-size:1.1rem;cursor:pointer;padding:0.45rem 0.75rem;line-height:1;transition:background 0.15s}
+.month-btn:active{background:rgba(245,197,24,0.2)}
+.month-label{font-family:'Anton',sans-serif;font-size:1rem;letter-spacing:0.12em;text-transform:uppercase}
 
 .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;padding:1.25rem}
 .card-full{grid-column:1/-1}
 
-.chart-container{background:var(--grey2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:1.25rem;margin:0 1.25rem 1.25rem}
-.chart-title{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.25rem}
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px}
+.chart-container{background:#141414;border:1px solid var(--border);border-radius:10px;padding:1.35rem;margin:0 1.25rem 1.25rem;box-shadow:0 2px 16px rgba(0,0,0,0.3)}
+.chart-title{font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.35rem;display:flex;align-items:center;gap:0.5rem}
+.chart-title::before{content:'';width:10px;height:1px;background:var(--yellow);opacity:0.5;flex-shrink:0}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:100px}
 .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.4rem}
-.bar{width:100%;background:var(--grey3);border-radius:3px 3px 0 0;transition:height 0.5s ease;min-height:4px;position:relative}
+.bar{width:100%;background:rgba(255,255,255,0.06);border-radius:4px 4px 0 0;transition:height 0.5s cubic-bezier(0.4,0,0.2,1);min-height:4px}
 .bar.active{background:var(--yellow)}
-.bar-label{font-size:0.55rem;color:var(--text-dim);letter-spacing:0.05em;text-align:center}
+.bar-label{font-size:0.52rem;color:var(--text-dim);letter-spacing:0.05em;text-align:center}
 
 .donut-wrap{display:flex;align-items:center;gap:1.5rem}
 .donut{width:100px;height:100px;flex-shrink:0}
 .donut-legend{flex:1}
-.legend-item{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.legend-name{font-size:0.75rem;color:var(--text-dim);flex:1}
-.legend-pct{font-size:0.75rem;font-weight:500}
+.legend-item{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.55rem}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.legend-name{font-size:0.73rem;color:var(--text-dim);flex:1}
+.legend-pct{font-size:0.73rem;font-weight:500}
 </style>
 </head>
 <body>
@@ -65,7 +67,7 @@
 </div>
 
 <nav class="bottom-nav">
-  <a href="dashboard.html" class="nav-item">
+  <a href="index.html" class="nav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
     Início
   </a>

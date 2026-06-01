@@ -10,23 +10,24 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f5c518">
 <style>
-.cat-section{margin:1.25rem;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
-.cat-header{background:var(--grey2);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06)}
+.cat-section{margin:1.25rem;border-radius:10px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 16px rgba(0,0,0,0.3)}
+.cat-header{background:#181818;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .cat-header-left{display:flex;align-items:center;gap:0.75rem}
 .cat-icon-big{font-size:1.5rem}
 .cat-nome{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.05em}
 .cat-total{font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--yellow)}
-.cat-gastos{background:var(--black)}
-.cat-gasto-item{display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.cat-gastos{background:#0d0d0d}
+.cat-gasto-item{display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s}
 .cat-gasto-item:last-child{border-bottom:none}
+.cat-gasto-item:active{background:rgba(255,255,255,0.02)}
 .cat-gasto-desc{font-size:0.9rem;flex:1}
-.cat-gasto-meta{font-size:0.72rem;color:var(--text-dim);margin-top:0.15rem}
-.cat-gasto-valor{font-size:0.9rem;font-weight:500;color:rgba(240,237,230,0.7)}
-.cat-empty{padding:1.5rem;text-align:center;color:var(--text-dim);font-size:0.85rem}
+.cat-gasto-meta{font-size:0.7rem;color:var(--text-dim);margin-top:0.15rem}
+.cat-gasto-valor{font-size:0.9rem;font-weight:500;color:rgba(240,237,230,0.62)}
+.cat-empty{padding:1.5rem;text-align:center;color:var(--text-dim);font-size:0.82rem;letter-spacing:0.05em}
 
-.summary-bar{background:var(--yellow);padding:1rem 1.25rem;margin:1.25rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
-.summary-label{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.5);font-weight:500}
-.summary-value{font-family:'Anton',sans-serif;font-size:1.4rem;color:var(--black)}
+.summary-bar{background:var(--yellow);padding:1.1rem 1.25rem;margin:1.25rem;border-radius:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px rgba(245,197,24,0.2)}
+.summary-label{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.48);font-weight:500}
+.summary-value{font-family:'Anton',sans-serif;font-size:1.4rem;color:var(--black);letter-spacing:-0.01em}
 </style>
 </head>
 <body>
@@ -42,7 +43,7 @@
 </div>
 
 <nav class="bottom-nav">
-  <a href="dashboard.html" class="nav-item">
+  <a href="index.html" class="nav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
     Início
   </a>
