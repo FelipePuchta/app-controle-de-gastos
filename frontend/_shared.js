@@ -7,22 +7,26 @@
    O objeto global window.FinTrack expõe tudo que as páginas precisam.
    ===================================================================== */
 
+/* ---------- Tema (dark/light) ---------- */
+(function () {
+  const saved = localStorage.getItem('ft-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+})();
+
 (function () {
   'use strict';
 
   const API_BASE = 'https://harmonious-unity-production-e26f.up.railway.app';
 
-  /* ---------- Metadados das categorias (ícone + cor) ----------
-     A API devolve as categorias com id e nome. Casamos pelo nome
-     (normalizado) para anexar emoji e cor de gráfico.            */
+  /* ---------- Metadados das categorias (ícone + cor) ---------- */
   const CAT_META = {
-    alimentacao: { emoji: '🍔', cor: 'var(--cat-alimentacao)', hex: '#6b8f5e' },
-    transporte:  { emoji: '🚗', cor: 'var(--cat-transporte)',  hex: '#4a6741' },
-    lazer:       { emoji: '🎮', cor: 'var(--cat-lazer)',       hex: '#c9b27a' },
-    moradia:     { emoji: '🏠', cor: 'var(--cat-moradia)',     hex: '#7da38f' },
-    saude:       { emoji: '💊', cor: 'var(--cat-saude)',       hex: '#b98a5e' },
-    educacao:    { emoji: '📚', cor: 'var(--cat-educacao)',    hex: '#8a9b6e' },
-    outros:      { emoji: '📦', cor: 'var(--cat-outros)',      hex: '#5a7d6a' },
+    alimentacao: { emoji: '🍔', cor: 'var(--cat-alimentacao)', hex: '#FF4757' },
+    transporte:  { emoji: '🚗', cor: 'var(--cat-transporte)',  hex: '#2ED573' },
+    lazer:       { emoji: '🎮', cor: 'var(--cat-lazer)',       hex: '#FFA502' },
+    moradia:     { emoji: '🏠', cor: 'var(--cat-moradia)',     hex: '#1E90FF' },
+    saude:       { emoji: '💊', cor: 'var(--cat-saude)',       hex: '#FF6B81' },
+    educacao:    { emoji: '📚', cor: 'var(--cat-educacao)',    hex: '#A55EEA' },
+    outros:      { emoji: '📦', cor: 'var(--cat-outros)',      hex: '#ECCC68' },
   };
 
   /* Lista padrão de categorias (fallback e ordem visual) */
@@ -188,4 +192,31 @@
     formatBRL, formatData, mesAnoDe,
     isDemo,
   };
+
+  /* ---------- Toggle dark/light ---------- */
+  function themeIcon(t) { return t === 'dark' ? '☀️' : '🌙'; }
+
+  function injectThemeToggle() {
+    const topbar = document.querySelector('.topbar');
+    if (!topbar || document.getElementById('theme-toggle')) return;
+    const btn = document.createElement('button');
+    btn.id = 'theme-toggle';
+    btn.className = 'theme-btn';
+    btn.setAttribute('aria-label', 'Alternar tema');
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    btn.textContent = themeIcon(cur);
+    btn.onclick = () => {
+      const next = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ft-theme', next);
+      btn.textContent = themeIcon(next);
+    };
+    topbar.appendChild(btn);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectThemeToggle);
+  } else {
+    injectThemeToggle();
+  }
 })();

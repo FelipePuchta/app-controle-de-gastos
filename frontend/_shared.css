@@ -23,14 +23,14 @@
   --border-soft:  rgba(240, 237, 230, 0.06);
   --glow:         rgba(74, 103, 65, 0.35);   /* sombra verde        */
 
-  /* Cores de categoria (paleta terrosa harmônica para gráficos) */
-  --cat-alimentacao: #6b8f5e;
-  --cat-transporte:  #4a6741;
-  --cat-lazer:       #c9b27a;
-  --cat-moradia:     #7da38f;
-  --cat-saude:       #b98a5e;
-  --cat-educacao:    #8a9b6e;
-  --cat-outros:      #5a7d6a;
+  /* Cores de categoria — vibrantes e distintas */
+  --cat-alimentacao: #FF4757;
+  --cat-transporte:  #2ED573;
+  --cat-lazer:       #FFA502;
+  --cat-moradia:     #1E90FF;
+  --cat-saude:       #FF6B81;
+  --cat-educacao:    #A55EEA;
+  --cat-outros:      #ECCC68;
 
   /* Tipografia */
   --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
@@ -396,6 +396,63 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 
 /* Scrollbar discreta */
 ::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ---------- Botão de tema ---------- */
+.theme-btn {
+  flex-shrink: 0;
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  display: grid; place-items: center;
+  font-size: 19px;
+  background: rgba(240,237,230,0.06);
+  border: 1px solid var(--border-soft);
+  transition: transform 0.18s var(--ease), background 0.2s var(--ease);
+}
+.theme-btn:active { transform: scale(0.88); }
+
+/* ---------- Modo claro ---------- */
+html[data-theme="light"] {
+  --bg:          #f5f6f1;
+  --bg-soft:     #eaebe5;
+  --primary:     #3d5c35;
+  --secondary:   #4a6741;
+  --text:        #1a1c18;
+  --text-dim:    #4a4e45;
+  --text-faint:  #7a7e75;
+  --card:        #ffffff;
+  --card-2:      #f0f2ed;
+  --border:      rgba(74, 103, 65, 0.22);
+  --border-soft: rgba(0, 0, 0, 0.09);
+  --glow:        rgba(74, 103, 65, 0.18);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.10);
+}
+html[data-theme="light"] body::before {
+  background: radial-gradient(900px 500px at 50% -10%, rgba(74,103,65,0.07), transparent 60%);
+}
+html[data-theme="light"] .card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,245,0.96));
+}
+html[data-theme="light"] .bottom-nav {
+  background: rgba(238,240,234,0.90);
+}
+html[data-theme="light"] .topbar {
+  background: linear-gradient(180deg, var(--bg) 70%, transparent);
+}
+html[data-theme="light"] .btn-ghost {
+  background: rgba(0,0,0,0.04);
+}
+html[data-theme="light"] .pill {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.10);
+}
+html[data-theme="light"] .input {
+  background: #f8f9f5;
+  border-color: rgba(74,103,65,0.22);
+}
+html[data-theme="light"] .theme-btn {
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.10);
+}
 
 /* =====================================================================
    FinTrack — _shared.js
