@@ -1,16 +1,26 @@
 import psycopg2
 from dotenv import load_dotenv
 import os
+import socket
 
 load_dotenv()
 
 _conexao = None
 
+def _ipv4(hostname):
+    try:
+        results = socket.getaddrinfo(hostname, None, socket.AF_INET)
+        return results[0][4][0]
+    except Exception:
+        return hostname
+
 def get_conn():
     global _conexao
     if _conexao is None or _conexao.closed:
+        host = os.getenv("DB_HOST")
         _conexao = psycopg2.connect(
-            host=os.getenv("DB_HOST"),
+            host=host,
+            hostaddr=_ipv4(host),
             database=os.getenv("DB_DATABASE"),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
