@@ -46,7 +46,7 @@
     .chart-card .head .hint { font-size: 11.5px; color: var(--text-faint); }
 
     /* Gráfico de barras */
-    .bars { display: flex; align-items: flex-end; gap: 10px; height: 150px; }
+    .bars { display: flex; align-items: flex-end; gap: 6px; height: 150px; }
     .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
     .bar-track { width: 100%; display: flex; align-items: flex-end; justify-content: center; flex: 1; }
     .bar {
@@ -59,9 +59,21 @@
       position: relative;
     }
     .bar.cur { box-shadow: 0 0 16px var(--glow); }
-    .bar-col .vlabel { font-size: 10px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
-    .bar-col .mlabel { font-size: 11px; color: var(--text-faint); font-weight: 600; }
+    .bar-col .vlabel { font-size: 9px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+    .bar-col .mlabel { font-size: 10px; color: var(--text-faint); font-weight: 600; }
     .bar-col.active .mlabel { color: var(--secondary); }
+
+    /* Seletor de período do gráfico */
+    .period-tabs { display: flex; gap: 6px; }
+    .period-tab {
+      flex: 1; height: 30px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      background: rgba(240,237,230,0.04); border: 1px solid var(--border-soft);
+      color: var(--text-dim); transition: all 0.18s var(--ease);
+    }
+    .period-tab.active {
+      background: rgba(74,103,65,0.22); border-color: var(--primary);
+      color: var(--text);
+    }
 
     /* Gráfico donut */
     .donut-wrap { display: flex; gap: 18px; align-items: center; }
@@ -138,6 +150,7 @@
     const hoje = new Date();
     let curMes = hoje.getMonth() + 1;
     let curAno = hoje.getFullYear();
+    let evolMeses = 6;
 
     async function init() {
       [gastos, categorias] = await Promise.all([FinTrack.getGastos(), FinTrack.getCategorias()]);
@@ -169,10 +182,10 @@
       const qtd = doMes.length;
       const media = qtd ? total / qtd : 0;
 
-      // ---- Série dos últimos 6 meses ----
+      // ---- Série dos últimos N meses ----
       const serie = [];
       let m = curMes, a = curAno;
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < evolMeses; i++) {
         const t = gastosDoMes(m, a).reduce((s, g) => s + (Number(g.valor) || 0), 0);
         serie.unshift({ mes: m, ano: a, total: t, atual: i === 0 });
         m--; if (m < 1) { m = 12; a--; }
@@ -207,9 +220,17 @@
         </div>`;
 
       // Gráfico de barras
+      const labelPeriodo = evolMeses === 3 ? '3 meses' : evolMeses === 6 ? '6 meses' : '1 ano';
       html += `
         <div class="card chart-card rise">
-          <div class="head"><div class="t">Evolução · 6 meses</div><div class="hint">por mês</div></div>
+          <div class="head">
+            <div class="t">Evolução · ${labelPeriodo}</div>
+            <div class="period-tabs">
+              <button class="period-tab ${evolMeses===3?'active':''}" data-n="3">3M</button>
+              <button class="period-tab ${evolMeses===6?'active':''}" data-n="6">6M</button>
+              <button class="period-tab ${evolMeses===12?'active':''}" data-n="12">1A</button>
+            </div>
+          </div>
           <div class="bars" id="bars">`;
       serie.forEach((s) => {
         const h = Math.round((s.total / maxSerie) * 100);
@@ -265,6 +286,11 @@
       html += `</div>`;
 
       $('#content').innerHTML = html;
+
+      // ---- Botões de período do gráfico ----
+      document.querySelectorAll('.period-tab').forEach((btn) => {
+        btn.onclick = () => { evolMeses = Number(btn.dataset.n); render(); };
+      });
 
       // ---- Animações de entrada ----
       requestAnimationFrame(() => {

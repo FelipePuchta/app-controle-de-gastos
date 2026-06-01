@@ -2,7 +2,7 @@
   "name": "FinTrack — Controle de Gastos",
   "short_name": "FinTrack",
   "description": "Controle seus gastos pessoais com clareza.",
-  "start_url": "./dashboard.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0a",
