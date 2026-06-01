@@ -1,349 +1,130 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0a0a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="manifest.json">
-  <title>Categorias · FinTrack</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-  <style>
-    .cat-section { margin: 0 16px 16px; border-radius: var(--r); overflow: hidden; background: var(--card); border: 1px solid var(--border); backdrop-filter: blur(16px); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Categorias — FINTRACK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5c518">
+<style>
+.cat-section{margin:1.25rem;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+.cat-header{background:var(--grey2);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06)}
+.cat-header-left{display:flex;align-items:center;gap:0.75rem}
+.cat-icon-big{font-size:1.5rem}
+.cat-nome{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.05em}
+.cat-total{font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--yellow)}
+.cat-gastos{background:var(--black)}
+.cat-gasto-item{display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.cat-gasto-item:last-child{border-bottom:none}
+.cat-gasto-desc{font-size:0.9rem;flex:1}
+.cat-gasto-meta{font-size:0.72rem;color:var(--text-dim);margin-top:0.15rem}
+.cat-gasto-valor{font-size:0.9rem;font-weight:500;color:rgba(240,237,230,0.7)}
+.cat-empty{padding:1.5rem;text-align:center;color:var(--text-dim);font-size:0.85rem}
 
-    .cat-header {
-      padding: 18px 20px;
-      display: flex; align-items: center; gap: 14px;
-      cursor: pointer;
-      transition: background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
-    }
-    .cat-header:active { background: var(--card-hover); }
-
-    .cat-header-icon {
-      width: 46px; height: 46px;
-      border-radius: 13px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; flex-shrink: 0;
-    }
-
-    .cat-header-info { flex: 1; min-width: 0; }
-    .cat-header-name { font-family: 'Anton', sans-serif; font-size: 18px; text-transform: uppercase; letter-spacing: 0.03em; }
-    .cat-header-count { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    .cat-header-total {
-      font-family: 'Anton', sans-serif;
-      font-size: 18px; color: var(--accent);
-      white-space: nowrap;
-    }
-
-    .cat-chevron {
-      font-size: 14px; color: var(--dim);
-      margin-left: 8px;
-      transition: transform 0.3s var(--ease);
-    }
-    .cat-section.open .cat-chevron { transform: rotate(180deg); }
-
-    .cat-bar-wrap { padding: 0 20px 16px; }
-    .cat-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
-
-    .cat-items { border-top: 1px solid var(--border); max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease); }
-    .cat-section.open .cat-items { max-height: 2000px; }
-
-    .cat-gasto-item {
-      padding: 14px 20px;
-      display: flex; align-items: center; gap: 12px;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .cat-gasto-item:last-child { border-bottom: none; }
-    .cat-gasto-item:active { background: var(--card-hover); }
-
-    .gi-info { flex: 1; min-width: 0; }
-    .gi-desc { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .gi-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .gi-val { font-family: 'Anton', sans-serif; font-size: 15px; color: var(--accent); white-space: nowrap; }
-
-    /* Summary bar at top */
-    .summary-bar {
-      margin: 0 16px 20px;
-      padding: 20px;
-      border-radius: var(--r);
-      background: var(--accent);
-      color: #0a0a0a;
-    }
-    .summary-bar .s-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; margin-bottom: 6px; }
-    .summary-bar .s-total { font-family: 'Anton', sans-serif; font-size: 36px; line-height: 1; }
-    .summary-bar .s-sub { font-size: 13px; font-weight: 500; opacity: 0.7; margin-top: 4px; }
-
-    /* Horizontal bar chart */
-    .hbar-container { padding: 0 20px 20px; }
-    .hbar-item { margin-bottom: 12px; }
-    .hbar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-    .hbar-name { font-size: 13px; font-weight: 600; }
-    .hbar-val { font-size: 12px; color: var(--muted); }
-    .hbar { height: 6px; background: var(--border); border-radius: 6px; overflow: hidden; }
-    .hbar-fill { height: 100%; border-radius: 6px; width: 0; transition: width 1.2s var(--ease); }
-
-    .chart-card { margin: 0 16px 16px; border-radius: var(--r); background: var(--card); border: 1px solid var(--border); backdrop-filter: blur(16px); overflow: hidden; }
-    .chart-header { padding: 18px 20px 12px; }
-    .chart-title { font-family: 'Anton', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em; }
-  </style>
+.summary-bar{background:var(--yellow);padding:1rem 1.25rem;margin:1.25rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
+.summary-label{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.5);font-weight:500}
+.summary-value{font-family:'Anton',sans-serif;font-size:1.4rem;color:var(--black)}
+</style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
 
-  <div class="top-controls">
-    <button class="icon-btn" id="backBtn" aria-label="Voltar">←</button>
-    <div class="api-status checking" id="apiStatus">
-      <span class="api-dot"></span>Verificando
-    </div>
-    <button class="icon-btn" id="themeBtn">🌙</button>
-  </div>
+<div class="page-header">
+  <div class="page-tag">Organização</div>
+  <div class="page-title">CATEGO<br>RIAS</div>
+</div>
 
-  <div class="page-content pb-nav">
-    <div class="page-header">
-      <h1>CATE<br>GORIAS</h1>
-      <p class="sub" id="headerSub">Gastos agrupados por categoria</p>
-    </div>
+<div id="summary"></div>
+<div id="content">
+  <div class="loading"><div class="spinner"></div>Carregando...</div>
+</div>
 
-    <!-- Month selector -->
-    <div class="month-selector reveal" id="monthSelector">
-      <button class="month-nav-btn" id="prevMonth">‹</button>
-      <span class="month-label" id="monthLabel">—</span>
-      <button class="month-nav-btn" id="nextMonth">›</button>
-    </div>
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    Início
+  </a>
+  <a href="dashboard.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="adicionar.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Adicionar
+  </a>
+  <a href="gastos.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Gastos
+  </a>
+</nav>
 
-    <!-- Summary -->
-    <div class="summary-bar reveal" id="summaryBar">
-      <div class="s-label">Total do período</div>
-      <div class="s-total" id="summaryTotal">R$ 0,00</div>
-      <div class="s-sub" id="summarySub">0 gastos em 0 categorias</div>
-    </div>
+<script>
+const API = 'https://app-controle-de-gastos.railway.app';
+const CAT_ICONS = {'Alimentação':'🍔','Transporte':'🚗','Lazer':'🎮','Moradia':'🏠','Saúde':'💊','Educação':'📚','Outros':'📦'};
 
-    <!-- Horizontal bar chart -->
-    <div class="chart-card reveal">
-      <div class="chart-header">
-        <div class="chart-title">Distribuição</div>
+async function load() {
+  try {
+    const [cRes, gRes, totRes] = await Promise.all([
+      fetch(`${API}/categorias`),
+      fetch(`${API}/gastos`),
+      fetch(`${API}/gastos/total/categoria`)
+    ]);
+
+    const cats = await cRes.json();
+    const gastos = await gRes.json();
+    const totais = await totRes.json();
+
+    const totalGeral = totais.reduce((s, t) => s + (t.total || 0), 0);
+
+    document.getElementById('summary').innerHTML = `
+      <div class="summary-bar">
+        <div class="summary-label">Total geral</div>
+        <div class="summary-value">R$ ${totalGeral.toFixed(2).replace('.',',')}</div>
       </div>
-      <div class="hbar-container" id="hbarContainer">
-        <div class="loading-state" style="padding:20px 0;">
-          <div class="spinner"></div>
-        </div>
-      </div>
-    </div>
+    `;
 
-    <!-- Categories list -->
-    <div id="catList">
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <span>Carregando categorias...</span>
-      </div>
-    </div>
+    const html = cats.map(cat => {
+      const gastosCat = gastos.filter(g => g.categoria_id === cat.id);
+      const totalCat = totais.find(t => t.categoria === cat.nome);
+      const total = totalCat ? totalCat.total : 0;
 
-  </div>
-
-  <!-- FAB -->
-  <a href="adicionar.html" class="fab" aria-label="Adicionar gasto">+</a>
-
-  <!-- Bottom nav -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item" data-page="dashboard.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span>Dashboard</span>
-    </a>
-    <a href="gastos.html" class="nav-item" data-page="gastos.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      <span>Gastos</span>
-    </a>
-    <a href="adicionar.html" class="nav-item" data-page="adicionar.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      <span>Adicionar</span>
-    </a>
-    <a href="categorias.html" class="nav-item" data-page="categorias.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-      <span>Categorias</span>
-    </a>
-  </nav>
-
-  <script src="js/app.js"></script>
-  <script>
-    let curMonth, curYear;
-    let allGastos = [], categorias = [];
-
-    async function init() {
-      const now = new Date();
-      curMonth = now.getMonth() + 1;
-      curYear = now.getFullYear();
-      updateLabel();
-      try {
-        [allGastos, categorias] = await Promise.all([api.getGastos(), api.getCategorias()]);
-        render();
-      } catch (e) {
-        document.getElementById('catList').innerHTML =
-          `<div class="empty-state"><div class="ei">⚠️</div><p>Erro: ${e.message}</p></div>`;
-      }
-    }
-
-    function updateLabel() {
-      document.getElementById('monthLabel').textContent =
-        MONTHS[curMonth - 1].toUpperCase() + ' ' + curYear;
-    }
-
-    function filteredGastos() {
-      return allGastos.filter(g => {
-        const [y, m] = g.data.split('-');
-        return parseInt(m) === curMonth && parseInt(y) === curYear;
-      });
-    }
-
-    function render() {
-      const gastos = filteredGastos();
-      const total = gastos.reduce((s, g) => s + g.valor, 0);
-
-      // Summary
-      const catSet = new Set(gastos.map(g => g.categoria_id));
-      document.getElementById('summaryTotal').textContent = fmtBRL(total);
-      document.getElementById('summarySub').textContent =
-        `${gastos.length} gasto${gastos.length !== 1 ? 's' : ''} em ${catSet.size} categoria${catSet.size !== 1 ? 's' : ''}`;
-
-      // Group by category
-      const groups = {};
-      gastos.forEach(g => {
-        const id = g.categoria_id;
-        if (!groups[id]) groups[id] = [];
-        groups[id].push(g);
-      });
-
-      // Sorted by total desc
-      const sorted = Object.entries(groups)
-        .map(([id, items]) => ({
-          id: parseInt(id),
-          items: items.sort((a, b) => b.data.localeCompare(a.data)),
-          total: items.reduce((s, g) => s + g.valor, 0)
-        }))
-        .sort((a, b) => b.total - a.total);
-
-      // Horizontal bars
-      renderHBars(sorted, total);
-
-      if (!sorted.length) {
-        document.getElementById('catList').innerHTML =
-          `<div class="empty-state">
-            <div class="ei">🏷️</div>
-            <p>Nenhum gasto em ${MONTHS[curMonth-1]} ${curYear}.</p>
-          </div>`;
-        return;
-      }
-
-      // Categories
-      const html = sorted.map((group, gi) => {
-        const cat = categorias.find(c => c.id === group.id);
-        const catNome = cat ? cat.nome : 'Outros';
-        const color = CAT_COLORS[gi % CAT_COLORS.length];
-        const icon = getCatIcon(catNome);
-        const pct = total > 0 ? (group.total / total * 100).toFixed(1) : 0;
-
-        const itemsHtml = group.items.map(g => `
+      const gastosHtml = gastosCat.length ? gastosCat
+        .sort((a,b) => new Date(b.data) - new Date(a.data))
+        .slice(0, 5)
+        .map(g => `
           <div class="cat-gasto-item">
-            <div class="gi-info">
-              <div class="gi-desc">${escHtml(g.descricao)}</div>
-              <div class="gi-date">${fmtDate(g.data)}</div>
+            <div>
+              <div class="cat-gasto-desc">${g.descricao}</div>
+              <div class="cat-gasto-meta">${new Date(g.data).toLocaleDateString('pt-BR')}</div>
             </div>
-            <div class="gi-val">${fmtBRL(g.valor)}</div>
+            <div class="cat-gasto-valor">R$ ${g.valor.toFixed(2).replace('.',',')}</div>
           </div>
-        `).join('');
+        `).join('') : '<div class="cat-empty">Nenhum gasto nesta categoria</div>';
 
-        return `
-          <div class="cat-section reveal" style="animation-delay:${gi * 0.06}s">
-            <div class="cat-header" onclick="toggleSection(this)">
-              <div class="cat-header-icon" style="background:${color}22;border:1px solid ${color}44;">${icon}</div>
-              <div class="cat-header-info">
-                <div class="cat-header-name">${catNome}</div>
-                <div class="cat-header-count">${group.items.length} gasto${group.items.length !== 1 ? 's' : ''} · ${pct}%</div>
-              </div>
-              <div class="cat-header-total">${fmtBRL(group.total)}</div>
-              <div class="cat-chevron">▾</div>
+      return `
+        <div class="cat-section fade-up">
+          <div class="cat-header">
+            <div class="cat-header-left">
+              <div class="cat-icon-big">${CAT_ICONS[cat.nome] || '📦'}</div>
+              <div class="cat-nome">${cat.nome}</div>
             </div>
-            <div class="cat-bar-wrap">
-              <div class="progress-bar">
-                <div class="progress-fill" style="background:${color}" data-width="${pct}"></div>
-              </div>
-            </div>
-            <div class="cat-items">${itemsHtml}</div>
+            <div class="cat-total">R$ ${total.toFixed(2).replace('.',',')}</div>
           </div>
-        `;
-      }).join('');
+          <div class="cat-gastos">${gastosHtml}</div>
+        </div>
+      `;
+    }).join('');
 
-      document.getElementById('catList').innerHTML = html;
+    document.getElementById('content').innerHTML = html;
+  } catch(e) {
+    document.getElementById('content').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">API offline</div></div>';
+  }
+}
 
-      // Animate progress bars
-      setTimeout(() => {
-        document.querySelectorAll('.progress-fill').forEach(el => {
-          el.style.width = el.dataset.width + '%';
-        });
-        initReveal();
-      }, 100);
-    }
-
-    function renderHBars(sorted, total) {
-      if (!sorted.length) {
-        document.getElementById('hbarContainer').innerHTML =
-          '<p style="text-align:center;color:var(--muted);font-size:13px;padding:8px 0;">Sem dados</p>';
-        return;
-      }
-      const html = sorted.map((group, i) => {
-        const cat = categorias.find(c => c.id === group.id);
-        const nome = cat ? cat.nome : 'Outros';
-        const pct = total > 0 ? group.total / total * 100 : 0;
-        const color = CAT_COLORS[i % CAT_COLORS.length];
-        return `
-          <div class="hbar-item">
-            <div class="hbar-head">
-              <span class="hbar-name">${nome}</span>
-              <span class="hbar-val">${fmtBRL(group.total)}</span>
-            </div>
-            <div class="hbar">
-              <div class="hbar-fill" style="background:${color}" data-width="${pct}"></div>
-            </div>
-          </div>
-        `;
-      }).join('');
-      document.getElementById('hbarContainer').innerHTML = html;
-      setTimeout(() => {
-        document.querySelectorAll('.hbar-fill').forEach(el => {
-          el.style.width = el.dataset.width + '%';
-        });
-      }, 200);
-    }
-
-    function toggleSection(headerEl) {
-      const section = headerEl.closest('.cat-section');
-      section.classList.toggle('open');
-    }
-
-    function escHtml(str) {
-      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    document.getElementById('prevMonth').addEventListener('click', () => {
-      curMonth--; if (curMonth < 1) { curMonth = 12; curYear--; }
-      updateLabel(); render();
-    });
-    document.getElementById('nextMonth').addEventListener('click', () => {
-      curMonth++; if (curMonth > 12) { curMonth = 1; curYear++; }
-      updateLabel(); render();
-    });
-
-    init();
-  </script>
+load();
+</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

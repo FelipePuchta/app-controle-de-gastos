@@ -1,433 +1,156 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0a0a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="manifest.json">
-  <title>Adicionar · FinTrack</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-  <style>
-    .form-card {
-      margin: 0 16px;
-      padding: 24px 20px;
-      border-radius: var(--r);
-      background: var(--card);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(16px);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Adicionar — FINTRACK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5c518">
+<style>
+.form-wrap{padding:1.5rem 1.25rem}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.5rem}
+.cat-btn{background:var(--grey2);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.9rem 0.5rem;display:flex;flex-direction:column;align-items:center;gap:0.4rem;cursor:pointer;transition:all 0.15s}
+.cat-btn:active{transform:scale(0.96)}
+.cat-btn.selected{border-color:var(--yellow);background:rgba(245,197,24,0.08)}
+.cat-icon{font-size:1.3rem}
+.cat-name{font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim)}
+.cat-btn.selected .cat-name{color:var(--yellow)}
 
-    /* Value display */
-    .value-display {
-      text-align: center;
-      padding: 28px 20px 20px;
-    }
-    .value-label {
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--muted); margin-bottom: 8px;
-    }
-    .value-big {
-      font-family: 'Anton', sans-serif;
-      font-size: clamp(44px, 14vw, 72px);
-      line-height: 1;
-      transition: color 0.2s;
-    }
-    .value-big.has-value { color: var(--accent); }
-    .value-big.empty { color: var(--dim); }
+.valor-input{font-family:'Anton',sans-serif;font-size:2.5rem;background:none;border:none;color:var(--yellow);width:100%;text-align:center;padding:1.5rem 0;letter-spacing:-0.02em}
+.valor-input:focus{outline:none}
+.valor-input::placeholder{color:rgba(245,197,24,0.2)}
+.valor-wrap{border-bottom:2px solid rgba(245,197,24,0.3);margin-bottom:2rem;position:relative}
+.valor-prefix{position:absolute;left:0;top:50%;transform:translateY(-50%);font-family:'Anton',sans-serif;font-size:1.2rem;color:rgba(245,197,24,0.5)}
 
-    /* Category grid */
-    .cat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    .cat-option {
-      padding: 12px 8px;
-      border-radius: var(--r-sm);
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.2s var(--ease);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .cat-option:active { transform: scale(0.92); }
-    .cat-option.selected {
-      border-color: var(--accent);
-      background: var(--accent-glow);
-    }
-    .cat-option .icon { font-size: 22px; display: block; margin-bottom: 4px; }
-    .cat-option .name { font-size: 11px; font-weight: 600; color: var(--muted); }
-    .cat-option.selected .name { color: var(--accent); }
-
-    /* Number pad */
-    .numpad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-    .num-btn {
-      height: 64px;
-      border-radius: var(--r-sm);
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 20px; font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s var(--ease);
-      -webkit-tap-highlight-color: transparent;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .num-btn:active { transform: scale(0.88); background: var(--card-hover); }
-    .num-btn.accent-btn { background: var(--accent); color: #0a0a0a; border-color: var(--accent); }
-    .num-btn.accent-btn:hover { background: #ffd324; }
-    .num-btn.del-btn { font-size: 22px; }
-
-    /* Input mode toggle */
-    .input-toggle {
-      display: flex;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--r-sm);
-      padding: 4px;
-      margin-bottom: 20px;
-    }
-    .toggle-btn {
-      flex: 1; padding: 10px;
-      border-radius: 10px;
-      border: none; background: transparent;
-      color: var(--muted); font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .toggle-btn.active { background: var(--accent); color: #0a0a0a; }
-
-    /* Success animation */
-    @keyframes successPop {
-      0% { transform: scale(0.5); opacity: 0; }
-      60% { transform: scale(1.15); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .success-icon { animation: successPop 0.5s var(--ease-spring) both; }
-  </style>
+.success-screen{display:none;position:fixed;inset:0;background:var(--black);z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}
+.success-screen.show{display:flex}
+.success-icon{font-size:4rem;animation:pop 0.4s ease}
+.success-title{font-family:'Anton',sans-serif;font-size:2.5rem;text-transform:uppercase;color:var(--yellow);letter-spacing:-0.02em}
+.success-sub{color:var(--text-dim);font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+</style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
 
-  <div class="top-controls">
-    <button class="icon-btn" id="backBtn" aria-label="Voltar">←</button>
-    <div class="api-status checking" id="apiStatus">
-      <span class="api-dot"></span>Verificando
-    </div>
-    <button class="icon-btn" id="themeBtn">🌙</button>
+<div class="page-header">
+  <div class="page-tag">Novo registro</div>
+  <div class="page-title">ADICIONAR<br>GASTO</div>
+</div>
+
+<div class="form-wrap">
+  <div class="valor-wrap">
+    <span class="valor-prefix">R$</span>
+    <input type="number" step="0.01" class="valor-input" id="valor" placeholder="0,00">
   </div>
 
-  <div class="page-content pb-nav">
-    <div class="page-header">
-      <h1>NOVO<br>GASTO</h1>
-      <p class="sub">Registre seu gasto rapidamente</p>
-    </div>
-
-    <!-- Value display -->
-    <div class="value-display reveal">
-      <div class="value-label">Valor (R$)</div>
-      <div class="value-big empty" id="valueDisplay">0,00</div>
-    </div>
-
-    <!-- Input toggle -->
-    <div class="px-20">
-      <div class="input-toggle reveal">
-        <button class="toggle-btn active" id="toggleNumpad" onclick="setMode('numpad')">Teclado</button>
-        <button class="toggle-btn" id="toggleManual" onclick="setMode('manual')">Manual</button>
-      </div>
-    </div>
-
-    <!-- Numpad mode -->
-    <div id="numpadMode" class="px-20">
-      <div class="numpad">
-        <button class="num-btn" onclick="numPress('1')">1</button>
-        <button class="num-btn" onclick="numPress('2')">2</button>
-        <button class="num-btn" onclick="numPress('3')">3</button>
-        <button class="num-btn" onclick="numPress('4')">4</button>
-        <button class="num-btn" onclick="numPress('5')">5</button>
-        <button class="num-btn" onclick="numPress('6')">6</button>
-        <button class="num-btn" onclick="numPress('7')">7</button>
-        <button class="num-btn" onclick="numPress('8')">8</button>
-        <button class="num-btn" onclick="numPress('9')">9</button>
-        <button class="num-btn" onclick="numPress(',')">
-          <span style="font-size:28px">·</span>
-        </button>
-        <button class="num-btn" onclick="numPress('0')">0</button>
-        <button class="num-btn del-btn" onclick="numDelete()">⌫</button>
-      </div>
-    </div>
-
-    <!-- Manual input -->
-    <div id="manualMode" class="px-20" style="display:none;">
-      <div class="form-group reveal">
-        <label class="form-label">Valor</label>
-        <input type="number" class="form-input" id="manualValue" placeholder="Ex: 49.90"
-               min="0" step="0.01" inputmode="decimal">
-        <span class="error-text" id="errValor">Informe o valor</span>
-      </div>
-    </div>
-
-    <!-- Form -->
-    <div class="px-20 mt-8">
-      <div class="form-group reveal">
-        <label class="form-label">Descrição</label>
-        <input type="text" class="form-input" id="descricao"
-               placeholder="Ex: Almoço, Uber, Netflix..."
-               autocomplete="off" autocapitalize="sentences" maxlength="100">
-        <span class="error-text" id="errDesc">Informe a descrição</span>
-      </div>
-
-      <div class="form-group reveal reveal-delay-1">
-        <label class="form-label">Data</label>
-        <input type="date" class="form-input" id="data">
-        <span class="error-text" id="errData">Selecione a data</span>
-      </div>
-
-      <div class="form-group reveal reveal-delay-2">
-        <label class="form-label">Categoria</label>
-        <div class="cat-grid" id="catGrid">
-          <div class="cat-option" style="text-align:center;grid-column:1/-1;padding:16px;">
-            <div class="spinner" style="margin:0 auto 8px;width:24px;height:24px;border-width:2px;"></div>
-            <span style="font-size:12px;color:var(--muted)">Carregando categorias...</span>
-          </div>
-        </div>
-        <select class="form-input" id="catSelect" style="display:none;">
-          <option value="">Selecione a categoria</option>
-        </select>
-        <span class="error-text" id="errCat">Selecione uma categoria</span>
-      </div>
-
-      <button class="btn btn-primary btn-full reveal reveal-delay-3" id="submitBtn" style="margin-bottom:8px;padding:18px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        <span class="btn-text">Salvar Gasto</span>
-      </button>
-
-      <button class="btn btn-ghost btn-full reveal reveal-delay-4" id="clearBtn" style="font-size:13px;">
-        Limpar formulário
-      </button>
-    </div>
+  <div class="form-group">
+    <label class="form-label">Descrição</label>
+    <input type="text" class="form-input" id="descricao" placeholder="Ex: Almoço, Uber, Netflix...">
   </div>
 
-  <!-- Bottom nav -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item" data-page="dashboard.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span>Dashboard</span>
-    </a>
-    <a href="gastos.html" class="nav-item" data-page="gastos.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      <span>Gastos</span>
-    </a>
-    <a href="adicionar.html" class="nav-item" data-page="adicionar.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      <span>Adicionar</span>
-    </a>
-    <a href="categorias.html" class="nav-item" data-page="categorias.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-      <span>Categorias</span>
-    </a>
-  </nav>
+  <div class="form-group">
+    <label class="form-label">Data</label>
+    <input type="date" class="form-input" id="data">
+  </div>
 
-  <script src="js/app.js"></script>
-  <script>
-    let numStr = '';
-    let selectedCat = null;
-    let mode = 'numpad';
-    let categorias = [];
+  <div class="form-group">
+    <label class="form-label">Categoria</label>
+    <div class="cat-grid" id="cat-grid">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
+    <input type="hidden" id="categoria-id">
+  </div>
 
-    // Numpad logic
-    function numPress(c) {
-      if (c === ',' && numStr.includes(',')) return;
-      if (c === ',' && numStr === '') { numStr = '0,'; }
-      else { numStr += c; }
-      // Max 2 decimals
-      if (numStr.includes(',')) {
-        const parts = numStr.split(',');
-        if (parts[1] && parts[1].length > 2) {
-          numStr = numStr.slice(0, -1); return;
-        }
-      }
-      if (numStr.length > 10) { numStr = numStr.slice(0, 10); return; }
-      updateDisplay();
-    }
+  <button class="btn btn-yellow" onclick="salvar()">Registrar gasto</button>
+</div>
 
-    function numDelete() {
-      numStr = numStr.slice(0, -1);
-      updateDisplay();
-    }
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    Início
+  </a>
+  <a href="dashboard.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="adicionar.html" class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Adicionar
+  </a>
+  <a href="gastos.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Gastos
+  </a>
+</nav>
 
-    function updateDisplay() {
-      const el = document.getElementById('valueDisplay');
-      if (!numStr || numStr === '0') {
-        el.textContent = '0,00';
-        el.className = 'value-big empty';
-      } else {
-        el.textContent = 'R$ ' + numStr;
-        el.className = 'value-big has-value';
-      }
-    }
+<div class="success-screen" id="success">
+  <div class="success-icon">✅</div>
+  <div class="success-title">Registrado!</div>
+  <div class="success-sub">Gasto adicionado com sucesso</div>
+</div>
 
-    function getNumpadValue() {
-      if (!numStr) return 0;
-      return parseFloat(numStr.replace(',', '.')) || 0;
-    }
+<script>
+const API = 'https://app-controle-de-gastos.railway.app';
+const CAT_ICONS = {'Alimentação':'🍔','Transporte':'🚗','Lazer':'🎮','Moradia':'🏠','Saúde':'💊','Educação':'📚','Outros':'📦'};
 
-    function setMode(m) {
-      mode = m;
-      document.getElementById('numpadMode').style.display = m === 'numpad' ? 'block' : 'none';
-      document.getElementById('manualMode').style.display = m === 'manual' ? 'block' : 'none';
-      document.getElementById('toggleNumpad').className = 'toggle-btn' + (m === 'numpad' ? ' active' : '');
-      document.getElementById('toggleManual').className = 'toggle-btn' + (m === 'manual' ? ' active' : '');
-    }
+// Data de hoje
+document.getElementById('data').value = new Date().toISOString().split('T')[0];
 
-    // Load categories
-    async function loadCats() {
-      try {
-        categorias = await api.getCategorias();
-        renderCatGrid();
-        // Also populate select
-        const sel = document.getElementById('catSelect');
-        categorias.forEach(c => {
-          const o = document.createElement('option');
-          o.value = c.id; o.textContent = c.nome;
-          sel.appendChild(o);
-        });
-      } catch {
-        document.getElementById('catGrid').innerHTML =
-          `<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:13px;padding:12px;">
-            Erro ao carregar categorias.<br>
-            <select class="form-input" id="catSelect" style="margin-top:10px;">
-              <option value="">Selecione...</option>
-            </select>
-          </div>`;
-      }
-    }
+async function loadCategorias() {
+  const res = await fetch(`${API}/categorias`);
+  const cats = await res.json();
+  document.getElementById('cat-grid').innerHTML = cats.map(c => `
+    <div class="cat-btn" onclick="selectCat(${c.id}, this)">
+      <div class="cat-icon">${CAT_ICONS[c.nome] || '📦'}</div>
+      <div class="cat-name">${c.nome}</div>
+    </div>
+  `).join('');
+}
 
-    function renderCatGrid() {
-      const grid = document.getElementById('catGrid');
-      if (!categorias.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:16px;">
-          Nenhuma categoria cadastrada.
-        </div>`;
-        return;
-      }
-      grid.innerHTML = categorias.map((c, i) => `
-        <div class="cat-option" data-id="${c.id}" onclick="selectCat(${c.id}, this)">
-          <span class="icon">${getCatIcon(c.nome)}</span>
-          <span class="name">${c.nome}</span>
-        </div>
-      `).join('');
-    }
+function selectCat(id, el) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('categoria-id').value = id;
+}
 
-    function selectCat(id, el) {
-      document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('selected'));
-      el.classList.add('selected');
-      selectedCat = id;
-      document.getElementById('errCat').classList.remove('show');
-      document.getElementById('catSelect').value = id;
-    }
+async function salvar() {
+  const descricao = document.getElementById('descricao').value.trim();
+  const valor = parseFloat(document.getElementById('valor').value);
+  const data = document.getElementById('data').value;
+  const categoria_id = parseInt(document.getElementById('categoria-id').value);
 
-    // Date default
-    document.getElementById('data').value = new Date().toISOString().split('T')[0];
+  if (!descricao || !valor || !data || !categoria_id) {
+    alert('Preencha todos os campos!');
+    return;
+  }
 
-    // Validation
-    function validate() {
-      let ok = true;
-      const valor = mode === 'numpad' ? getNumpadValue() : parseFloat(document.getElementById('manualValue').value) || 0;
-      const desc = document.getElementById('descricao').value.trim();
-      const data = document.getElementById('data').value;
-      const catId = selectedCat || parseInt(document.getElementById('catSelect').value);
-
-      if (valor <= 0) {
-        document.getElementById('valueDisplay').style.animation = 'shake 0.3s ease';
-        setTimeout(() => document.getElementById('valueDisplay').style.animation = '', 400);
-        ok = false;
-      }
-      if (!desc) {
-        document.getElementById('descricao').classList.add('error');
-        document.getElementById('errDesc').classList.add('show');
-        ok = false;
-      } else {
-        document.getElementById('descricao').classList.remove('error');
-        document.getElementById('errDesc').classList.remove('show');
-      }
-      if (!data) {
-        document.getElementById('data').classList.add('error');
-        document.getElementById('errData').classList.add('show');
-        ok = false;
-      } else {
-        document.getElementById('data').classList.remove('error');
-        document.getElementById('errData').classList.remove('show');
-      }
-      if (!catId) {
-        document.getElementById('errCat').classList.add('show');
-        ok = false;
-      } else {
-        document.getElementById('errCat').classList.remove('show');
-      }
-      return { ok, valor, desc, data, catId };
-    }
-
-    // Submit
-    document.getElementById('submitBtn').addEventListener('click', async () => {
-      const { ok, valor, desc, data, catId } = validate();
-      if (!ok) return;
-
-      const btn = document.getElementById('submitBtn');
-      btn.classList.add('btn-loading');
-
-      try {
-        await api.postGasto({ descricao: desc, valor, data, categoria_id: catId });
-        toast('Gasto salvo com sucesso!');
-        clearForm();
-        setTimeout(() => pageGo('gastos.html'), 1000);
-      } catch (e) {
-        toast('Erro ao salvar: ' + e.message, 'error');
-      } finally {
-        btn.classList.remove('btn-loading');
-      }
+  try {
+    const res = await fetch(`${API}/gastos`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({descricao, valor, data, categoria_id})
     });
 
-    function clearForm() {
-      numStr = '';
-      updateDisplay();
-      document.getElementById('descricao').value = '';
-      document.getElementById('data').value = new Date().toISOString().split('T')[0];
-      document.getElementById('manualValue').value = '';
-      document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('selected'));
-      selectedCat = null;
+    if (res.ok) {
+      document.getElementById('success').classList.add('show');
+      setTimeout(() => {
+        document.getElementById('success').classList.remove('show');
+        document.getElementById('descricao').value = '';
+        document.getElementById('valor').value = '';
+        document.getElementById('categoria-id').value = '';
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+      }, 2000);
     }
+  } catch(e) {
+    alert('Erro ao registrar gasto');
+  }
+}
 
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      clearForm();
-      toast('Formulário limpo');
-    });
-
-    // Dynamic display sync from manual input
-    document.getElementById('manualValue').addEventListener('input', e => {
-      const v = parseFloat(e.target.value) || 0;
-      const el = document.getElementById('valueDisplay');
-      if (v > 0) { el.textContent = fmtBRL(v); el.className = 'value-big has-value'; }
-      else { el.textContent = '0,00'; el.className = 'value-big empty'; }
-    });
-
-    loadCats();
-  </script>
+loadCategorias();
+</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

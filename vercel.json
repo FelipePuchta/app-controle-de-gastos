@@ -1,5 +1,8 @@
 {
-  "framework": null,
+  "version": 2,
   "outputDirectory": "frontend",
-  "buildCommand": ""
+  "routes": [
+    { "src": "/", "dest": "/dashboard.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
 }

@@ -1,37 +1,14 @@
 {
-  "name": "FinTrack — Controle de Gastos",
+  "name": "FinTrack",
   "short_name": "FinTrack",
-  "description": "Controle total dos seus gastos pessoais",
-  "start_url": "/index.html",
+  "description": "Controle seus gastos pessoais",
+  "start_url": "/dashboard.html",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0a0a0a",
+  "background_color": "#080808",
   "theme_color": "#f5c518",
-  "lang": "pt-BR",
+  "orientation": "portrait",
   "icons": [
-    {
-      "src": "icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [],
-  "categories": ["finance", "productivity"],
-  "shortcuts": [
-    {
-      "name": "Adicionar Gasto",
-      "short_name": "Adicionar",
-      "description": "Registrar novo gasto rapidamente",
-      "url": "/adicionar.html",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "Ver gráficos e resumo",
-      "url": "/dashboard.html",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
-    }
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
   ]
 }

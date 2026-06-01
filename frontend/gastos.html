@@ -1,404 +1,241 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0a0a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="manifest.json">
-  <title>Gastos · FinTrack</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-  <style>
-    .list-container {
-      margin: 0 16px;
-      border-radius: var(--r);
-      background: var(--card);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(16px);
-      overflow: hidden;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gastos — FINTRACK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5c518">
+<style>
+.search-bar{padding:0.75rem 1.25rem;background:var(--grey2);border-bottom:1px solid rgba(255,255,255,0.06)}
+.search-input{width:100%;background:var(--grey3);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:0.75rem 1rem;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.95rem}
+.search-input:focus{outline:none;border-color:var(--yellow)}
+.search-input::placeholder{color:var(--text-dim)}
 
-    .expense-item {
-      padding: 16px 20px;
-      display: flex; align-items: center; gap: 14px;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      transition: background 0.15s;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: pan-y;
-    }
-    .expense-item:last-child { border-bottom: none; }
-    .expense-item:active { background: var(--card-hover); }
+.filter-pills{display:flex;gap:0.5rem;padding:0.75rem 1.25rem;overflow-x:auto;scrollbar-width:none}
+.filter-pills::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;padding:0.4rem 0.9rem;border-radius:999px;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);background:none;cursor:pointer;transition:all 0.15s}
+.pill.active{background:var(--yellow);color:var(--black);border-color:var(--yellow)}
 
-    .expense-item .swipe-bg {
-      position: absolute; right: 0; top: 0; bottom: 0;
-      background: linear-gradient(to left, rgba(255,60,60,0.25), transparent);
-      width: 0;
-      display: flex; align-items: center; justify-content: flex-end;
-      padding-right: 18px;
-      pointer-events: none;
-      transition: none;
-      color: #ff5555; font-size: 20px;
-    }
+.gastos-list{background:var(--grey2);margin:0 1.25rem;border-radius:8px;border:1px solid rgba(255,255,255,0.06);overflow:hidden}
 
-    .expense-item .inner {
-      display: flex; align-items: center; gap: 14px;
-      flex: 1; min-width: 0;
-      transition: transform 0.15s;
-      pointer-events: none;
-    }
+.gasto-item{display:flex;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.05);gap:1rem;animation:fadeUp 0.3s ease forwards;opacity:0}
+.gasto-item:last-child{border-bottom:none}
+.gasto-icon{width:40px;height:40px;background:rgba(245,197,24,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.gasto-info{flex:1;min-width:0}
+.gasto-desc{font-size:0.95rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gasto-meta{font-size:0.72rem;color:var(--text-dim);margin-top:0.2rem;display:flex;align-items:center;gap:0.5rem}
+.gasto-right{display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem}
+.gasto-valor{font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--yellow)}
+.gasto-actions{display:flex;gap:0.4rem}
+.action-btn{background:none;border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:var(--text-dim);font-size:0.65rem;padding:0.25rem 0.5rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.15s}
+.action-btn:active{transform:scale(0.95)}
+.action-btn.del{border-color:rgba(255,60,60,0.3);color:rgba(255,100,100,0.7)}
+.action-btn.del:active{background:rgba(255,60,60,0.1)}
 
-    .cat-dot {
-      width: 42px; height: 42px;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; flex-shrink: 0;
-      position: relative;
-    }
+.total-bar{background:var(--yellow);color:var(--black);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;margin:1.25rem}
+.total-bar-label{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:500}
+.total-bar-value{font-family:'Anton',sans-serif;font-size:1.3rem}
 
-    .expense-info { flex: 1; min-width: 0; }
-    .expense-desc { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .expense-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    .expense-amount {
-      font-family: 'Anton', sans-serif;
-      font-size: 17px; color: var(--accent);
-      white-space: nowrap; flex-shrink: 0;
-    }
-
-    /* Delete modal */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(8px);
-      z-index: 2000;
-      display: flex; align-items: flex-end;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s var(--ease);
-    }
-    .modal-overlay.show { opacity: 1; pointer-events: all; }
-    .modal-sheet {
-      width: 100%;
-      background: var(--bg2);
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      padding: 20px 24px 40px;
-      border-top: 1px solid var(--border);
-      transform: translateY(100%);
-      transition: transform 0.4s var(--ease-spring);
-    }
-    .modal-overlay.show .modal-sheet { transform: translateY(0); }
-    .modal-handle {
-      width: 36px; height: 4px; border-radius: 4px;
-      background: var(--border); margin: 0 auto 20px;
-    }
-    .modal-title { font-family: 'Anton', sans-serif; font-size: 22px; text-transform: uppercase; margin-bottom: 8px; }
-    .modal-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
-    .modal-item-preview {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--r-sm); padding: 14px 16px;
-      margin-bottom: 24px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .modal-item-name { font-weight: 600; }
-    .modal-item-val { color: var(--accent); font-weight: 700; }
-    .modal-actions { display: flex; gap: 10px; }
-    .modal-actions .btn { flex: 1; }
-
-    /* Edit sheet */
-    .edit-sheet { display: none; }
-    .edit-sheet.show { display: block; }
-
-    /* Swipe hint */
-    .swipe-hint {
-      text-align: center; font-size: 11px;
-      color: var(--dim); padding: 12px;
-      letter-spacing: 0.04em;
-    }
-  </style>
+/* MODAL EDIT */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal{background:var(--grey);border-radius:16px 16px 0 0;padding:1.5rem 1.25rem;width:100%;max-height:80dvh;overflow-y:auto}
+.modal-title{font-family:'Anton',sans-serif;font-size:1.5rem;text-transform:uppercase;margin-bottom:1.5rem;letter-spacing:0.05em}
+.modal-close{float:right;background:none;border:none;color:var(--text-dim);font-size:1.5rem;cursor:pointer;line-height:1}
+</style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
 
-  <div class="top-controls">
-    <button class="icon-btn" id="backBtn" aria-label="Voltar">←</button>
-    <div class="api-status checking" id="apiStatus">
-      <span class="api-dot"></span>Verificando
+<div class="page-header">
+  <div class="page-tag">Histórico</div>
+  <div class="page-title">MEUS<br>GASTOS</div>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar gasto..." id="search" oninput="filterGastos()">
+</div>
+
+<div class="filter-pills" id="pills">
+  <button class="pill active" onclick="filterCat(null, this)">Todos</button>
+</div>
+
+<div id="total-bar"></div>
+
+<div class="gastos-list" id="list">
+  <div class="loading"><div class="spinner"></div>Carregando...</div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    Início
+  </a>
+  <a href="dashboard.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="adicionar.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Adicionar
+  </a>
+  <a href="gastos.html" class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Gastos
+  </a>
+</nav>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-title">Editar</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-group">
+      <label class="form-label">Valor</label>
+      <input type="number" step="0.01" class="form-input" id="edit-valor" placeholder="0,00">
     </div>
-    <button class="icon-btn" id="themeBtn">🌙</button>
+    <div class="form-group">
+      <label class="form-label">Data</label>
+      <input type="date" class="form-input" id="edit-data">
+    </div>
+    <button class="btn btn-yellow" onclick="salvarEdicao()">Salvar</button>
   </div>
+</div>
 
-  <div class="page-content pb-nav">
-    <div class="page-header">
-      <h1>SEUS<br>GASTOS</h1>
-      <p class="sub" id="headerSub">Carregando...</p>
+<script>
+const API = 'https://app-controle-de-gastos.railway.app';
+const CAT_ICONS = {'Alimentação':'🍔','Transporte':'🚗','Lazer':'🎮','Moradia':'🏠','Saúde':'💊','Educação':'📚','Outros':'📦'};
+
+let allGastos = [];
+let categorias = [];
+let activeCat = null;
+
+async function loadGastos() {
+  try {
+    const [gRes, cRes] = await Promise.all([
+      fetch(`${API}/gastos`),
+      fetch(`${API}/categorias`)
+    ]);
+    allGastos = await gRes.json();
+    categorias = await cRes.json();
+
+    const pills = document.getElementById('pills');
+    categorias.forEach(c => {
+      const b = document.createElement('button');
+      b.className = 'pill';
+      b.textContent = c.nome;
+      b.onclick = () => filterCat(c.id, b);
+      pills.appendChild(b);
+    });
+
+    renderGastos(allGastos);
+  } catch(e) {
+    document.getElementById('list').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">API offline</div></div>';
+  }
+}
+
+function getCatNome(id) {
+  const c = categorias.find(c => c.id === id);
+  return c ? c.nome : 'Outros';
+}
+
+function getCatIcon(id) {
+  const nome = getCatNome(id);
+  return CAT_ICONS[nome] || '📦';
+}
+
+function filterCat(id, btn) {
+  activeCat = id;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filterGastos();
+}
+
+function filterGastos() {
+  const q = document.getElementById('search').value.toLowerCase();
+  let filtered = allGastos;
+  if (activeCat) filtered = filtered.filter(g => g.categoria_id === activeCat);
+  if (q) filtered = filtered.filter(g => g.descricao.toLowerCase().includes(q));
+  renderGastos(filtered);
+}
+
+function renderGastos(list) {
+  const total = list.reduce((s, g) => s + g.valor, 0);
+  document.getElementById('total-bar').innerHTML = list.length ? `
+    <div class="total-bar">
+      <div class="total-bar-label">${list.length} gasto${list.length !== 1 ? 's' : ''}</div>
+      <div class="total-bar-value">R$ ${total.toFixed(2).replace('.',',')}</div>
     </div>
+  ` : '';
 
-    <!-- Month selector -->
-    <div class="month-selector reveal" id="monthSelector">
-      <button class="month-nav-btn" id="prevMonth">‹</button>
-      <span class="month-label" id="monthLabel">—</span>
-      <button class="month-nav-btn" id="nextMonth">›</button>
-    </div>
+  if (!list.length) {
+    document.getElementById('list').innerHTML = '<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum gasto encontrado</div></div>';
+    return;
+  }
 
-    <!-- Swipe hint -->
-    <p class="swipe-hint">← Deslize para esquerda para excluir</p>
-
-    <!-- List -->
-    <div id="listWrap">
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <span>Carregando gastos...</span>
+  const sorted = [...list].sort((a, b) => new Date(b.data) - new Date(a.data));
+  document.getElementById('list').innerHTML = sorted.map((g, i) => `
+    <div class="gasto-item" style="animation-delay:${i * 0.04}s">
+      <div class="gasto-icon">${getCatIcon(g.categoria_id)}</div>
+      <div class="gasto-info">
+        <div class="gasto-desc">${g.descricao}</div>
+        <div class="gasto-meta">
+          <span>${new Date(g.data).toLocaleDateString('pt-BR')}</span>
+          <span>·</span>
+          <span>${getCatNome(g.categoria_id)}</span>
+        </div>
+      </div>
+      <div class="gasto-right">
+        <div class="gasto-valor">R$ ${g.valor.toFixed(2).replace('.',',')}</div>
+        <div class="gasto-actions">
+          <button class="action-btn" onclick="editarGasto(${g.id}, ${g.valor}, '${g.data}')">Edit</button>
+          <button class="action-btn del" onclick="deletarGasto(${g.id})">Del</button>
+        </div>
       </div>
     </div>
+  `).join('');
+}
 
-  </div>
+function editarGasto(id, valor, data) {
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-valor').value = valor;
+  document.getElementById('edit-data').value = data;
+  document.getElementById('modal').classList.add('open');
+}
 
-  <!-- FAB -->
-  <a href="adicionar.html" class="fab" aria-label="Adicionar gasto">+</a>
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
 
-  <!-- Bottom nav -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item" data-page="dashboard.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span>Dashboard</span>
-    </a>
-    <a href="gastos.html" class="nav-item" data-page="gastos.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      <span>Gastos</span>
-    </a>
-    <a href="adicionar.html" class="nav-item" data-page="adicionar.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      <span>Adicionar</span>
-    </a>
-    <a href="categorias.html" class="nav-item" data-page="categorias.html">
-      <div class="nav-dot"></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-      <span>Categorias</span>
-    </a>
-  </nav>
-
-  <!-- Delete modal -->
-  <div class="modal-overlay" id="deleteModal" role="dialog" aria-modal="true">
-    <div class="modal-sheet">
-      <div class="modal-handle"></div>
-      <div class="modal-title">Excluir Gasto</div>
-      <p class="modal-desc">Esta ação não pode ser desfeita. O gasto será removido permanentemente.</p>
-      <div class="modal-item-preview">
-        <span class="modal-item-name" id="deleteItemName">—</span>
-        <span class="modal-item-val" id="deleteItemVal">—</span>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" id="cancelDelete">Cancelar</button>
-        <button class="btn btn-danger" id="confirmDelete">
-          <span class="btn-text">Excluir</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script src="js/app.js"></script>
-  <script>
-    let curMonth, curYear;
-    let gastos = [], categorias = [];
-    let deleteTarget = null;
-
-    async function init() {
-      const now = new Date();
-      curMonth = now.getMonth() + 1;
-      curYear = now.getFullYear();
-      updateLabel();
-      try {
-        [gastos, categorias] = await Promise.all([api.getGastos(), api.getCategorias()]);
-        renderList();
-      } catch (e) {
-        document.getElementById('listWrap').innerHTML =
-          `<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao carregar gastos.<br>${e.message}</p></div>`;
-      }
-    }
-
-    function updateLabel() {
-      document.getElementById('monthLabel').textContent =
-        MONTHS[curMonth - 1].toUpperCase() + ' ' + curYear;
-    }
-
-    function filtered() {
-      return gastos.filter(g => {
-        const [y, m] = g.data.split('-');
-        return parseInt(m) === curMonth && parseInt(y) === curYear;
-      }).sort((a, b) => b.data.localeCompare(a.data));
-    }
-
-    function renderList() {
-      const list = filtered();
-      const total = list.reduce((s, g) => s + g.valor, 0);
-
-      document.getElementById('headerSub').textContent =
-        list.length + ' gasto' + (list.length !== 1 ? 's' : '') +
-        ' · ' + fmtBRL(total);
-
-      if (!list.length) {
-        document.getElementById('listWrap').innerHTML = `
-          <div class="empty-state">
-            <div class="ei">💸</div>
-            <p>Nenhum gasto em ${MONTHS[curMonth-1]} ${curYear}.<br>
-            <a href="adicionar.html" style="color:var(--accent)">Adicionar agora →</a></p>
-          </div>`;
-        return;
-      }
-
-      // Group by date
-      const groups = {};
-      list.forEach(g => {
-        if (!groups[g.data]) groups[g.data] = [];
-        groups[g.data].push(g);
-      });
-
-      let html = '';
-      Object.entries(groups).sort((a,b) => b[0].localeCompare(a[0])).forEach(([date, items]) => {
-        const dayTotal = items.reduce((s, g) => s + g.valor, 0);
-        html += `
-          <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:20px;">
-            <span>${fmtDate(date)}</span>
-            <span style="color:var(--accent);font-size:12px;font-weight:700">${fmtBRL(dayTotal)}</span>
-          </div>
-          <div class="list-container mb-12">
-        `;
-        items.forEach(g => {
-          const cat = categorias.find(c => c.id === g.categoria_id);
-          const catNome = cat ? cat.nome : 'Outros';
-          const catIdx = cat ? categorias.indexOf(cat) : 0;
-          const color = getCatColor(catIdx);
-          const icon = getCatIcon(catNome);
-          html += `
-            <div class="expense-item" data-id="${g.id}" data-desc="${escHtml(g.descricao)}" data-val="${g.valor}">
-              <div class="swipe-bg">🗑️</div>
-              <div class="inner">
-                <div class="cat-dot" style="background:${color}22;border:1px solid ${color}44;">
-                  ${icon}
-                </div>
-                <div class="expense-info">
-                  <div class="expense-desc">${escHtml(g.descricao)}</div>
-                  <div class="expense-meta">${catNome}</div>
-                </div>
-                <div class="expense-amount">${fmtBRL(g.valor)}</div>
-              </div>
-            </div>
-          `;
-        });
-        html += '</div>';
-      });
-
-      document.getElementById('listWrap').innerHTML = html;
-
-      // Swipe to delete
-      document.querySelectorAll('.expense-item').forEach(el => {
-        let startX, startY, swiping = false;
-
-        el.addEventListener('touchstart', e => {
-          startX = e.touches[0].clientX;
-          startY = e.touches[0].clientY;
-          swiping = false;
-        }, { passive: true });
-
-        el.addEventListener('touchmove', e => {
-          const dx = e.touches[0].clientX - startX;
-          const dy = e.touches[0].clientY - startY;
-          if (!swiping && Math.abs(dy) > Math.abs(dx)) return;
-          if (dx < -5) {
-            swiping = true;
-            const bg = el.querySelector('.swipe-bg');
-            const inner = el.querySelector('.inner');
-            const dist = Math.min(Math.abs(dx), 80);
-            bg.style.width = dist + 'px';
-            inner.style.transform = `translateX(-${dist * 0.5}px)`;
-          }
-        }, { passive: true });
-
-        el.addEventListener('touchend', e => {
-          const dx = e.changedTouches[0].clientX - startX;
-          const bg = el.querySelector('.swipe-bg');
-          const inner = el.querySelector('.inner');
-          if (dx < -60) {
-            openDeleteModal(
-              parseInt(el.dataset.id),
-              el.dataset.desc,
-              parseFloat(el.dataset.val)
-            );
-          }
-          bg.style.width = '0';
-          inner.style.transform = '';
-        }, { passive: true });
-
-        // Click to show detail
-        el.querySelector('.inner').addEventListener('click', () => {
-          const id = parseInt(el.dataset.id);
-          const g = gastos.find(x => x.id === id);
-          if (g) showDetail(g);
-        });
-      });
-    }
-
-    function escHtml(str) {
-      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function openDeleteModal(id, desc, val) {
-      deleteTarget = id;
-      document.getElementById('deleteItemName').textContent = desc;
-      document.getElementById('deleteItemVal').textContent = fmtBRL(val);
-      document.getElementById('deleteModal').classList.add('show');
-    }
-
-    function closeDeleteModal() {
-      document.getElementById('deleteModal').classList.remove('show');
-      deleteTarget = null;
-    }
-
-    function showDetail(g) {
-      const cat = categorias.find(c => c.id === g.categoria_id);
-      toast(`${g.descricao} — ${fmtDate(g.data)}`, 'success');
-    }
-
-    document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
-    document.getElementById('deleteModal').addEventListener('click', e => {
-      if (e.target === e.currentTarget) closeDeleteModal();
+async function salvarEdicao() {
+  const id = document.getElementById('edit-id').value;
+  const valor = parseFloat(document.getElementById('edit-valor').value);
+  const data = document.getElementById('edit-data').value;
+  try {
+    await fetch(`${API}/gastos/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({valor, data})
     });
+    closeModal();
+    loadGastos();
+  } catch(e) { alert('Erro ao atualizar'); }
+}
 
-    document.getElementById('confirmDelete').addEventListener('click', async () => {
-      if (!deleteTarget) return;
-      const btn = document.getElementById('confirmDelete');
-      btn.classList.add('btn-loading');
-      try {
-        await api.deleteGasto(deleteTarget);
-        gastos = gastos.filter(g => g.id !== deleteTarget);
-        closeDeleteModal();
-        renderList();
-        toast('Gasto excluído!');
-      } catch (e) {
-        toast('Erro ao excluir: ' + e.message, 'error');
-      } finally {
-        btn.classList.remove('btn-loading');
-      }
-    });
+async function deletarGasto(id) {
+  if (!confirm('Deletar este gasto?')) return;
+  try {
+    await fetch(`${API}/gastos/${id}`, {method: 'DELETE'});
+    loadGastos();
+  } catch(e) { alert('Erro ao deletar'); }
+}
 
-    document.getElementById('prevMonth').addEventListener('click', () => {
-      curMonth--; if (curMonth < 1) { curMonth = 12; curYear--; }
-      updateLabel(); renderList();
-    });
-    document.getElementById('nextMonth').addEventListener('click', () => {
-      curMonth++; if (curMonth > 12) { curMonth = 1; curYear++; }
-      updateLabel(); renderList();
-    });
-
-    init();
-  </script>
+loadGastos();
+</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>
