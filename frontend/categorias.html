@@ -159,7 +159,7 @@
         html += `
           <div class="card cat-block" style="animation-delay:${i * 0.05}s">
             <div class="cat-row" data-toggle>
-              <div class="ic">${l.meta.emoji}</div>
+              <div class="ic" style="background:${l.meta.hex}18;border-color:${l.meta.hex}40;color:${l.meta.hex};font-weight:700;font-size:18px;">${l.cat.nome[0].toUpperCase()}</div>
               <div class="body">
                 <div class="nm">${l.cat.nome}</div>
                 <div class="cnt">${l.itens.length} ${l.itens.length === 1 ? 'gasto' : 'gastos'}</div>

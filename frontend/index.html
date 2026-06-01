@@ -12,6 +12,19 @@
   <link rel="manifest" href="manifest.json" />
   <title>FinTrack — Controle de Gastos</title>
   <link rel="stylesheet" href="_shared.css" />
+  <script>
+    (function () {
+      if (sessionStorage.getItem('ft-splash')) return;
+      sessionStorage.setItem('ft-splash', '1');
+      document.addEventListener('DOMContentLoaded', function () {
+        var el = document.createElement('div');
+        el.id = 'ft-splash';
+        el.innerHTML = '<div class="s-mark">F</div><div class="s-name">FINTRACK</div><div class="s-bar"></div>';
+        document.body.prepend(el);
+        el.addEventListener('animationend', function (e) { if (e.animationName === 'splash-out') el.remove(); });
+      });
+    })();
+  </script>
   <style>
     /* ---------- Estilos específicos da landing ---------- */
     .landing { padding-bottom: 40px; }

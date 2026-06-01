@@ -10,27 +10,27 @@
 /* ---------- Tokens de design (variáveis CSS) ---------- */
 :root {
   /* Cores */
-  --bg:           #0a0a0a;   /* fundo principal — preto profundo  */
-  --bg-soft:      #111210;   /* fundo levemente elevado            */
-  --primary:      #4a6741;   /* verde musgo                        */
-  --secondary:    #6b8f5e;   /* verde claro                        */
-  --text:         #f0ede6;   /* off-white                          */
-  --text-dim:     #9a978f;   /* texto secundário                   */
-  --text-faint:   #6b6862;   /* texto terciário                    */
-  --card:         #1a1a1a;   /* cards                              */
-  --card-2:       #161616;   /* card alternativo                   */
-  --border:       rgba(74, 103, 65, 0.20);  /* bordas              */
+  --bg:           #0a0a0a;
+  --bg-soft:      #111210;
+  --primary:      #4a6741;
+  --secondary:    #6b8f5e;
+  --text:         #f0ede6;
+  --text-dim:     #9a978f;
+  --text-faint:   #6b6862;
+  --card:         #1a1a1a;
+  --card-2:       #161616;
+  --border:       rgba(74, 103, 65, 0.20);
   --border-soft:  rgba(240, 237, 230, 0.06);
-  --glow:         rgba(74, 103, 65, 0.35);   /* sombra verde        */
+  --glow:         rgba(74, 103, 65, 0.35);
 
   /* Cores de categoria — vibrantes e distintas */
-  --cat-alimentacao: #FF4757;
-  --cat-transporte:  #2ED573;
-  --cat-lazer:       #FFA502;
-  --cat-moradia:     #1E90FF;
-  --cat-saude:       #FF6B81;
-  --cat-educacao:    #A55EEA;
-  --cat-outros:      #ECCC68;
+  --cat-alimentacao: #E17055;
+  --cat-transporte:  #00CEC9;
+  --cat-lazer:       #FDCB6E;
+  --cat-moradia:     #6C5CE7;
+  --cat-saude:       #00B894;
+  --cat-educacao:    #E84393;
+  --cat-outros:      #74B9FF;
 
   /* Tipografia */
   --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
@@ -65,12 +65,10 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   min-height: 100vh;
-  /* Centraliza o "telefone" em telas largas */
   display: flex;
   justify-content: center;
 }
 
-/* Textura sutil de fundo para profundidade */
 body::before {
   content: '';
   position: fixed;
@@ -87,7 +85,7 @@ input, select, textarea { font-family: inherit; }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
-/* ---------- Container do app (largura de telefone) ---------- */
+/* ---------- Container do app ---------- */
 .app {
   position: relative;
   z-index: 1;
@@ -101,7 +99,6 @@ ul { list-style: none; }
   border-right: 1px solid var(--border-soft);
 }
 
-/* Área que rola, com espaço para a navegação inferior */
 .screen {
   flex: 1;
   padding: 0 20px calc(var(--nav-h) + 28px);
@@ -147,7 +144,7 @@ ul { list-style: none; }
 }
 .topbar .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
 
-/* ---------- Cards (glassmorphism sutil) ---------- */
+/* ---------- Cards ---------- */
 .card {
   background: linear-gradient(180deg, rgba(26,26,26,0.92), rgba(20,20,20,0.92));
   backdrop-filter: blur(8px);
@@ -193,7 +190,7 @@ ul { list-style: none; }
 .btn-danger { background: rgba(180, 70, 60, 0.14); border: 1px solid rgba(180,70,60,0.4); color: #e8a59c; }
 .btn-danger:hover { background: rgba(180,70,60,0.22); }
 
-/* ---------- Pills / chips de filtro ---------- */
+/* ---------- Pills ---------- */
 .pills {
   display: flex;
   gap: 9px;
@@ -291,7 +288,6 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 .nav-item.active { color: var(--secondary); }
 .nav-item.active svg { filter: drop-shadow(0 0 8px var(--glow)); }
 
-/* O botão central "Adicionar" recebe destaque */
 .nav-item.nav-add svg {
   width: 46px; height: 46px;
   margin-top: -22px;
@@ -302,7 +298,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   box-shadow: var(--shadow-glow);
 }
 
-/* ---------- Spinner de carregamento (verde) ---------- */
+/* ---------- Spinner ---------- */
 .spinner {
   width: 34px; height: 34px;
   border-radius: 50%;
@@ -343,7 +339,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 }
 .notice b { color: var(--cat-lazer); font-weight: 600; }
 
-/* ---------- Toast / feedback animado ao salvar ---------- */
+/* ---------- Toast ---------- */
 .toast {
   position: fixed;
   left: 50%;
@@ -379,7 +375,6 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   60%  { transform: scale(1.08); }
   100% { transform: scale(1); opacity: 1; }
 }
-/* Aplica entrada em cascata */
 .rise { animation: rise 0.55s var(--ease) both; }
 .stagger > * { animation: rise 0.5s var(--ease) both; }
 .stagger > *:nth-child(1) { animation-delay: 0.04s; }
@@ -397,251 +392,43 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 /* Scrollbar discreta */
 ::-webkit-scrollbar { width: 0; height: 0; }
 
-/* ---------- Botão de tema ---------- */
-.theme-btn {
-  flex-shrink: 0;
-  width: 38px; height: 38px;
-  border-radius: 11px;
+/* ---------- Splash screen ---------- */
+#ft-splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #0a0a0a;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px;
+  animation: splash-out 0.45s cubic-bezier(0.55, 0, 1, 0.45) 1.9s forwards;
+}
+#ft-splash .s-mark {
+  width: 80px; height: 80px; border-radius: 24px;
+  background: linear-gradient(160deg, #6b8f5e, #4a6741);
   display: grid; place-items: center;
-  font-size: 19px;
-  background: rgba(240,237,230,0.06);
-  border: 1px solid var(--border-soft);
-  transition: transform 0.18s var(--ease), background 0.2s var(--ease);
+  font-family: 'Bebas Neue', sans-serif; font-size: 54px;
+  color: #0c130a;
+  box-shadow: 0 0 60px rgba(74,103,65,0.55), 0 0 140px rgba(74,103,65,0.18);
+  animation: splash-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.theme-btn:active { transform: scale(0.88); }
-
-/* ---------- Modo claro ---------- */
-html[data-theme="light"] {
-  --bg:          #f5f6f1;
-  --bg-soft:     #eaebe5;
-  --primary:     #3d5c35;
-  --secondary:   #4a6741;
-  --text:        #1a1c18;
-  --text-dim:    #4a4e45;
-  --text-faint:  #7a7e75;
-  --card:        #ffffff;
-  --card-2:      #f0f2ed;
-  --border:      rgba(74, 103, 65, 0.22);
-  --border-soft: rgba(0, 0, 0, 0.09);
-  --glow:        rgba(74, 103, 65, 0.18);
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.10);
+#ft-splash .s-name {
+  font-family: 'Bebas Neue', sans-serif; font-size: 56px;
+  letter-spacing: 10px; color: #f0ede6; line-height: 1;
+  animation: splash-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
 }
-html[data-theme="light"] body::before {
-  background: radial-gradient(900px 500px at 50% -10%, rgba(74,103,65,0.07), transparent 60%);
+#ft-splash .s-bar {
+  width: 48px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, #6b8f5e, transparent);
+  animation: splash-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
 }
-html[data-theme="light"] .card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,245,0.96));
+@keyframes splash-pop {
+  0%   { transform: scale(0.2) rotate(-15deg); opacity: 0; }
+  65%  { transform: scale(1.1) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
-html[data-theme="light"] .bottom-nav {
-  background: rgba(238,240,234,0.90);
+@keyframes splash-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-html[data-theme="light"] .topbar {
-  background: linear-gradient(180deg, var(--bg) 70%, transparent);
+@keyframes splash-out {
+  from { opacity: 1; }
+  to   { opacity: 0; pointer-events: none; }
 }
-html[data-theme="light"] .btn-ghost {
-  background: rgba(0,0,0,0.04);
-}
-html[data-theme="light"] .pill {
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.10);
-}
-html[data-theme="light"] .input {
-  background: #f8f9f5;
-  border-color: rgba(74,103,65,0.22);
-}
-html[data-theme="light"] .theme-btn {
-  background: rgba(0,0,0,0.05);
-  border-color: rgba(0,0,0,0.10);
-}
-
-/* =====================================================================
-   FinTrack — _shared.js
-   Camada de dados (API) + categorias + utilitários compartilhados.
-   ---------------------------------------------------------------------
-   Estratégia: tentamos a API real (Railway). Se a rede/CORS falhar,
-   usamos dados de demonstração para que a interface continue navegável.
-   O objeto global window.FinTrack expõe tudo que as páginas precisam.
-   ===================================================================== */
-
-(function () {
-  'use strict';
-
-  const API_BASE = 'https://app-controle-de-gastos.railway.app';
-
-  /* ---------- Metadados das categorias (ícone + cor) ----------
-     A API devolve as categorias com id e nome. Casamos pelo nome
-     (normalizado) para anexar emoji e cor de gráfico.            */
-  const CAT_META = {
-    alimentacao: { emoji: '🍔', cor: 'var(--cat-alimentacao)', hex: '#6b8f5e' },
-    transporte:  { emoji: '🚗', cor: 'var(--cat-transporte)',  hex: '#4a6741' },
-    lazer:       { emoji: '🎮', cor: 'var(--cat-lazer)',       hex: '#c9b27a' },
-    moradia:     { emoji: '🏠', cor: 'var(--cat-moradia)',     hex: '#7da38f' },
-    saude:       { emoji: '💊', cor: 'var(--cat-saude)',       hex: '#b98a5e' },
-    educacao:    { emoji: '📚', cor: 'var(--cat-educacao)',    hex: '#8a9b6e' },
-    outros:      { emoji: '📦', cor: 'var(--cat-outros)',      hex: '#5a7d6a' },
-  };
-
-  /* Lista padrão de categorias (fallback e ordem visual) */
-  const CAT_DEFAULT = [
-    { id: 1, nome: 'Alimentação' },
-    { id: 2, nome: 'Transporte' },
-    { id: 3, nome: 'Lazer' },
-    { id: 4, nome: 'Moradia' },
-    { id: 5, nome: 'Saúde' },
-    { id: 6, nome: 'Educação' },
-    { id: 7, nome: 'Outros' },
-  ];
-
-  /* Dados de demonstração (usados quando a API está inacessível) */
-  function demoGastos() {
-    const hoje = new Date();
-    const y = hoje.getFullYear();
-    const m = String(hoje.getMonth() + 1).padStart(2, '0');
-    const d = (n) => `${y}-${m}-${String(n).padStart(2, '0')}`;
-    return [
-      { id: 1,  descricao: 'Mercado da semana',     valor: 287.4,  data: d(3),  categoria_id: 1 },
-      { id: 2,  descricao: 'Combustível',            valor: 210.0,  data: d(4),  categoria_id: 2 },
-      { id: 3,  descricao: 'Cinema com amigos',      valor: 68.0,   data: d(6),  categoria_id: 3 },
-      { id: 4,  descricao: 'Aluguel',                valor: 1450.0, data: d(5),  categoria_id: 4 },
-      { id: 5,  descricao: 'Farmácia',               valor: 92.3,   data: d(8),  categoria_id: 5 },
-      { id: 6,  descricao: 'Curso online',           valor: 149.9,  data: d(9),  categoria_id: 6 },
-      { id: 7,  descricao: 'Café da manhã padaria',  valor: 24.5,   data: d(10), categoria_id: 1 },
-      { id: 8,  descricao: 'Uber centro',            valor: 31.8,   data: d(11), categoria_id: 2 },
-      { id: 9,  descricao: 'Assinatura streaming',   valor: 39.9,   data: d(12), categoria_id: 3 },
-      { id: 10, descricao: 'Conta de luz',           valor: 178.6,  data: d(13), categoria_id: 4 },
-      { id: 11, descricao: 'Jantar restaurante',     valor: 134.0,  data: d(15), categoria_id: 1 },
-      { id: 12, descricao: 'Material escolar',       valor: 56.2,   data: d(16), categoria_id: 6 },
-    ];
-  }
-
-  let usingDemo = false;
-  const isDemo = () => usingDemo;
-
-  /* ---------- Helper de fetch com timeout ---------- */
-  async function api(path, options = {}) {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 7000);
-    try {
-      const res = await fetch(API_BASE + path, {
-        headers: { 'Content-Type': 'application/json' },
-        signal: ctrl.signal,
-        ...options,
-      });
-      clearTimeout(t);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const txt = await res.text();
-      return txt ? JSON.parse(txt) : null;
-    } catch (err) {
-      clearTimeout(t);
-      throw err;
-    }
-  }
-
-  /* ---------- Operações de gastos ---------- */
-  async function getGastos() {
-    try {
-      const data = await api('/gastos');
-      usingDemo = false;
-      return Array.isArray(data) ? data : (data?.gastos || []);
-    } catch (e) {
-      usingDemo = true;
-      return demoGastos();
-    }
-  }
-
-  async function addGasto(gasto) {
-    try {
-      return await api('/gastos', { method: 'POST', body: JSON.stringify(gasto) });
-    } catch (e) {
-      usingDemo = true;
-      // Em modo demo, devolvemos o objeto como se tivesse sido salvo.
-      return { ...gasto, id: Date.now() };
-    }
-  }
-
-  async function updateGasto(id, gasto) {
-    try {
-      return await api('/gastos/' + id, { method: 'PUT', body: JSON.stringify(gasto) });
-    } catch (e) {
-      usingDemo = true;
-      return { ...gasto, id };
-    }
-  }
-
-  async function deleteGasto(id) {
-    try {
-      await api('/gastos/' + id, { method: 'DELETE' });
-      return true;
-    } catch (e) {
-      usingDemo = true;
-      return true;
-    }
-  }
-
-  async function getCategorias() {
-    try {
-      const data = await api('/categorias');
-      const list = Array.isArray(data) ? data : (data?.categorias || []);
-      usingDemo = false;
-      return list.length ? list : CAT_DEFAULT;
-    } catch (e) {
-      usingDemo = true;
-      return CAT_DEFAULT;
-    }
-  }
-
-  /* ---------- Utilitários ---------- */
-
-  // Normaliza nome de categoria -> chave de CAT_META (sem acento/minúsculo)
-  function normKey(nome) {
-    return String(nome || '')
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z]/g, '');
-  }
-
-  function metaForCategoria(nome) {
-    return CAT_META[normKey(nome)] || { emoji: '📦', cor: 'var(--cat-outros)', hex: '#5a7d6a' };
-  }
-
-  // Constrói mapa id -> {nome, emoji, cor, hex}
-  function buildCatMap(categorias) {
-    const map = {};
-    (categorias || CAT_DEFAULT).forEach((c) => {
-      map[c.id] = { ...c, ...metaForCategoria(c.nome) };
-    });
-    return map;
-  }
-
-  // Formata moeda em Real brasileiro
-  function formatBRL(v) {
-    const n = Number(v) || 0;
-    return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  }
-
-  // Formata data evitando bug de fuso horário (padrão pedido no brief)
-  function formatData(dataStr) {
-    if (!dataStr) return '';
-    const [ano, mes, dia] = String(dataStr).split('T')[0].split('-');
-    return `${dia}/${mes}/${ano}`;
-  }
-
-  // Nome curto do mês a partir de "YYYY-MM-DD"
-  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const MESES_LONGO = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
-  function mesAnoDe(dataStr) {
-    const [ano, mes] = String(dataStr).split('T')[0].split('-');
-    return { mes: parseInt(mes, 10), ano: parseInt(ano, 10) };
-  }
-
-  /* ---------- Exporta tudo ---------- */
-  window.FinTrack = {
-    API_BASE,
-    CAT_META, CAT_DEFAULT, MESES, MESES_LONGO,
-    getGastos, addGasto, updateGasto, deleteGasto, getCategorias,
-    metaForCategoria, buildCatMap, normKey,
-    formatBRL, formatData, mesAnoDe,
-    isDemo,
-  };
-})();

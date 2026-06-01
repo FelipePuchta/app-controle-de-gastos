@@ -230,7 +230,7 @@
         const meta = FinTrack.metaForCategoria(c.nome);
         const p = document.createElement('button');
         p.className = 'pill';
-        p.innerHTML = `${meta.emoji} ${c.nome}`;
+        p.innerHTML = `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${meta.hex};vertical-align:middle;margin-right:4px"></span>${c.nome}`;
         p.onclick = () => setFiltro(c.id, p);
         box.appendChild(p);
       });
@@ -277,7 +277,7 @@
           const meta = catMap[g.categoria_id] || FinTrack.metaForCategoria('');
           html += `
             <div class="card gasto-item">
-              <div class="ic">${meta.emoji}</div>
+              <div class="ic" style="background:${meta.hex}18;border-color:${meta.hex}40;color:${meta.hex};font-weight:700;font-size:16px;">${(meta.nome||catMap[g.categoria_id]?.nome||'?')[0].toUpperCase()}</div>
               <div class="body">
                 <div class="desc">${escapeHtml(g.descricao)}</div>
                 <div class="sub">${meta.nome || 'Outros'}</div>
@@ -330,7 +330,7 @@
         const cell = document.createElement('button');
         cell.type = 'button';
         cell.className = 'cat-cell' + (editSelectedCat && c.id === editSelectedCat.id ? ' active' : '');
-        cell.innerHTML = `<span class="e">${meta.emoji}</span><span class="n">${c.nome}</span>`;
+        cell.innerHTML = `<span class="e" style="display:block;width:22px;height:22px;border-radius:7px;background:${meta.hex}"></span><span class="n">${c.nome}</span>`;
         cell.onclick = () => {
           box.querySelectorAll('.cat-cell').forEach((x) => x.classList.remove('active'));
           cell.classList.add('active');
