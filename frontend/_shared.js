@@ -16,6 +16,21 @@
 
   const API_BASE = 'https://harmonious-unity-production-e26f.up.railway.app';
 
+  /* ---------- Ícones SVG das categorias ---------- */
+  const CAT_ICONS = {
+    alimentacao: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2s2-.9 2-2V2"/><line x1="5" y1="11" x2="5" y2="22"/><path d="M20 2l-3 9h3"/><line x1="19" y1="11" x2="19" y2="22"/></svg>`,
+    transporte:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
+    lazer:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="17" y1="10" x2="17.01" y2="10"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>`,
+    moradia:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+    saude:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+    educacao:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    outros:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/><circle cx="5" cy="12" r="1" fill="currentColor"/></svg>`,
+  };
+
+  function iconForCategoria(nome) {
+    return CAT_ICONS[normKey(nome)] || CAT_ICONS.outros;
+  }
+
   /* ---------- Metadados das categorias ---------- */
   const CAT_META = {
     alimentacao: { cor: 'var(--cat-alimentacao)', hex: '#E17055' },
@@ -171,9 +186,9 @@
 
   window.FinTrack = {
     API_BASE,
-    CAT_META, CAT_DEFAULT, MESES, MESES_LONGO,
+    CAT_META, CAT_ICONS, CAT_DEFAULT, MESES, MESES_LONGO,
     getGastos, addGasto, updateGasto, deleteGasto, getCategorias,
-    metaForCategoria, buildCatMap, normKey,
+    metaForCategoria, buildCatMap, normKey, iconForCategoria,
     formatBRL, formatData, mesAnoDe,
     isDemo,
   };

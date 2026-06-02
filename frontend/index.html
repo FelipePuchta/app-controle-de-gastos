@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
-  <meta name="theme-color" content="#0a0f1e" />
+  <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="FinTrack" />
@@ -12,14 +12,12 @@
   <link rel="manifest" href="manifest.json" />
   <title>FinTrack — Controle de Gastos</title>
 
-  <!-- Fonte Sora (estilo C6 Bank) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" />
 
   <link rel="stylesheet" href="_shared.css" />
 
-  <!-- Splash screen (uma vez por sessão) -->
   <script>
     (function () {
       if (sessionStorage.getItem('ft-splash')) return;
@@ -35,18 +33,16 @@
   </script>
 
   <style>
-    /* Sobrescreve fontes globais para esta página */
     :root {
       --font-display: 'Sora', system-ui, sans-serif;
       --font-body:    'Sora', system-ui, sans-serif;
     }
 
-    /* ===== Reset da landing ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #0a0f1e;
-      color: #f8fafc;
+      background: #000000;
+      color: #ffffff;
       font-family: 'Sora', system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
@@ -54,28 +50,15 @@
       justify-content: center;
     }
 
-    /* Container centralizado no estilo do app */
     .landing {
       width: 100%;
       max-width: 480px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      border-left: 1px solid rgba(248,250,252,0.06);
-      border-right: 1px solid rgba(248,250,252,0.06);
-      position: relative;
+      border-left: 1px solid rgba(255,255,255,0.06);
+      border-right: 1px solid rgba(255,255,255,0.06);
     }
-
-    /* Gradiente de fundo sutil */
-    .landing::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(800px 500px at 50% -5%, rgba(59,130,246,0.12), transparent 60%);
-      z-index: 0;
-    }
-    .landing > * { position: relative; z-index: 1; }
 
     /* ===== Navbar ===== */
     .navbar {
@@ -89,25 +72,23 @@
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: #f8fafc;
+      color: #ffffff;
     }
-    .navbar .wordmark span { color: #3b82f6; }
+    .navbar .wordmark span { color: #FFE600; }
 
     /* ===== Hero ===== */
     .hero {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: 24px 28px 28px;
-      gap: 36px;
+      padding: 24px 28px 0;
+      gap: 28px;
     }
 
-    /* Duas colunas lado a lado */
     .hero-cols {
       display: flex;
       align-items: flex-start;
       gap: 22px;
+      animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) 0.05s both;
     }
 
     .hero-left { flex: 0 0 54%; }
@@ -115,12 +96,12 @@
     .hero-left h1 {
       font-family: 'Sora', sans-serif;
       font-weight: 800;
-      font-size: clamp(36px, 11vw, 44px);
+      font-size: clamp(34px, 10.5vw, 42px);
       line-height: 1.05;
       letter-spacing: -0.03em;
-      color: #f8fafc;
+      color: #ffffff;
     }
-    .hero-left h1 .accent { color: #3b82f6; }
+    .hero-left h1 .accent { color: #FFE600; }
 
     .hero-right {
       flex: 1;
@@ -129,20 +110,68 @@
     .hero-right p {
       font-size: 13px;
       font-weight: 400;
-      color: rgba(248,250,252,0.55);
+      color: rgba(255,255,255,0.50);
       line-height: 1.7;
     }
 
-    /* Linha divisória sutil */
+    /* Divisor */
     .divider {
       width: 100%;
       height: 1px;
-      background: linear-gradient(90deg, rgba(59,130,246,0.6) 0%, rgba(59,130,246,0.15) 60%, transparent 100%);
+      background: rgba(255,255,255,0.08);
+      animation: rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.15s both;
+    }
+
+    /* ===== Features ===== */
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0 28px;
+      animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.18s both;
+    }
+
+    .feat-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .feat-item:last-child { border-bottom: none; }
+
+    .feat-icon {
+      flex: 0 0 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.7);
+    }
+    .feat-icon svg { width: 20px; height: 20px; }
+    .feat-icon.yellow { background: rgba(255,230,0,0.10); border-color: rgba(255,230,0,0.22); color: #FFE600; }
+
+    .feat-body { flex: 1; min-width: 0; }
+    .feat-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      margin-bottom: 3px;
+    }
+    .feat-desc {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.5;
     }
 
     /* ===== CTA ===== */
     .cta-section {
-      padding: 0 28px max(36px, env(safe-area-inset-bottom) + 24px);
+      padding: 24px 28px max(36px, env(safe-area-inset-bottom) + 24px);
+      animation: rise 0.6s cubic-bezier(0.22,1,0.36,1) 0.22s both;
     }
 
     .btn-cta {
@@ -152,26 +181,21 @@
       width: 100%;
       height: 60px;
       padding: 0 26px;
-      background: #3b82f6;
+      background: #FFE600;
       border-radius: 14px;
-      color: #f8fafc;
+      color: #000000;
       font-family: 'Sora', sans-serif;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 13px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       text-decoration: none;
-      box-shadow: 0 8px 28px rgba(59,130,246,0.38);
-      transition: background 0.2s, transform 0.18s, box-shadow 0.2s;
-      animation: rise 0.6s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+      box-shadow: 0 8px 28px rgba(255,230,0,0.22);
+      transition: filter 0.2s, transform 0.18s;
     }
     .btn-cta:active { transform: scale(0.98); }
-    .btn-cta:hover  { background: #2563eb; box-shadow: 0 12px 36px rgba(59,130,246,0.5); }
+    .btn-cta:hover  { filter: brightness(1.06); }
     .btn-cta .arrow { font-size: 20px; font-weight: 300; }
-
-    /* Animação de entrada do hero */
-    .hero-cols  { animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
-    .divider    { animation: rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
 
     @keyframes rise {
       from { opacity: 0; transform: translateY(18px); }
@@ -182,26 +206,65 @@
 <body>
   <div class="landing">
 
-    <!-- Navbar -->
     <nav class="navbar">
       <div class="wordmark">Fin<span>Track</span></div>
     </nav>
 
-    <!-- Hero -->
     <section class="hero">
       <div class="hero-cols">
         <div class="hero-left">
           <h1>Controle<br>total do<br>seu<br><span class="accent">dinheiro.</span></h1>
         </div>
         <div class="hero-right">
-          <p>FinTrack é o app que te ajuda a visualizar, organizar e controlar seus gastos pessoais em tempo real. Simples, rápido e eficiente.</p>
+          <p>Visualize, organize e controle seus gastos pessoais em tempo real. Simples e eficiente.</p>
         </div>
       </div>
 
       <div class="divider"></div>
     </section>
 
-    <!-- CTA -->
+    <!-- Seção de funcionalidades -->
+    <div class="features">
+
+      <div class="feat-item">
+        <div class="feat-icon yellow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/>
+            <rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <div class="feat-title">Dashboard</div>
+          <div class="feat-desc">Gráficos de evolução mensal e distribuição por categoria com comparativo de períodos.</div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <div class="feat-title">Adicionar gasto</div>
+          <div class="feat-desc">Registre qualquer gasto em segundos com valor, categoria, descrição e data.</div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <div class="feat-title">Histórico de gastos</div>
+          <div class="feat-desc">Consulte, edite ou exclua qualquer lançamento com filtros por categoria e busca por descrição.</div>
+        </div>
+      </div>
+
+    </div>
+
     <div class="cta-section">
       <a href="dashboard.html" class="btn-cta">
         <span>Acessar o app</span>

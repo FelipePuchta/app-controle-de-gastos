@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
-  <meta name="theme-color" content="#0a0f1e" />
+  <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -16,10 +16,10 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 18px 20px;
       margin-bottom: 16px;
-      background: linear-gradient(180deg, rgba(59,130,246,0.12), rgba(17,24,39,0.7));
+      background: rgba(255,255,255,0.03);
     }
     .total-bar .lbl { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
-    .total-bar .val { font-family: var(--font-display); font-size: 38px; color: var(--secondary); line-height: 1; margin-top: 4px; }
+    .total-bar .val { font-family: var(--font-display); font-size: 38px; color: var(--text); line-height: 1; margin-top: 4px; }
     .total-bar .count { font-size: 13px; color: var(--text-dim); text-align: right; }
     .total-bar .count b { font-family: var(--font-display); font-size: 26px; color: var(--text); display: block; }
 
@@ -39,10 +39,10 @@
       flex: 0 0 auto;
       width: 44px; height: 44px; border-radius: 12px;
       display: grid; place-items: center;
-      font-size: 21px;
-      background: rgba(248,250,252,0.04);
+      background: rgba(255,255,255,0.04);
       border: 1px solid var(--border-soft);
     }
+    .gasto-item .ic svg { width: 22px; height: 22px; }
     .gasto-item .body { flex: 1; min-width: 0; }
     .gasto-item .desc { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .gasto-item .sub { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
@@ -68,7 +68,7 @@
     /* ---------- Modal inferior (bottom sheet) ---------- */
     .sheet-overlay {
       position: fixed; inset: 0; z-index: 300;
-      background: rgba(10,15,30,0.80);
+      background: rgba(0,0,0,0.80);
       backdrop-filter: blur(4px);
       opacity: 0; pointer-events: none;
       transition: opacity 0.3s var(--ease);
@@ -93,12 +93,13 @@
     .sheet .cat-cell {
       display: flex; flex-direction: column; align-items: center; gap: 6px;
       padding: 11px 4px; border-radius: 13px;
-      background: rgba(248,250,252,0.03); border: 1px solid var(--border-soft);
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border-soft);
       transition: all 0.18s var(--ease);
     }
-    .sheet .cat-cell .e { font-size: 20px; }
+    .sheet .cat-cell .e { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; }
+    .sheet .cat-cell .e svg { width: 20px; height: 20px; }
     .sheet .cat-cell .n { font-size: 10px; color: var(--text-dim); }
-    .sheet .cat-cell.active { background: rgba(59,130,246,0.18); border-color: var(--primary); }
+    .sheet .cat-cell.active { background: rgba(255,230,0,0.10); border-color: var(--primary); }
     .sheet .cat-cell.active .n { color: var(--text); }
   </style>
 </head>
@@ -230,7 +231,7 @@
         const meta = FinTrack.metaForCategoria(c.nome);
         const p = document.createElement('button');
         p.className = 'pill';
-        p.innerHTML = `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${meta.hex};vertical-align:middle;margin-right:4px"></span>${c.nome}`;
+        p.innerHTML = `<span class="pill-icon" style="color:${meta.hex};">${FinTrack.iconForCategoria(c.nome)}</span>${c.nome}`;
         p.onclick = () => setFiltro(c.id, p);
         box.appendChild(p);
       });
@@ -277,7 +278,7 @@
           const meta = catMap[g.categoria_id] || FinTrack.metaForCategoria('');
           html += `
             <div class="card gasto-item">
-              <div class="ic" style="background:${meta.hex}18;border-color:${meta.hex}40;color:${meta.hex};font-weight:700;font-size:16px;">${(meta.nome||catMap[g.categoria_id]?.nome||'?')[0].toUpperCase()}</div>
+              <div class="ic" style="background:${meta.hex}18;border-color:${meta.hex}40;color:${meta.hex};">${FinTrack.iconForCategoria(meta.nome||catMap[g.categoria_id]?.nome||'')}</div>
               <div class="body">
                 <div class="desc">${escapeHtml(g.descricao)}</div>
                 <div class="sub">${meta.nome || 'Outros'}</div>
@@ -330,7 +331,7 @@
         const cell = document.createElement('button');
         cell.type = 'button';
         cell.className = 'cat-cell' + (editSelectedCat && c.id === editSelectedCat.id ? ' active' : '');
-        cell.innerHTML = `<span class="e" style="display:block;width:22px;height:22px;border-radius:7px;background:${meta.hex}"></span><span class="n">${c.nome}</span>`;
+        cell.innerHTML = `<span class="e" style="color:${meta.hex};">${FinTrack.iconForCategoria(c.nome)}</span><span class="n">${c.nome}</span>`;
         cell.onclick = () => {
           box.querySelectorAll('.cat-cell').forEach((x) => x.classList.remove('active'));
           cell.classList.add('active');

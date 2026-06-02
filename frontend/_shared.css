@@ -1,31 +1,26 @@
 /* =====================================================================
    FinTrack — _shared.css
-   Estilos compartilhados por todas as páginas do app.
-   Paleta verde-musgo sobre preto profundo, mobile-first.
+   Paleta: preto puro + branco predominante + amarelo acento (C6-style)
    ===================================================================== */
 
-/* ---------- Fontes (Google Fonts) ---------- */
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
-/* ---------- Tokens de design (variáveis CSS) ---------- */
 :root {
-  /* Cores — Midnight Finance */
-  --bg:           #0a0f1e;
-  --bg-soft:      #111827;
-  --primary:      #3b82f6;
-  --primary-hover:#2563eb;
-  --secondary:    #60a5fa;
-  --accent:       #f59e0b;
-  --text:         #f8fafc;
-  --text-dim:     rgba(248, 250, 252, 0.55);
-  --text-faint:   rgba(248, 250, 252, 0.35);
-  --card:         #111827;
-  --card-2:       #0f1629;
-  --border:       rgba(59, 130, 246, 0.15);
-  --border-soft:  rgba(248, 250, 252, 0.06);
-  --glow:         rgba(59, 130, 246, 0.35);
+  --bg:           #000000;
+  --bg-soft:      #111111;
+  --primary:      #FFE600;
+  --primary-hover:#F5DC00;
+  --secondary:    #FFFFFF;
+  --accent:       #FFE600;
+  --text:         #FFFFFF;
+  --text-dim:     rgba(255, 255, 255, 0.55);
+  --text-faint:   rgba(255, 255, 255, 0.28);
+  --card:         #111111;
+  --card-2:       #0A0A0A;
+  --border:       rgba(255, 255, 255, 0.10);
+  --border-soft:  rgba(255, 255, 255, 0.06);
+  --glow:         rgba(255, 230, 0, 0.22);
 
-  /* Cores de categoria — vibrantes e distintas */
   --cat-alimentacao: #E17055;
   --cat-transporte:  #00CEC9;
   --cat-lazer:       #FDCB6E;
@@ -34,28 +29,21 @@
   --cat-educacao:    #E84393;
   --cat-outros:      #74B9FF;
 
-  /* Tipografia */
   --font-display: 'Sora', system-ui, sans-serif;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
 
-  /* Layout */
   --app-max:    480px;
   --nav-h:      72px;
   --radius:     18px;
   --radius-sm:  12px;
 
-  /* Sombras */
-  --shadow-soft: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 8px 28px rgba(0, 0, 0, 0.6);
   --shadow-glow: 0 6px 22px var(--glow);
 
-  /* Transições */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ---------- Reset ---------- */
-*,
-*::before,
-*::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { -webkit-text-size-adjust: 100%; }
 
@@ -71,23 +59,12 @@ body {
   justify-content: center;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(900px 500px at 50% -10%, rgba(59,130,246,0.10), transparent 60%);
-  z-index: 0;
-}
-
 img { max-width: 100%; display: block; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 input, select, textarea { font-family: inherit; }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
-/* ---------- Container do app ---------- */
 .app {
   position: relative;
   z-index: 1;
@@ -107,7 +84,7 @@ ul { list-style: none; }
   animation: page-in 0.5s var(--ease) both;
 }
 
-/* ---------- Tipografia utilitária ---------- */
+/* ---------- Tipografia ---------- */
 .display {
   font-family: var(--font-display);
   font-weight: 400;
@@ -119,19 +96,19 @@ ul { list-style: none; }
   font-size: 12px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--secondary);
+  color: var(--text-dim);
   font-weight: 600;
 }
 .muted { color: var(--text-dim); }
 .faint { color: var(--text-faint); }
 
-/* ---------- Cabeçalho de página ---------- */
+/* ---------- Topbar ---------- */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 20;
   padding: max(26px, env(safe-area-inset-top) + 12px) 20px 16px;
-  background: linear-gradient(180deg, var(--bg) 70%, transparent);
+  background: linear-gradient(180deg, #000 70%, transparent);
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -148,16 +125,14 @@ ul { list-style: none; }
 
 /* ---------- Cards ---------- */
 .card {
-  background: linear-gradient(180deg, rgba(17,24,39,0.94), rgba(15,20,35,0.94));
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: var(--shadow-soft);
-  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease);
 }
-.card.interactive:hover { transform: translateY(-3px); border-color: rgba(59,130,246,0.45); }
+.card.interactive:hover { transform: translateY(-3px); border-color: rgba(255,230,0,0.3); }
 .card.interactive:active { transform: translateY(-1px) scale(0.995); }
 
 /* ---------- Botões ---------- */
@@ -172,24 +147,24 @@ ul { list-style: none; }
   font-weight: 600;
   font-size: 16px;
   letter-spacing: 0.01em;
-  transition: transform 0.18s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease), filter 0.2s var(--ease);
+  transition: transform 0.18s var(--ease), box-shadow 0.25s var(--ease), filter 0.2s var(--ease);
   user-select: none;
 }
 .btn:active { transform: scale(0.96); }
 .btn-primary {
-  background: linear-gradient(180deg, var(--secondary), var(--primary));
-  color: #f8fafc;
-  box-shadow: var(--shadow-glow);
+  background: var(--primary);
+  color: #000000;
+  box-shadow: 0 6px 20px rgba(255,230,0,0.18);
 }
-.btn-primary:hover { filter: brightness(1.06); box-shadow: 0 10px 30px var(--glow); }
+.btn-primary:hover { filter: brightness(1.06); box-shadow: 0 10px 30px rgba(255,230,0,0.28); }
 .btn-ghost {
-  background: rgba(248,250,252,0.04);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
   color: var(--text);
 }
-.btn-ghost:hover { border-color: rgba(59,130,246,0.5); background: rgba(59,130,246,0.08); }
+.btn-ghost:hover { border-color: rgba(255,230,0,0.4); background: rgba(255,230,0,0.06); }
 .btn-block { width: 100%; }
-.btn-danger { background: rgba(180, 70, 60, 0.14); border: 1px solid rgba(180,70,60,0.4); color: #e8a59c; }
+.btn-danger { background: rgba(180,70,60,0.14); border: 1px solid rgba(180,70,60,0.4); color: #e8a59c; }
 .btn-danger:hover { background: rgba(180,70,60,0.22); }
 
 /* ---------- Pills ---------- */
@@ -205,27 +180,29 @@ ul { list-style: none; }
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   height: 38px;
   padding: 0 15px;
   border-radius: 100px;
   font-size: 13.5px;
   font-weight: 500;
   white-space: nowrap;
-  background: rgba(248,250,252,0.04);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border-soft);
   color: var(--text-dim);
   transition: all 0.2s var(--ease);
 }
 .pill:active { transform: scale(0.95); }
 .pill.active {
-  background: rgba(59,130,246,0.18);
+  background: rgba(255,230,0,0.10);
   border-color: var(--primary);
   color: var(--text);
-  box-shadow: 0 0 0 1px rgba(59,130,246,0.3), var(--shadow-glow);
+  box-shadow: 0 0 0 1px rgba(255,230,0,0.15);
 }
+.pill-icon { display: flex; align-items: center; justify-content: center; }
+.pill-icon svg { width: 13px; height: 13px; }
 
-/* ---------- Campos de formulário ---------- */
+/* ---------- Formulários ---------- */
 .field { margin-bottom: 18px; }
 .field label {
   display: block;
@@ -246,16 +223,18 @@ ul { list-style: none; }
   color: var(--text);
   font-size: 16px;
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  -webkit-appearance: none;
+  appearance: none;
 }
 .input::placeholder { color: var(--text-faint); }
 .input:focus {
   outline: none;
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255,230,0,0.12);
 }
 textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: vertical; line-height: 1.5; }
 
-/* ---------- Navegação inferior fixa ---------- */
+/* ---------- Nav inferior ---------- */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -267,7 +246,7 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   align-items: center;
-  background: rgba(10,15,30,0.88);
+  background: rgba(0,0,0,0.92);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border-top: 1px solid var(--border);
@@ -287,25 +266,25 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 }
 .nav-item svg { width: 23px; height: 23px; transition: transform 0.25s var(--ease); }
 .nav-item:active svg { transform: scale(0.85); }
-.nav-item.active { color: var(--secondary); }
-.nav-item.active svg { filter: drop-shadow(0 0 8px var(--glow)); }
+.nav-item.active { color: var(--primary); }
+.nav-item.active svg { filter: drop-shadow(0 0 6px rgba(255,230,0,0.4)); }
 
 .nav-item.nav-add svg {
   width: 46px; height: 46px;
   margin-top: -22px;
-  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  background: var(--primary);
   border-radius: 50%;
   padding: 11px;
-  color: #f8fafc;
-  box-shadow: var(--shadow-glow);
+  color: #000000;
+  box-shadow: 0 4px 16px rgba(255,230,0,0.28);
 }
 
 /* ---------- Spinner ---------- */
 .spinner {
   width: 34px; height: 34px;
   border-radius: 50%;
-  border: 3px solid rgba(59,130,246,0.22);
-  border-top-color: var(--secondary);
+  border: 3px solid rgba(255,255,255,0.10);
+  border-top-color: var(--primary);
   animation: spin 0.8s linear infinite;
 }
 .loading-wrap {
@@ -326,20 +305,20 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
 }
 .empty .ic { font-size: 38px; margin-bottom: 12px; opacity: 0.7; }
 
-/* ---------- Notice (API offline / demo) ---------- */
+/* ---------- Notice ---------- */
 .notice {
   display: flex;
   align-items: center;
   gap: 9px;
   font-size: 12px;
   color: var(--text-dim);
-  background: rgba(201,178,122,0.08);
-  border: 1px solid rgba(201,178,122,0.2);
+  background: rgba(255,230,0,0.06);
+  border: 1px solid rgba(255,230,0,0.18);
   border-radius: 10px;
   padding: 9px 12px;
   margin: 4px 0 14px;
 }
-.notice b { color: var(--cat-lazer); font-weight: 600; }
+.notice b { color: var(--primary); font-weight: 600; }
 
 /* ---------- Toast ---------- */
 .toast {
@@ -347,13 +326,13 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   left: 50%;
   bottom: calc(var(--nav-h) + 18px);
   transform: translate(-50%, 24px);
-  background: linear-gradient(180deg, var(--secondary), var(--primary));
-  color: #f8fafc;
-  font-weight: 600;
+  background: var(--primary);
+  color: #000000;
+  font-weight: 700;
   font-size: 14px;
   padding: 13px 22px;
   border-radius: 100px;
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 6px 20px rgba(255,230,0,0.22);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s var(--ease), transform 0.4s var(--ease);
@@ -391,13 +370,12 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   * { animation: none !important; transition: none !important; }
 }
 
-/* Scrollbar discreta */
 ::-webkit-scrollbar { width: 0; height: 0; }
 
 /* ---------- Splash screen ---------- */
 #ft-splash {
   position: fixed; inset: 0; z-index: 9999;
-  background: #0a0f1e;
+  background: #000000;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 14px;
   animation: splash-out 0.5s ease 2.0s forwards;
@@ -410,11 +388,11 @@ textarea.input { height: auto; min-height: 92px; padding: 14px 16px; resize: ver
   line-height: 1;
   animation: splash-word 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-#ft-splash .s-fin   { color: #3b82f6; }
-#ft-splash .s-track { color: #f8fafc; }
+#ft-splash .s-fin   { color: #FFE600; }
+#ft-splash .s-track { color: #FFFFFF; }
 #ft-splash .s-bar {
   height: 2px; width: 0; border-radius: 2px;
-  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  background: #FFE600;
   animation: splash-bar 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
 }
 @keyframes splash-word {

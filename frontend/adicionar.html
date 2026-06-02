@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
-  <meta name="theme-color" content="#0a0f1e" />
+  <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -49,17 +49,18 @@
       display: flex; flex-direction: column; align-items: center; gap: 7px;
       padding: 13px 6px;
       border-radius: 15px;
-      background: rgba(248,250,252,0.03);
+      background: rgba(255,255,255,0.03);
       border: 1px solid var(--border-soft);
       transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
     }
-    .cat-cell .e { font-size: 24px; line-height: 1; }
+    .cat-cell .e { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
+    .cat-cell .e svg { width: 22px; height: 22px; }
     .cat-cell .n { font-size: 10.5px; color: var(--text-dim); text-align: center; line-height: 1.15; }
     .cat-cell:active { transform: scale(0.92); }
     .cat-cell.active {
-      background: rgba(59,130,246,0.18);
+      background: rgba(255,230,0,0.10);
       border-color: var(--primary);
-      box-shadow: var(--shadow-glow);
+      box-shadow: 0 0 0 1px rgba(255,230,0,0.15);
     }
     .cat-cell.active .n { color: var(--text); font-weight: 600; }
 
@@ -80,7 +81,7 @@
       position: fixed; inset: 0; z-index: 300;
       display: none;
       align-items: center; justify-content: center;
-      background: rgba(10,15,30,0.88);
+      background: rgba(0,0,0,0.88);
       backdrop-filter: blur(8px);
       padding: 30px;
     }
@@ -90,11 +91,11 @@
       width: 96px; height: 96px; margin: 0 auto 22px;
       border-radius: 50%;
       display: grid; place-items: center;
-      background: rgba(59,130,246,0.12);
+      background: rgba(255,230,0,0.10);
       border: 2px solid var(--primary);
       animation: pop 0.5s var(--ease) both;
     }
-    .check-ring svg { width: 48px; height: 48px; color: var(--secondary); }
+    .check-ring svg { width: 48px; height: 48px; color: var(--primary); }
     .check-ring svg path {
       stroke-dasharray: 40; stroke-dashoffset: 40;
       animation: draw 0.5s 0.18s var(--ease) forwards;
@@ -244,7 +245,7 @@
         cell.type = 'button';
         cell.className = 'cat-cell';
         cell.dataset.id = c.id;
-        cell.innerHTML = `<span class="e" style="display:block;width:22px;height:22px;border-radius:7px;background:${meta.hex}"></span><span class="n">${c.nome}</span>`;
+        cell.innerHTML = `<span class="e" style="color:${meta.hex};">${FinTrack.iconForCategoria(c.nome)}</span><span class="n">${c.nome}</span>`;
         cell.addEventListener('click', () => {
           document.querySelectorAll('.cat-cell').forEach((x) => x.classList.remove('active'));
           cell.classList.add('active');
