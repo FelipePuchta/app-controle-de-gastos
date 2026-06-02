@@ -175,13 +175,18 @@
       padding: 28px 28px max(36px, env(safe-area-inset-bottom) + 24px);
       animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.48s both;
     }
+    .cta-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
     .btn-enter {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      width: 100%;
+      justify-content: center;
+      gap: 8px;
       height: 56px;
-      padding: 0 24px;
+      padding: 0 20px;
       background: #FFE600;
       color: #000;
       font-family: 'Sora', sans-serif;
@@ -195,7 +200,26 @@
     }
     .btn-enter:active { transform: scale(0.98); }
     .btn-enter:hover  { filter: brightness(1.06); }
-    .btn-enter .arr   { font-size: 18px; font-weight: 300; letter-spacing: 0; }
+    .btn-outline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 56px;
+      padding: 0 20px;
+      background: transparent;
+      color: #fff;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 0;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .btn-outline:active { transform: scale(0.98); }
+    .btn-outline:hover  { border-color: rgba(255,255,255,0.55); }
 
     /* ── Animações ── */
     @keyframes rise {
@@ -277,10 +301,10 @@
     </div>
 
     <div class="cta-wrap">
-      <a href="dashboard.html" class="btn-enter">
-        <span>Acessar o app</span>
-        <span class="arr">→</span>
-      </a>
+      <div class="cta-btns">
+        <a href="login.html" class="btn-enter">Entrar</a>
+        <a href="cadastrar.html" class="btn-outline">Cadastrar</a>
+      </div>
     </div>
 
   </div>

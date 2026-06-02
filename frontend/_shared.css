@@ -251,7 +251,7 @@ textarea.input {
   max-width: var(--app-max);
   height: var(--nav-h);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
   background: rgba(0,0,0,0.96);
   backdrop-filter: blur(24px) saturate(200%);
