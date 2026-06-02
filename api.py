@@ -20,7 +20,7 @@ from database import (
 
 SECRET_KEY = os.getenv("JWT_SECRET", "fintrack-dev-secret-change-in-prod")
 ALGORITHM = "HS256"
-TOKEN_EXPIRE_DAYS = 7
+TOKEN_EXPIRE_DAYS = 30
 
 bearer = HTTPBearer()
 

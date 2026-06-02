@@ -183,6 +183,7 @@
   </div>
 
   <script>
+    if (localStorage.getItem('ft-token')) window.location.replace('dashboard.html');
     const API_BASE = 'https://harmonious-unity-production-e26f.up.railway.app';
 
     function setErro(msg) {

@@ -18,6 +18,9 @@
   <link rel="stylesheet" href="_shared.css" />
 
   <script>
+    if (localStorage.getItem('ft-token')) {
+      window.location.replace('dashboard.html');
+    }
     (function () {
       if (sessionStorage.getItem('ft-splash')) return;
       sessionStorage.setItem('ft-splash', '1');
