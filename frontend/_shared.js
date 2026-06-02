@@ -136,11 +136,13 @@
   }
 
   async function getGastos() {
+    const estaLogado = !!auth.getToken();
     try {
       const data = await api('/gastos');
       usingDemo = false;
       return Array.isArray(data) ? data : (data?.gastos || []);
     } catch (e) {
+      if (estaLogado) return [];
       usingDemo = true;
       return demoGastos();
     }
