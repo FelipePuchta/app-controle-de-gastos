@@ -212,13 +212,14 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nome, email, senha }),
         });
-        const data = await res.json();
-        if (!res.ok) { setErro(data.detail || 'Não foi possível criar a conta.'); return; }
+        let data;
+        try { data = await res.json(); } catch { data = {}; }
+        if (!res.ok) { setErro(data.detail || `Erro ${res.status}. Tente novamente.`); return; }
         localStorage.setItem('ft-token', data.access_token);
         localStorage.setItem('ft-user', JSON.stringify({ nome: data.nome }));
         window.location.href = 'dashboard.html';
-      } catch {
-        setErro('Não foi possível conectar. Tente novamente.');
+      } catch (err) {
+        setErro('Servidor indisponível. Aguarde e tente novamente.');
       } finally {
         btn.disabled = false;
       }

@@ -20,6 +20,15 @@ else:
 cursor = conexao.cursor()
 
 
+def _migrar(sql):
+    try:
+        cursor.execute(sql)
+        conexao.commit()
+    except Exception as e:
+        conexao.rollback()
+        print(f"Migration skipped: {e}")
+
+
 def criar_tabela():
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS categorias("
@@ -47,11 +56,9 @@ def criar_tabela():
     )
     conexao.commit()
 
-    # Migrations idempotentes para tabelas já existentes
-    cursor.execute("ALTER TABLE usuarios ALTER COLUMN senha TYPE VARCHAR(255)")
-    conexao.commit()
-
-    cursor.execute("""
+    # Migrations idempotentes — cada uma é independente
+    _migrar("ALTER TABLE usuarios ALTER COLUMN senha TYPE VARCHAR(255)")
+    _migrar("""
         DO $$ BEGIN
             IF NOT EXISTS (
                 SELECT 1 FROM pg_constraint WHERE conname = 'usuarios_email_unique'
@@ -60,9 +67,7 @@ def criar_tabela():
             END IF;
         END $$;
     """)
-    conexao.commit()
-
-    cursor.execute("""
+    _migrar("""
         DO $$ BEGIN
             IF NOT EXISTS (
                 SELECT 1 FROM information_schema.columns
@@ -72,7 +77,6 @@ def criar_tabela():
             END IF;
         END $$;
     """)
-    conexao.commit()
 
 
 # USUARIOS
