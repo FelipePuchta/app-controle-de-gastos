@@ -10,12 +10,11 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="description" content="FinTrack — controle seus gastos pessoais com clareza." />
   <link rel="manifest" href="manifest.json" />
-  <title>FinTrack — Controle de Gastos</title>
+  <title>FinTrack</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" />
-
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="_shared.css" />
 
   <script>
@@ -33,19 +32,15 @@
   </script>
 
   <style>
-    :root {
-      --font-display: 'Sora', system-ui, sans-serif;
-      --font-body:    'Sora', system-ui, sans-serif;
-    }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #000000;
-      color: #ffffff;
+      background: #000;
+      color: #fff;
       font-family: 'Sora', system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       justify-content: center;
     }
@@ -54,221 +49,237 @@
       width: 100%;
       max-width: 480px;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      border-left: 1px solid rgba(255,255,255,0.06);
-      border-right: 1px solid rgba(255,255,255,0.06);
+      border-left: 1px solid rgba(255,255,255,0.07);
+      border-right: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
     }
 
-    /* ===== Navbar ===== */
-    .navbar {
+    /* ── Marca topo ── */
+    .l-header {
+      padding: max(28px, env(safe-area-inset-top) + 16px) 28px 0;
       display: flex;
       align-items: center;
-      padding: max(24px, env(safe-area-inset-top) + 14px) 28px 20px;
+      justify-content: space-between;
+      animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.1s both;
     }
-    .navbar .wordmark {
-      font-family: 'Sora', sans-serif;
-      font-size: 15px;
+    .wordmark {
+      font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: #ffffff;
+      color: rgba(255,255,255,0.35);
     }
-    .navbar .wordmark span { color: #FFE600; }
+    .wordmark strong { color: #FFE600; font-weight: 700; }
+    .l-header-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+    }
 
-    /* ===== Hero ===== */
+    /* ── Wordmark hero ── */
     .hero {
+      flex: 1;
+      padding: 0 28px;
       display: flex;
       flex-direction: column;
-      padding: 24px 28px 0;
-      gap: 28px;
+      justify-content: center;
     }
 
-    .hero-cols {
-      display: flex;
-      align-items: flex-start;
-      gap: 22px;
-      animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) 0.05s both;
-    }
-
-    .hero-left { flex: 0 0 54%; }
-
-    .hero-left h1 {
-      font-family: 'Sora', sans-serif;
+    .hero-mark {
+      line-height: 0.84;
+      letter-spacing: -0.06em;
       font-weight: 800;
-      font-size: clamp(34px, 10.5vw, 42px);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      color: #ffffff;
+      animation: mark-in 0.8s cubic-bezier(0.22,1,0.36,1) 0.15s both;
     }
-    .hero-left h1 .accent { color: #FFE600; }
+    .hero-mark .line-1 {
+      font-size: clamp(72px, 22vw, 108px);
+      color: #fff;
+      display: block;
+    }
+    .hero-mark .line-2 {
+      font-size: clamp(72px, 22vw, 108px);
+      color: #FFE600;
+      display: block;
+    }
 
-    .hero-right {
-      flex: 1;
-      padding-top: 6px;
+    /* Linha divisória amarela */
+    .hero-rule {
+      width: 40px;
+      height: 1px;
+      background: rgba(255,255,255,0.20);
+      margin: 28px 0;
+      animation: rule-in 0.6s cubic-bezier(0.22,1,0.36,1) 0.3s both;
     }
-    .hero-right p {
+
+    .hero-copy {
+      animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.35s both;
+    }
+    .hero-tagline {
       font-size: 13px;
       font-weight: 400;
-      color: rgba(255,255,255,0.50);
-      line-height: 1.7;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.65;
+      max-width: 260px;
     }
 
-    /* Divisor */
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: rgba(255,255,255,0.08);
-      animation: rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.15s both;
-    }
-
-    /* ===== Features ===== */
+    /* ── Features ── */
     .features {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
       padding: 0 28px;
-      animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.18s both;
+      animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.42s both;
     }
-
-    .feat-item {
+    .feat {
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 18px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
     }
-    .feat-item:last-child { border-bottom: none; }
+    .feat:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
 
-    .feat-icon {
-      flex: 0 0 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(255,255,255,0.7);
-    }
-    .feat-icon svg { width: 20px; height: 20px; }
-    .feat-icon.yellow { background: rgba(255,230,0,0.10); border-color: rgba(255,230,0,0.22); color: #FFE600; }
-
-    .feat-body { flex: 1; min-width: 0; }
-    .feat-title {
-      font-size: 14px;
+    .feat-num {
+      font-size: 11px;
       font-weight: 700;
-      color: #ffffff;
+      color: rgba(255,255,255,0.20);
+      letter-spacing: 0.08em;
+      min-width: 24px;
+    }
+    .feat-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.10);
+      flex-shrink: 0;
+    }
+    .feat-icon svg { width: 16px; height: 16px; color: rgba(255,255,255,0.55); }
+    .feat-icon.hl { border-color: rgba(255,230,0,0.30); }
+    .feat-icon.hl svg { color: #FFE600; }
+    .feat-body { flex: 1; }
+    .feat-title {
+      font-size: 13px;
+      font-weight: 700;
       letter-spacing: -0.01em;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .feat-desc {
-      font-size: 12.5px;
-      color: rgba(255,255,255,0.45);
-      line-height: 1.5;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.55;
     }
 
-    /* ===== CTA ===== */
-    .cta-section {
-      padding: 24px 28px max(36px, env(safe-area-inset-bottom) + 24px);
-      animation: rise 0.6s cubic-bezier(0.22,1,0.36,1) 0.22s both;
+    /* ── CTA ── */
+    .cta-wrap {
+      padding: 28px 28px max(36px, env(safe-area-inset-bottom) + 24px);
+      animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.48s both;
     }
-
-    .btn-cta {
+    .btn-enter {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      height: 60px;
-      padding: 0 26px;
+      height: 56px;
+      padding: 0 24px;
       background: #FFE600;
-      border-radius: 14px;
-      color: #000000;
+      color: #000;
       font-family: 'Sora', sans-serif;
       font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.1em;
+      font-size: 11px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       text-decoration: none;
-      box-shadow: 0 8px 28px rgba(255,230,0,0.22);
-      transition: filter 0.2s, transform 0.18s;
+      border-radius: 0;
+      transition: filter 0.15s, transform 0.15s;
     }
-    .btn-cta:active { transform: scale(0.98); }
-    .btn-cta:hover  { filter: brightness(1.06); }
-    .btn-cta .arrow { font-size: 20px; font-weight: 300; }
+    .btn-enter:active { transform: scale(0.98); }
+    .btn-enter:hover  { filter: brightness(1.06); }
+    .btn-enter .arr   { font-size: 18px; font-weight: 300; letter-spacing: 0; }
 
+    /* ── Animações ── */
     @keyframes rise {
-      from { opacity: 0; transform: translateY(18px); }
+      from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes mark-in {
+      from { opacity: 0; transform: translateY(32px); filter: blur(4px); }
+      to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes rule-in {
+      from { width: 0; opacity: 0; }
+      to   { width: 40px; opacity: 1; }
     }
   </style>
 </head>
 <body>
   <div class="landing">
 
-    <nav class="navbar">
-      <div class="wordmark">Fin<span>Track</span></div>
-    </nav>
+    <header class="l-header">
+      <div class="wordmark"><strong>Fin</strong>Track</div>
+      <div class="l-header-tag">Finanças pessoais</div>
+    </header>
 
     <section class="hero">
-      <div class="hero-cols">
-        <div class="hero-left">
-          <h1>Controle<br>total do<br>seu<br><span class="accent">dinheiro.</span></h1>
-        </div>
-        <div class="hero-right">
-          <p>Visualize, organize e controle seus gastos pessoais em tempo real. Simples e eficiente.</p>
-        </div>
+      <div class="hero-mark">
+        <span class="line-1">FIN</span>
+        <span class="line-2">TRACK</span>
       </div>
-
-      <div class="divider"></div>
+      <div class="hero-rule"></div>
+      <div class="hero-copy">
+        <p class="hero-tagline">Clareza total sobre o seu dinheiro. Registre, visualize e controle em tempo real.</p>
+      </div>
     </section>
 
-    <!-- Seção de funcionalidades -->
     <div class="features">
-
-      <div class="feat-item">
-        <div class="feat-icon yellow">
+      <div class="feat">
+        <span class="feat-num">01</span>
+        <div class="feat-icon hl">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/>
-            <rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/>
+            <rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/>
+            <rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/>
           </svg>
         </div>
         <div class="feat-body">
           <div class="feat-title">Dashboard</div>
-          <div class="feat-desc">Gráficos de evolução mensal e distribuição por categoria com comparativo de períodos.</div>
+          <div class="feat-desc">Gráficos de evolução e distribuição por categoria.</div>
         </div>
       </div>
 
-      <div class="feat-item">
+      <div class="feat">
+        <span class="feat-num">02</span>
         <div class="feat-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+            <path d="M12 5v14M5 12h14"/>
           </svg>
         </div>
         <div class="feat-body">
           <div class="feat-title">Adicionar gasto</div>
-          <div class="feat-desc">Registre qualquer gasto em segundos com valor, categoria, descrição e data.</div>
+          <div class="feat-desc">Registre qualquer gasto em segundos.</div>
         </div>
       </div>
 
-      <div class="feat-item">
+      <div class="feat">
+        <span class="feat-num">03</span>
         <div class="feat-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/>
+            <path d="M8 6h13M8 12h13M8 18h13"/>
+            <circle cx="3.5" cy="6" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="3.5" cy="12" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="3.5" cy="18" r="1" fill="currentColor" stroke="none"/>
           </svg>
         </div>
         <div class="feat-body">
-          <div class="feat-title">Histórico de gastos</div>
-          <div class="feat-desc">Consulte, edite ou exclua qualquer lançamento com filtros por categoria e busca por descrição.</div>
+          <div class="feat-title">Histórico</div>
+          <div class="feat-desc">Filtros por categoria, busca e edição inline.</div>
         </div>
       </div>
-
     </div>
 
-    <div class="cta-section">
-      <a href="dashboard.html" class="btn-cta">
+    <div class="cta-wrap">
+      <a href="dashboard.html" class="btn-enter">
         <span>Acessar o app</span>
-        <span class="arrow">→</span>
+        <span class="arr">→</span>
       </a>
     </div>
 

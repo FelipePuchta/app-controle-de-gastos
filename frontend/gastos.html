@@ -8,99 +8,171 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="manifest.json" />
-  <title>Meus gastos — FinTrack</title>
+  <title>Gastos — FinTrack</title>
   <link rel="stylesheet" href="_shared.css" />
   <style>
-    /* ---------- Total no topo ---------- */
+    /* ── Total header ── */
     .total-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 20px;
-      margin-bottom: 16px;
-      background: rgba(255,255,255,0.03);
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 24px 0 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
     }
-    .total-bar .lbl { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
-    .total-bar .val { font-family: var(--font-display); font-size: 38px; color: var(--text); line-height: 1; margin-top: 4px; }
-    .total-bar .count { font-size: 13px; color: var(--text-dim); text-align: right; }
-    .total-bar .count b { font-family: var(--font-display); font-size: 26px; color: var(--text); display: block; }
+    .total-bar .lbl {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .total-bar .val {
+      font-size: 42px; font-weight: 800;
+      letter-spacing: -0.05em; line-height: 0.9;
+      color: var(--fg);
+    }
+    .total-bar .count {
+      text-align: right;
+    }
+    .total-bar .count b {
+      font-size: 36px; font-weight: 800;
+      letter-spacing: -0.05em; line-height: 0.9;
+      display: block; color: var(--fg);
+    }
+    .total-bar .count span {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); margin-top: 6px; display: block;
+    }
 
-    /* ---------- Busca ---------- */
-    .search-wrap { position: relative; margin-bottom: 14px; }
-    .search-wrap svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; color: var(--text-faint); }
-    .search-wrap input { padding-left: 44px; }
+    /* ── Busca ── */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .search-wrap svg {
+      position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 16px; height: 16px; color: var(--faint);
+    }
+    .search-wrap input {
+      padding-left: 24px !important;
+    }
 
-    /* ---------- Lista de gastos ---------- */
-    .gasto-list { display: flex; flex-direction: column; gap: 10px; }
+    /* ── Lista de gastos ── */
+    .gasto-list { display: flex; flex-direction: column; }
     .gasto-item {
       display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px;
-      animation: rise 0.4s var(--ease) both;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      animation: rise 0.35s var(--ease) both;
+      background: transparent !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
     }
     .gasto-item .ic {
       flex: 0 0 auto;
-      width: 44px; height: 44px; border-radius: 12px;
+      width: 40px; height: 40px;
+      border-radius: 0;
       display: grid; place-items: center;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-soft);
+      background: transparent;
+      border: 1px solid var(--border);
     }
-    .gasto-item .ic svg { width: 22px; height: 22px; }
+    .gasto-item .ic svg { width: 18px; height: 18px; }
     .gasto-item .body { flex: 1; min-width: 0; }
-    .gasto-item .desc { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .gasto-item .sub { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
-    .gasto-item .amt { font-family: var(--font-display); font-size: 24px; color: var(--text); letter-spacing: 0.5px; }
-    .gasto-item .actions { display: flex; gap: 6px; margin-left: 4px; }
+    .gasto-item .desc {
+      font-weight: 600; font-size: 14px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      letter-spacing: -0.01em;
+    }
+    .gasto-item .sub {
+      font-size: 10px; color: var(--muted); margin-top: 3px;
+      font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+    }
+    .gasto-item .amt {
+      font-size: 18px; font-weight: 800;
+      letter-spacing: -0.03em; color: var(--fg);
+      white-space: nowrap;
+    }
+    .gasto-item .actions { display: flex; gap: 4px; margin-left: 4px; }
     .icon-btn {
-      width: 34px; height: 34px; border-radius: 9px;
+      width: 32px; height: 32px; border-radius: 0;
       display: grid; place-items: center;
-      background: rgba(248,250,252,0.04);
-      border: 1px solid var(--border-soft);
-      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--faint);
       transition: all 0.18s var(--ease);
     }
-    .icon-btn svg { width: 16px; height: 16px; }
+    .icon-btn svg { width: 14px; height: 14px; }
     .icon-btn:active { transform: scale(0.9); }
-    .icon-btn.edit:hover { color: var(--secondary); border-color: var(--primary); }
-    .icon-btn.del:hover { color: #e8a59c; border-color: rgba(180,70,60,0.5); }
+    .icon-btn.edit:hover { color: var(--fg); border-color: var(--border-str); }
+    .icon-btn.del:hover { color: rgba(239,68,68,0.8); border-color: rgba(239,68,68,0.3); }
 
     /* Cabeçalho de grupo por data */
-    .day-head { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 18px 4px 8px; font-weight: 600; }
-    .day-head:first-child { margin-top: 4px; }
+    .day-head {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.20em; text-transform: uppercase;
+      color: var(--faint);
+      padding: 20px 0 8px;
+    }
+    .day-head:first-child { padding-top: 4px; }
 
-    /* ---------- Modal inferior (bottom sheet) ---------- */
+    /* ── Bottom sheet ── */
     .sheet-overlay {
       position: fixed; inset: 0; z-index: 300;
-      background: rgba(0,0,0,0.80);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
       opacity: 0; pointer-events: none;
       transition: opacity 0.3s var(--ease);
     }
     .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+
     .sheet {
-      position: fixed; left: 50%; bottom: 0; transform: translateX(-50%) translateY(100%);
+      position: fixed; left: 50%; bottom: 0;
+      transform: translateX(-50%) translateY(100%);
       width: 100%; max-width: var(--app-max);
-      background: var(--bg-soft);
+      background: #0A0A0A;
       border: 1px solid var(--border);
       border-bottom: none;
-      border-radius: 24px 24px 0 0;
-      padding: 10px 22px calc(28px + env(safe-area-inset-bottom, 0));
+      border-radius: 0;
+      padding: 10px 24px calc(28px + env(safe-area-inset-bottom, 0));
       z-index: 301;
       transition: transform 0.4s var(--ease);
       max-height: 88vh; overflow-y: auto;
     }
     .sheet.show { transform: translateX(-50%) translateY(0); }
-    .sheet .grab { width: 40px; height: 4px; border-radius: 100px; background: var(--text-faint); margin: 4px auto 18px; opacity: 0.5; }
-    .sheet h2 { font-family: var(--font-display); font-size: 30px; margin-bottom: 18px; }
-    .sheet .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .sheet .cat-cell {
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      padding: 11px 4px; border-radius: 13px;
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border-soft);
-      transition: all 0.18s var(--ease);
+    .sheet .grab {
+      width: 32px; height: 2px; border-radius: 0;
+      background: var(--border-str); margin: 10px auto 20px; opacity: 0.5;
     }
-    .sheet .cat-cell .e { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; }
-    .sheet .cat-cell .e svg { width: 20px; height: 20px; }
-    .sheet .cat-cell .n { font-size: 10px; color: var(--text-dim); }
-    .sheet .cat-cell.active { background: rgba(255,230,0,0.10); border-color: var(--primary); }
-    .sheet .cat-cell.active .n { color: var(--text); }
+    .sheet h2 {
+      font-size: 22px; font-weight: 800;
+      letter-spacing: -0.04em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    /* Grid de categorias no sheet */
+    .sheet .cat-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .sheet .cat-cell {
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      padding: 14px 4px 12px;
+      background: #0A0A0A; border: none; border-radius: 0;
+      transition: background 0.18s var(--ease);
+    }
+    .sheet .cat-cell .e {
+      display: flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px;
+    }
+    .sheet .cat-cell .e svg { width: 18px; height: 18px; }
+    .sheet .cat-cell .n {
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--faint); text-align: center;
+    }
+    .sheet .cat-cell.active { background: rgba(255,255,255,0.06); }
+    .sheet .cat-cell.active .n { color: var(--fg); }
   </style>
 </head>
 <body>
@@ -108,7 +180,7 @@
     <header class="topbar">
       <div>
         <div class="eyebrow">Histórico</div>
-        <h1>Meus gastos</h1>
+        <h1>Gastos</h1>
       </div>
     </header>
 
@@ -116,12 +188,15 @@
       <div id="notice-slot"></div>
 
       <!-- Total -->
-      <div class="total-bar card">
+      <div class="total-bar">
         <div>
           <div class="lbl">Total exibido</div>
           <div class="val" id="total-val">R$ 0,00</div>
         </div>
-        <div class="count"><b id="total-count">0</b>gastos</div>
+        <div class="count">
+          <b id="total-count">0</b>
+          <span>gastos</span>
+        </div>
       </div>
 
       <!-- Busca -->
@@ -130,41 +205,40 @@
         <input class="input" id="busca" type="text" placeholder="Buscar por descrição..." />
       </div>
 
-      <!-- Filtros por categoria -->
+      <!-- Filtros -->
       <div class="pills" id="filtros"></div>
 
       <!-- Lista -->
       <div id="lista-slot">
-        <div class="loading-wrap"><div class="spinner"></div>Carregando gastos...</div>
+        <div class="loading-wrap"><div class="spinner"></div>Carregando</div>
       </div>
     </div>
 
-    <!-- ============ Navegação inferior ============ -->
     <nav class="bottom-nav">
       <a href="index.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
         Início
       </a>
       <a href="dashboard.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>
         Dashboard
       </a>
       <a href="adicionar.html" class="nav-item nav-add">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
         Adicionar
       </a>
       <a href="gastos.html" class="nav-item active" aria-current="page">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
         Gastos
       </a>
     </nav>
   </main>
 
-  <!-- ============ Bottom sheet de edição ============ -->
+  <!-- Sheet de edição -->
   <div class="sheet-overlay" id="sheet-overlay"></div>
   <div class="sheet" id="sheet">
     <div class="grab"></div>
-    <h2>Editar gasto</h2>
+    <h2>Editar</h2>
     <form id="form-edit">
       <input type="hidden" id="edit-id" />
       <div class="field">
@@ -183,27 +257,21 @@
         <label for="edit-data">Data</label>
         <input class="input" id="edit-data" type="date" />
       </div>
-      <div style="display:flex;gap:10px;margin-top:4px;">
+      <div style="display:flex;gap:8px;margin-top:8px;">
         <button type="button" class="btn btn-ghost" id="edit-cancel" style="flex:1;">Cancelar</button>
-        <button type="submit" class="btn btn-primary" id="edit-save" style="flex:2;">Salvar alterações</button>
+        <button type="submit" class="btn btn-primary" id="edit-save" style="flex:2;">Salvar</button>
       </div>
     </form>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <script src="_shared.js"></script>
   <script>
     const $ = (s) => document.querySelector(s);
-    let gastos = [];
-    let categorias = [];
-    let catMap = {};
-    let filtroCat = 'todas';
-    let termo = '';
-    let editSelectedCat = null;
+    let gastos = [], categorias = [], catMap = {};
+    let filtroCat = 'todas', termo = '', editSelectedCat = null;
 
-    /* ===== Carregamento ===== */
     async function init() {
       [gastos, categorias] = await Promise.all([FinTrack.getGastos(), FinTrack.getCategorias()]);
       catMap = FinTrack.buildCatMap(categorias);
@@ -214,11 +282,9 @@
     }
 
     function showNotice() {
-      $('#notice-slot').innerHTML =
-        '<div class="notice">⚠️ <span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
+      $('#notice-slot').innerHTML = '<div class="notice">⚠ <span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
     }
 
-    /* ===== Filtros (pills) ===== */
     function renderFiltros() {
       const box = $('#filtros');
       box.innerHTML = '';
@@ -227,7 +293,7 @@
       todas.textContent = 'Todas';
       todas.onclick = () => setFiltro('todas', todas);
       box.appendChild(todas);
-      categorias.forEach((c) => {
+      categorias.forEach(c => {
         const meta = FinTrack.metaForCategoria(c.nome);
         const p = document.createElement('button');
         p.className = 'pill';
@@ -238,18 +304,16 @@
     }
     function setFiltro(id, el) {
       filtroCat = id;
-      document.querySelectorAll('#filtros .pill').forEach((x) => x.classList.remove('active'));
+      document.querySelectorAll('#filtros .pill').forEach(x => x.classList.remove('active'));
       el.classList.add('active');
       render();
     }
 
-    /* ===== Busca ===== */
-    $('#busca').addEventListener('input', (e) => { termo = e.target.value.toLowerCase().trim(); render(); });
+    $('#busca').addEventListener('input', e => { termo = e.target.value.toLowerCase().trim(); render(); });
 
-    /* ===== Render da lista ===== */
     function filtrar() {
-      return gastos.filter((g) => {
-        const okCat = filtroCat === 'todas' || g.categoria_id === filtroCat;
+      return gastos.filter(g => {
+        const okCat   = filtroCat === 'todas' || g.categoria_id === filtroCat;
         const okTermo = !termo || (g.descricao || '').toLowerCase().includes(termo);
         return okCat && okTermo;
       });
@@ -258,27 +322,26 @@
     function render() {
       const lista = filtrar();
       const total = lista.reduce((s, g) => s + (Number(g.valor) || 0), 0);
-      $('#total-val').textContent = FinTrack.formatBRL(total);
+      $('#total-val').textContent  = FinTrack.formatBRL(total);
       $('#total-count').textContent = lista.length;
 
       const slot = $('#lista-slot');
       if (!lista.length) {
-        slot.innerHTML = '<div class="empty"><div class="ic"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></div>Nenhum gasto encontrado.<br/>Que tal registrar um novo?</div>';
+        slot.innerHTML = '<div class="empty"><div class="ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></div>Nenhum gasto encontrado.</div>';
         return;
       }
 
-      // Agrupa por data
       const grupos = {};
-      lista.forEach((g) => { (grupos[g.data] = grupos[g.data] || []).push(g); });
+      lista.forEach(g => { (grupos[g.data] = grupos[g.data] || []).push(g); });
 
       let html = '<div class="gasto-list">';
-      Object.keys(grupos).sort((a, b) => b.localeCompare(a)).forEach((data) => {
+      Object.keys(grupos).sort((a, b) => b.localeCompare(a)).forEach(data => {
         html += `<div class="day-head">${FinTrack.formatData(data)}</div>`;
-        grupos[data].forEach((g) => {
+        grupos[data].forEach(g => {
           const meta = catMap[g.categoria_id] || FinTrack.metaForCategoria('');
           html += `
             <div class="card gasto-item">
-              <div class="ic" style="background:${meta.hex}18;border-color:${meta.hex}40;color:${meta.hex};">${FinTrack.iconForCategoria(meta.nome||catMap[g.categoria_id]?.nome||'')}</div>
+              <div class="ic" style="border-color:${meta.hex}22;color:${meta.hex};">${FinTrack.iconForCategoria(meta.nome||catMap[g.categoria_id]?.nome||'')}</div>
               <div class="body">
                 <div class="desc">${escapeHtml(g.descricao)}</div>
                 <div class="sub">${meta.nome || 'Outros'}</div>
@@ -286,10 +349,10 @@
               <div class="amt">${FinTrack.formatBRL(g.valor)}</div>
               <div class="actions">
                 <button class="icon-btn edit" data-id="${g.id}" aria-label="Editar">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
                 </button>
                 <button class="icon-btn del" data-id="${g.id}" aria-label="Excluir">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
                 </button>
               </div>
             </div>`;
@@ -298,48 +361,42 @@
       html += '</div>';
       slot.innerHTML = html;
 
-      slot.querySelectorAll('.icon-btn.edit').forEach((b) => b.onclick = () => openEdit(Number(b.dataset.id)));
-      slot.querySelectorAll('.icon-btn.del').forEach((b) => b.onclick = () => remover(Number(b.dataset.id), b));
+      slot.querySelectorAll('.icon-btn.edit').forEach(b => b.onclick = () => openEdit(Number(b.dataset.id)));
+      slot.querySelectorAll('.icon-btn.del').forEach(b => b.onclick = () => remover(Number(b.dataset.id), b));
     }
 
-    /* ===== Excluir ===== */
     async function remover(id, btn) {
       const item = btn.closest('.gasto-item');
-      item.style.transition = 'opacity .3s, transform .3s';
-      item.style.opacity = '0';
-      item.style.transform = 'translateX(40px)';
+      item.style.transition = 'opacity .25s, transform .25s';
+      item.style.opacity = '0'; item.style.transform = 'translateX(32px)';
       await FinTrack.deleteGasto(id);
-      gastos = gastos.filter((g) => g.id !== id);
-      setTimeout(() => { render(); toast('Gasto excluído'); }, 280);
+      gastos = gastos.filter(g => g.id !== id);
+      setTimeout(() => { render(); toast('Gasto excluído'); }, 240);
     }
 
-    /* ===== Editar (bottom sheet) ===== */
     function openEdit(id) {
-      const g = gastos.find((x) => x.id === id);
+      const g = gastos.find(x => x.id === id);
       if (!g) return;
-      $('#edit-id').value = g.id;
+      $('#edit-id').value    = g.id;
       $('#edit-valor').value = String(g.valor).replace('.', ',');
-      $('#edit-desc').value = g.descricao;
-      $('#edit-data').value = String(g.data).split('T')[0];
-      editSelectedCat = categorias.find((c) => c.id === g.categoria_id) || null;
-
-      // Grid de categorias do sheet
+      $('#edit-desc').value  = g.descricao;
+      $('#edit-data').value  = String(g.data).split('T')[0];
+      editSelectedCat = categorias.find(c => c.id === g.categoria_id) || null;
       const box = $('#edit-cats');
       box.innerHTML = '';
-      categorias.forEach((c) => {
+      categorias.forEach(c => {
         const meta = FinTrack.metaForCategoria(c.nome);
         const cell = document.createElement('button');
         cell.type = 'button';
         cell.className = 'cat-cell' + (editSelectedCat && c.id === editSelectedCat.id ? ' active' : '');
         cell.innerHTML = `<span class="e" style="color:${meta.hex};">${FinTrack.iconForCategoria(c.nome)}</span><span class="n">${c.nome}</span>`;
         cell.onclick = () => {
-          box.querySelectorAll('.cat-cell').forEach((x) => x.classList.remove('active'));
+          box.querySelectorAll('.cat-cell').forEach(x => x.classList.remove('active'));
           cell.classList.add('active');
           editSelectedCat = c;
         };
         box.appendChild(cell);
       });
-
       $('#sheet-overlay').classList.add('show');
       $('#sheet').classList.add('show');
     }
@@ -348,45 +405,35 @@
       $('#sheet').classList.remove('show');
     }
     $('#sheet-overlay').onclick = closeEdit;
-    $('#edit-cancel').onclick = closeEdit;
+    $('#edit-cancel').onclick   = closeEdit;
 
-    $('#form-edit').addEventListener('submit', async (e) => {
+    $('#form-edit').addEventListener('submit', async e => {
       e.preventDefault();
-      const id = Number($('#edit-id').value);
+      const id    = Number($('#edit-id').value);
       const valor = parseFloat(($('#edit-valor').value || '0').replace(',', '.'));
-      const payload = {
-        descricao: $('#edit-desc').value.trim(),
-        valor,
-        data: $('#edit-data').value,
-        categoria_id: editSelectedCat ? editSelectedCat.id : null,
-      };
+      const payload = { descricao: $('#edit-desc').value.trim(), valor, data: $('#edit-data').value, categoria_id: editSelectedCat ? editSelectedCat.id : null };
       const btn = $('#edit-save');
       const old = btn.innerHTML;
-      btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2.5px;"></span>';
+      btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:1.5px;"></span>';
       btn.disabled = true;
-
       await FinTrack.updateGasto(id, payload);
-      const idx = gastos.findIndex((g) => g.id === id);
+      const idx = gastos.findIndex(g => g.id === id);
       if (idx >= 0) gastos[idx] = { ...gastos[idx], ...payload };
-
       btn.innerHTML = old; btn.disabled = false;
-      closeEdit();
-      render();
-      toast('Alterações salvas');
+      closeEdit(); render(); toast('Alterações salvas');
     });
 
-    /* ===== Toast ===== */
     let toastTimer;
     function toast(msg) {
       const t = $('#toast');
-      t.innerHTML = '✓ ' + msg;
+      t.textContent = msg;
       t.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
     }
 
     function escapeHtml(s) {
-      return String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      return String(s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
     }
 
     init();
