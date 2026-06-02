@@ -56,7 +56,10 @@ def criar_tabela():
     )
     conexao.commit()
 
-    # Migrations idempotentes — cada uma é independente
+    # Garante colunas obrigatórias caso a tabela tenha sido criada com schema diferente
+    _migrar("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS nome  VARCHAR(50)  NOT NULL DEFAULT ''")
+    _migrar("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS email VARCHAR(60)  NOT NULL DEFAULT ''")
+    _migrar("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS senha VARCHAR(255) NOT NULL DEFAULT ''")
     _migrar("ALTER TABLE usuarios ALTER COLUMN senha TYPE VARCHAR(255)")
     _migrar("""
         DO $$ BEGIN
