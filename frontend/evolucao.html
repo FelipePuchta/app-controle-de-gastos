@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Evolução — FinTrack</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* ── Topbar com voltar + seletor de ano ── */
+    .topbar-back {
+      display: flex; align-items: center; gap: 0;
+      height: 56px;
+      padding: max(16px, env(safe-area-inset-top) + 8px) 24px 0;
+      border-bottom: 1px solid var(--border);
+      justify-content: space-between;
+    }
+    .btn-back {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.18s var(--ease);
+      padding-bottom: 16px;
+    }
+    .btn-back:hover { color: var(--fg); }
+    .btn-back svg { width: 16px; height: 16px; }
+
+    .year-nav {
+      display: flex; align-items: center; gap: 10px;
+      padding-bottom: 16px;
+    }
+    .year-nav button {
+      width: 28px; height: 28px;
+      display: grid; place-items: center;
+      background: transparent; border: 1px solid var(--border); border-radius: 0;
+      color: var(--muted); transition: all 0.18s var(--ease);
+    }
+    .year-nav button:hover { border-color: var(--border-str); color: var(--fg); }
+    .year-nav button svg { width: 14px; height: 14px; }
+    .year-nav .yr {
+      font-size: 14px; font-weight: 800;
+      letter-spacing: -0.02em; color: var(--fg);
+      min-width: 48px; text-align: center;
+    }
+
+    /* ── Hero anual ── */
+    .anual-hero {
+      padding: 28px 0 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .anual-hero .lbl {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .anual-hero .val {
+      font-size: clamp(44px, 14vw, 64px);
+      font-weight: 800; letter-spacing: -0.05em; line-height: 0.9;
+    }
+    .anual-hero .meta {
+      font-size: 11px; color: var(--muted); margin-top: 12px; letter-spacing: 0.04em;
+    }
+    .anual-hero .meta b { color: rgba(255,255,255,0.65); font-weight: 600; }
+
+    /* ── Stats 3 colunas ── */
+    .stats3 {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .s3 { padding: 18px 0; }
+    .s3:not(:last-child) { border-right: 1px solid var(--border); padding-right: 14px; }
+    .s3:not(:first-child) { padding-left: 14px; }
+    .s3 .cap {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 7px;
+    }
+    .s3 .val {
+      font-size: 20px; font-weight: 800;
+      letter-spacing: -0.04em; line-height: 1;
+    }
+    .s3 .sub { font-size: 10px; color: var(--muted); margin-top: 5px; letter-spacing: 0.04em; }
+
+    /* ── Gráfico anual ── */
+    .chart-anual {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .chart-anual .lbl {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 18px;
+    }
+    .bars-anual {
+      display: flex; align-items: flex-end; gap: 0; height: 140px;
+    }
+    .ba-col {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; height: 100%; justify-content: flex-end;
+    }
+    .ba-track {
+      width: 100%; display: flex; align-items: flex-end; justify-content: center; flex: 1;
+    }
+    .ba-bar {
+      width: 3px; max-width: 3px; border-radius: 0;
+      background: rgba(255,255,255,0.20);
+      height: 0; transition: height 0.8s var(--ease);
+    }
+    .ba-bar.melhor { background: #10B981; }
+    .ba-bar.pior   { background: #EF4444; }
+    .ba-bar.cur    { background: var(--accent); width: 4px; max-width: 4px; }
+    .ba-col .ba-vlabel {
+      font-size: 7px; color: var(--faint); font-weight: 600; letter-spacing: 0.04em;
+    }
+    .ba-col .ba-mlabel {
+      font-size: 7px; color: var(--faint); font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .ba-col.is-cur .ba-mlabel { color: var(--accent); }
+    .ba-col.is-melhor .ba-mlabel { color: #10B981; }
+    .ba-col.is-pior .ba-mlabel { color: #EF4444; }
+
+    /* Legenda do gráfico */
+    .chart-legend {
+      display: flex; gap: 16px; margin-top: 14px;
+    }
+    .cleg {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .cleg-dot { width: 8px; height: 1px; }
+
+    /* ── Tabela mensal ── */
+    .table-section { padding: 24px 0 0; }
+    .table-head {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 4px;
+    }
+    .month-row {
+      display: flex; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+      gap: 12px; transition: opacity 0.2s var(--ease);
+      animation: rise 0.35s var(--ease) both;
+    }
+    .month-row.vazio { opacity: 0.35; }
+    .month-name {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; min-width: 80px;
+      color: var(--muted);
+    }
+    .month-row.is-cur .month-name { color: var(--accent); }
+    .month-row.is-melhor .month-name { color: #10B981; }
+    .month-row.is-pior .month-name { color: #EF4444; }
+    .month-total {
+      font-size: 15px; font-weight: 800; letter-spacing: -0.03em; flex: 1;
+    }
+    .month-vs {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+      min-width: 52px; text-align: right;
+    }
+    .month-vs.up   { color: #EF4444; }
+    .month-vs.down { color: #10B981; }
+    .month-vs.neu  { color: var(--faint); }
+    .month-qtd {
+      font-size: 10px; color: var(--faint); font-weight: 600;
+      letter-spacing: 0.06em; min-width: 44px; text-align: right;
+    }
+
+    /* Badge mês */
+    .month-badge {
+      font-size: 8px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 2px 6px;
+      border-radius: 0;
+    }
+    .month-badge.melhor { border: 1px solid #10B981; color: #10B981; }
+    .month-badge.pior   { border: 1px solid #EF4444; color: #EF4444; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <!-- Topbar -->
+    <header class="topbar-back">
+      <a href="dashboard.html" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Dashboard
+      </a>
+      <div class="year-nav">
+        <button id="prev-yr" aria-label="Ano anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <span class="yr" id="ano-label">—</span>
+        <button id="next-yr" aria-label="Próximo ano">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="screen" style="padding-top:24px;">
+      <div id="content">
+        <div class="loading-wrap"><div class="spinner"></div>Carregando</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="_shared.js"></script>
+  <script>
+    const $ = s => document.querySelector(s);
+    let gastos = [];
+    const hoje = new Date();
+    let curAno = hoje.getFullYear();
+
+    async function init() {
+      gastos = await FinTrack.getGastos();
+      render();
+    }
+
+    $('#prev-yr').onclick = () => { curAno--; render(); };
+    $('#next-yr').onclick = () => { curAno++; render(); };
+
+    function gastosDoMes(mes, ano) {
+      return gastos.filter(g => {
+        const { mes: m, ano: a } = FinTrack.mesAnoDe(g.data);
+        return m === mes && a === ano;
+      });
+    }
+
+    function render() {
+      $('#ano-label').textContent = curAno;
+
+      // Dados por mês (12 meses do ano)
+      const meses = FinTrack.MESES.map((nome, i) => {
+        const lista = gastosDoMes(i + 1, curAno);
+        const total = lista.reduce((s, g) => s + (Number(g.valor) || 0), 0);
+        return { mes: i + 1, nome, total, qtd: lista.length };
+      });
+
+      const comGastos = meses.filter(m => m.total > 0);
+      const totalAno  = meses.reduce((s, m) => s + m.total, 0);
+      const totalQtd  = meses.reduce((s, m) => s + m.qtd,   0);
+      const mediaAno  = comGastos.length ? totalAno / comGastos.length : 0;
+
+      const mesesAtivos = comGastos;
+      const melhor = mesesAtivos.reduce((mn, m) => (!mn || m.total < mn.total ? m : mn), null);
+      const pior   = mesesAtivos.reduce((mx, m) => (!mx || m.total > mx.total ? m : mx), null);
+
+      const mesAtual = hoje.getMonth() + 1;
+      const isCurAno = curAno === hoje.getFullYear();
+
+      const maxTotal = Math.max(...meses.map(m => m.total), 1);
+
+      // HTML
+      let html = `
+        <!-- Hero anual -->
+        <div class="anual-hero rise">
+          <div class="lbl">Total ${curAno}</div>
+          <div class="val">${FinTrack.formatBRL(totalAno)}</div>
+          <div class="meta"><b>${totalQtd}</b> gastos · média mensal de <b>${FinTrack.formatBRL(mediaAno)}</b></div>
+        </div>
+
+        <!-- Stats 3 colunas -->
+        <div class="stats3 rise" style="animation-delay:.05s;">
+          <div class="s3">
+            <div class="cap">Menor mês</div>
+            <div class="val">${melhor ? FinTrack.MESES_LONGO[melhor.mes-1].slice(0,3) : '—'}</div>
+            <div class="sub">${melhor ? FinTrack.formatBRL(melhor.total) : '—'}</div>
+          </div>
+          <div class="s3">
+            <div class="cap">Maior mês</div>
+            <div class="val">${pior ? FinTrack.MESES_LONGO[pior.mes-1].slice(0,3) : '—'}</div>
+            <div class="sub">${pior ? FinTrack.formatBRL(pior.total) : '—'}</div>
+          </div>
+          <div class="s3">
+            <div class="cap">Meses ativos</div>
+            <div class="val">${comGastos.length}</div>
+            <div class="sub">de 12 meses</div>
+          </div>
+        </div>
+
+        <!-- Gráfico 12 barras -->
+        <div class="chart-anual rise" style="animation-delay:.10s;">
+          <div class="lbl">Todos os meses</div>
+          <div class="bars-anual" id="bars-anual">`;
+
+      meses.forEach(m => {
+        const h       = Math.round((m.total / maxTotal) * 100);
+        const isCur   = isCurAno && m.mes === mesAtual;
+        const isMelh  = melhor && m.mes === melhor.mes && m.total > 0;
+        const isPior  = pior   && m.mes === pior.mes   && m.total > 0;
+        const cls     = [isCur ? 'is-cur' : '', isMelh ? 'is-melhor' : '', isPior ? 'is-pior' : ''].filter(Boolean).join(' ');
+        const barCls  = [isCur ? 'cur' : '', isMelh ? 'melhor' : '', isPior ? 'pior' : ''].filter(Boolean).join(' ');
+        const vlabel  = m.total >= 1000 ? (m.total/1000).toFixed(1)+'k' : m.total ? Math.round(m.total) : '';
+        html += `
+          <div class="ba-col ${cls}">
+            <span class="ba-vlabel">${vlabel}</span>
+            <div class="ba-track"><div class="ba-bar ${barCls}" data-h="${h}"></div></div>
+            <span class="ba-mlabel">${m.nome}</span>
+          </div>`;
+      });
+
+      html += `</div>
+          <div class="chart-legend">
+            <div class="cleg"><div class="cleg-dot" style="background:#10B981;height:1px;"></div>Menor</div>
+            <div class="cleg"><div class="cleg-dot" style="background:#EF4444;height:1px;"></div>Maior</div>
+            <div class="cleg"><div class="cleg-dot" style="background:var(--accent);height:1px;"></div>Atual</div>
+          </div>
+        </div>
+
+        <!-- Tabela mensal -->
+        <div class="table-section rise" style="animation-delay:.15s;">
+          <div class="table-head">Detalhamento mensal</div>`;
+
+      meses.forEach((m, idx) => {
+        const anterior = idx > 0 ? meses[idx - 1].total : null;
+        const isCur    = isCurAno && m.mes === mesAtual;
+        const isMelh   = melhor && m.mes === melhor.mes && m.total > 0;
+        const isPior   = pior   && m.mes === pior.mes   && m.total > 0;
+        const rowCls   = [m.total === 0 ? 'vazio' : '', isCur ? 'is-cur' : '', isMelh ? 'is-melhor' : '', isPior ? 'is-pior' : ''].filter(Boolean).join(' ');
+
+        let vs = '', vsCls = 'neu';
+        if (anterior !== null && anterior > 0 && m.total > 0) {
+          const pct = Math.round(((m.total - anterior) / anterior) * 100);
+          vs    = (pct > 0 ? '+' : '') + pct + '%';
+          vsCls = pct > 0 ? 'up' : 'down';
+        } else if (m.total === 0) {
+          vs = '—';
+        }
+
+        const badge = isMelh
+          ? '<span class="month-badge melhor">min</span>'
+          : isPior ? '<span class="month-badge pior">max</span>' : '';
+
+        html += `
+          <div class="month-row ${rowCls}" style="animation-delay:${0.02 * idx}s;">
+            <div class="month-name">${FinTrack.MESES_LONGO[m.mes-1]}</div>
+            <div class="month-total">${m.total > 0 ? FinTrack.formatBRL(m.total) : '—'}</div>
+            ${badge}
+            <div class="month-vs ${vsCls}">${vs}</div>
+            <div class="month-qtd">${m.qtd > 0 ? m.qtd + ' gastos' : ''}</div>
+          </div>`;
+      });
+
+      html += '</div>';
+
+      $('#content').innerHTML = html;
+
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.querySelectorAll('.ba-bar').forEach(b => { b.style.height = b.dataset.h + '%'; });
+        }, 80);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

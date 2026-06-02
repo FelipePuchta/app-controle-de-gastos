@@ -201,6 +201,22 @@
     .bar-col.active .mlabel { color: var(--accent); }
     .bar-col.active .vlabel { color: rgba(255,255,255,0.55); }
 
+    /* ── Seções clicáveis ── */
+    .section-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: color 0.18s var(--ease);
+    }
+    .section-link:hover { color: var(--fg); }
+    .section-link .arr-sm {
+      font-size: 12px;
+      opacity: 0.45;
+      transition: opacity 0.18s var(--ease), transform 0.18s var(--ease);
+    }
+    .section-link:hover .arr-sm { opacity: 1; transform: translateX(3px); }
+
     /* ── Categorias ── */
     .cat-section {
       padding: 24px 0 0;
@@ -420,7 +436,7 @@
         <!-- Gráfico de barras -->
         <div class="chart-section rise" style="animation-delay:.12s;">
           <div class="chart-head">
-            <span class="t">Evolução</span>
+            <a href="evolucao.html" class="t section-link">Evolução <span class="arr-sm">→</span></a>
             <div class="period-tabs">
               <button class="period-tab ${evolMeses===3?'active':''}" data-n="3">3M</button>
               <button class="period-tab ${evolMeses===6?'active':''}" data-n="6">6M</button>
@@ -442,7 +458,7 @@
 
         <!-- Categorias -->
         <div class="cat-section rise" style="animation-delay:.18s;">
-          <div class="cat-section-head">Por categoria</div>`;
+          <a href="por-categoria.html?mes=${curMes}&ano=${curAno}" class="cat-section-head section-link">Por categoria <span class="arr-sm">→</span></a>`;
 
       if (!cats.length) {
         html += '<div class="empty" style="padding:24px 0;color:var(--faint);font-size:12px;letter-spacing:.08em;">Nenhum gasto neste mês.</div>';

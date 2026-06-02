@@ -16,13 +16,13 @@
   --border-mid: rgba(255,255,255,0.16);
   --border-str: rgba(255,255,255,0.32);
 
-  --cat-alimentacao: #E17055;
-  --cat-transporte:  #00CEC9;
-  --cat-lazer:       #FDCB6E;
-  --cat-moradia:     #A29BFE;
-  --cat-saude:       #00B894;
-  --cat-educacao:    #FD79A8;
-  --cat-outros:      #74B9FF;
+  --cat-alimentacao: #EF4444;
+  --cat-transporte:  #3B82F6;
+  --cat-lazer:       #F97316;
+  --cat-moradia:     #8B5CF6;
+  --cat-saude:       #06B6D4;
+  --cat-educacao:    #EC4899;
+  --cat-outros:      #6B7280;
 
   --font:    'Sora', system-ui, sans-serif;
   --app-max: 480px;

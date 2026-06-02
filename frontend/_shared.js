@@ -33,13 +33,13 @@
 
   /* ---------- Metadados das categorias ---------- */
   const CAT_META = {
-    alimentacao: { cor: 'var(--cat-alimentacao)', hex: '#E17055' },
-    transporte:  { cor: 'var(--cat-transporte)',  hex: '#00CEC9' },
-    lazer:       { cor: 'var(--cat-lazer)',       hex: '#FDCB6E' },
-    moradia:     { cor: 'var(--cat-moradia)',     hex: '#6C5CE7' },
-    saude:       { cor: 'var(--cat-saude)',       hex: '#00B894' },
-    educacao:    { cor: 'var(--cat-educacao)',    hex: '#E84393' },
-    outros:      { cor: 'var(--cat-outros)',      hex: '#74B9FF' },
+    alimentacao: { cor: 'var(--cat-alimentacao)', hex: '#EF4444' },
+    transporte:  { cor: 'var(--cat-transporte)',  hex: '#3B82F6' },
+    lazer:       { cor: 'var(--cat-lazer)',       hex: '#F97316' },
+    moradia:     { cor: 'var(--cat-moradia)',     hex: '#8B5CF6' },
+    saude:       { cor: 'var(--cat-saude)',       hex: '#06B6D4' },
+    educacao:    { cor: 'var(--cat-educacao)',    hex: '#EC4899' },
+    outros:      { cor: 'var(--cat-outros)',      hex: '#6B7280' },
   };
 
   const CAT_DEFAULT = [
