@@ -173,6 +173,7 @@
         <span>Entrar</span>
         <span class="arr">→</span>
       </button>
+      <p id="erro" style="display:none;margin-top:14px;font-size:11px;color:#ff4d4d;letter-spacing:.04em;"></p>
     </div>
 
     <div class="form-footer">
@@ -182,13 +183,41 @@
   </div>
 
   <script>
-    function entrar() {
+    const API_BASE = 'https://harmonious-unity-production-e26f.up.railway.app';
+
+    function setErro(msg) {
+      const el = document.getElementById('erro');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    async function entrar() {
       const email = document.getElementById('email').value.trim();
       const senha = document.getElementById('senha').value;
-      if (!email || !senha) return;
-      // TODO: autenticar com o backend quando a tabela de usuários estiver pronta
-      window.location.href = 'dashboard.html';
+      if (!email || !senha) { setErro('Preencha todos os campos.'); return; }
+
+      const btn = document.getElementById('btn-entrar');
+      btn.disabled = true;
+      setErro('');
+
+      try {
+        const res = await fetch(API_BASE + '/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha }),
+        });
+        const data = await res.json();
+        if (!res.ok) { setErro(data.detail || 'E-mail ou senha incorretos.'); return; }
+        localStorage.setItem('ft-token', data.access_token);
+        localStorage.setItem('ft-user', JSON.stringify({ nome: data.nome }));
+        window.location.href = 'dashboard.html';
+      } catch {
+        setErro('Não foi possível conectar. Tente novamente.');
+      } finally {
+        btn.disabled = false;
+      }
     }
+
     document.getElementById('btn-entrar').onclick = entrar;
     document.getElementById('senha').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') entrar();

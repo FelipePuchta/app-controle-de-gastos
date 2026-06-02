@@ -177,6 +177,7 @@
         <span>Criar conta</span>
         <span class="arr">→</span>
       </button>
+      <p id="erro" style="display:none;margin-top:14px;font-size:11px;color:#ff4d4d;letter-spacing:.04em;"></p>
     </div>
 
     <div class="form-footer">
@@ -186,14 +187,43 @@
   </div>
 
   <script>
-    function cadastrar() {
+    const API_BASE = 'https://harmonious-unity-production-e26f.up.railway.app';
+
+    function setErro(msg) {
+      const el = document.getElementById('erro');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    async function cadastrar() {
       const nome  = document.getElementById('nome').value.trim();
       const email = document.getElementById('email').value.trim();
       const senha = document.getElementById('senha').value;
-      if (!nome || !email || !senha) return;
-      // TODO: criar usuário no backend quando a tabela de usuários estiver pronta
-      window.location.href = 'dashboard.html';
+      if (!nome || !email || !senha) { setErro('Preencha todos os campos.'); return; }
+      if (senha.length < 6) { setErro('A senha deve ter pelo menos 6 caracteres.'); return; }
+
+      const btn = document.getElementById('btn-cadastrar');
+      btn.disabled = true;
+      setErro('');
+
+      try {
+        const res = await fetch(API_BASE + '/auth/cadastrar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, email, senha }),
+        });
+        const data = await res.json();
+        if (!res.ok) { setErro(data.detail || 'Não foi possível criar a conta.'); return; }
+        localStorage.setItem('ft-token', data.access_token);
+        localStorage.setItem('ft-user', JSON.stringify({ nome: data.nome }));
+        window.location.href = 'dashboard.html';
+      } catch {
+        setErro('Não foi possível conectar. Tente novamente.');
+      } finally {
+        btn.disabled = false;
+      }
     }
+
     document.getElementById('btn-cadastrar').onclick = cadastrar;
     document.getElementById('senha').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') cadastrar();

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -350,6 +350,7 @@
 
   <script src="_shared.js"></script>
   <script>
+    FinTrack.requireAuth();
     const $ = (s) => document.querySelector(s);
     let gastos = [], categorias = [], catMap = {};
     const hoje = new Date();

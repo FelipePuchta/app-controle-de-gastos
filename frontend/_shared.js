@@ -73,19 +73,59 @@
     ];
   }
 
+  /* ---------- Auth ---------- */
+  const auth = {
+    getToken: () => localStorage.getItem('ft-token'),
+    getUser:  () => { try { return JSON.parse(localStorage.getItem('ft-user')); } catch { return null; } },
+    setSession(token, nome) {
+      localStorage.setItem('ft-token', token);
+      localStorage.setItem('ft-user', JSON.stringify({ nome }));
+    },
+    logout() {
+      localStorage.removeItem('ft-token');
+      localStorage.removeItem('ft-user');
+      window.location.href = 'login.html';
+    },
+  };
+
+  function requireAuth() {
+    if (!localStorage.getItem('ft-token')) {
+      window.location.href = 'login.html';
+      return;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const header = document.querySelector('.l-header');
+      if (!header) return;
+      const btn = document.createElement('button');
+      btn.textContent = 'SAIR';
+      btn.style.cssText = 'background:none;border:none;color:rgba(255,255,255,0.28);font:600 10px/1 Sora,sans-serif;letter-spacing:.14em;cursor:pointer;padding:0;';
+      btn.onmouseenter = () => { btn.style.color = 'rgba(255,255,255,0.65)'; };
+      btn.onmouseleave = () => { btn.style.color = 'rgba(255,255,255,0.28)'; };
+      btn.onclick = auth.logout;
+      header.appendChild(btn);
+    });
+  }
+
   let usingDemo = false;
   const isDemo = () => usingDemo;
 
   async function api(path, options = {}) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 7000);
+    const token = auth.getToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
     try {
       const res = await fetch(API_BASE + path, {
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         signal: ctrl.signal,
         ...options,
       });
       clearTimeout(t);
+      if (res.status === 401) {
+        auth.logout();
+        throw new Error('Unauthorized');
+      }
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const txt = await res.text();
       return txt ? JSON.parse(txt) : null;
@@ -190,6 +230,6 @@
     getGastos, addGasto, updateGasto, deleteGasto, getCategorias,
     metaForCategoria, buildCatMap, normKey, iconForCategoria,
     formatBRL, formatData, mesAnoDe,
-    isDemo,
+    isDemo, auth, requireAuth,
   };
 })();

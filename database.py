@@ -1,9 +1,7 @@
-#IMPORTAÇÕES DAS BIBLIOTECAS
 import psycopg2
 from dotenv import load_dotenv
 import os
 
-#CONEXÃO COM O BANCO DE DADOS
 load_dotenv()
 
 database_url = os.getenv("DATABASE_URL")
@@ -19,66 +17,162 @@ else:
         sslmode="require",
     )
 
-cursor=conexao.cursor()
+cursor = conexao.cursor()
 
-#CRIAÇÃO DAS TABELAS DO BANCO DE DADOS
 
 def criar_tabela():
-    cursor.execute("CREATE TABLE IF NOT EXISTS categorias(id SERIAL PRIMARY KEY, nome VARCHAR(30) NOT NULL)")
-
-    cursor.execute("CREATE TABLE IF NOT EXISTS gastos(id SERIAL PRIMARY KEY, descricao VARCHAR(100) NOT NULL, " \
-    "valor REAL NOT NULL, data DATE, categoria_id INTEGER REFERENCES categorias(id))")
+    cursor.execute(
+        "CREATE TABLE IF NOT EXISTS categorias("
+        "id SERIAL PRIMARY KEY, nome VARCHAR(30) NOT NULL)"
+    )
     conexao.commit()
 
-#CRUD GASTOS
-
-def adicionar_gasto(descricao,valor,data,categoria_id):
-    cursor.execute("INSERT INTO gastos( descricao, valor, data, categoria_id)" \
-    " VALUES(%s, %s, %s, %s)",(descricao, valor, data, categoria_id,))
+    cursor.execute(
+        "CREATE TABLE IF NOT EXISTS usuarios ("
+        "id SERIAL PRIMARY KEY, "
+        "nome VARCHAR(50) NOT NULL, "
+        "email VARCHAR(60) NOT NULL, "
+        "senha VARCHAR(255) NOT NULL)"
+    )
     conexao.commit()
 
-def visualizar_gasto():
-    cursor.execute("SELECT * FROM gastos")
-    resultados=cursor.fetchall()
-    return resultados
-
-def deletar_gasto(id):
-    cursor.execute("DELETE FROM gastos" \
-    " WHERE id = %s",(id,))
+    cursor.execute(
+        "CREATE TABLE IF NOT EXISTS gastos("
+        "id SERIAL PRIMARY KEY, "
+        "descricao VARCHAR(100) NOT NULL, "
+        "valor REAL NOT NULL, "
+        "data DATE, "
+        "categoria_id INTEGER REFERENCES categorias(id), "
+        "usuario_id INTEGER REFERENCES usuarios(id))"
+    )
     conexao.commit()
 
-def atualizar_gasto(novo_valor, nova_data, id):
-    cursor.execute("UPDATE gastos" \
-    " SET valor = %s," \
-    "     data = %s " \
-    " WHERE id = %s ", (novo_valor, nova_data, id))
+    # Migrations idempotentes para tabelas já existentes
+    cursor.execute("ALTER TABLE usuarios ALTER COLUMN senha TYPE VARCHAR(255)")
     conexao.commit()
 
-#CRUD CATEGORIAS
+    cursor.execute("""
+        DO $$ BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM pg_constraint WHERE conname = 'usuarios_email_unique'
+            ) THEN
+                ALTER TABLE usuarios ADD CONSTRAINT usuarios_email_unique UNIQUE (email);
+            END IF;
+        END $$;
+    """)
+    conexao.commit()
+
+    cursor.execute("""
+        DO $$ BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'gastos' AND column_name = 'usuario_id'
+            ) THEN
+                ALTER TABLE gastos ADD COLUMN usuario_id INTEGER REFERENCES usuarios(id);
+            END IF;
+        END $$;
+    """)
+    conexao.commit()
+
+
+# USUARIOS
+
+def registrar_usuario(nome, email, senha_hash):
+    cursor.execute(
+        "INSERT INTO usuarios(nome, email, senha) VALUES(%s, %s, %s) RETURNING id",
+        (nome, email, senha_hash)
+    )
+    conexao.commit()
+    return cursor.fetchone()[0]
+
+
+def buscar_usuario_por_email(email):
+    cursor.execute(
+        "SELECT id, nome, email, senha FROM usuarios WHERE email = %s",
+        (email,)
+    )
+    return cursor.fetchone()
+
+
+# GASTOS
+
+def adicionar_gasto(descricao, valor, data, categoria_id, usuario_id):
+    cursor.execute(
+        "INSERT INTO gastos(descricao, valor, data, categoria_id, usuario_id)"
+        " VALUES(%s, %s, %s, %s, %s)",
+        (descricao, valor, data, categoria_id, usuario_id)
+    )
+    conexao.commit()
+
+
+def visualizar_gasto(usuario_id):
+    cursor.execute(
+        "SELECT id, descricao, valor, data, categoria_id FROM gastos WHERE usuario_id = %s",
+        (usuario_id,)
+    )
+    return cursor.fetchall()
+
+
+def deletar_gasto(id, usuario_id):
+    cursor.execute(
+        "DELETE FROM gastos WHERE id = %s AND usuario_id = %s",
+        (id, usuario_id)
+    )
+    conexao.commit()
+
+
+def atualizar_gasto(novo_valor, nova_data, id, usuario_id):
+    cursor.execute(
+        "UPDATE gastos SET valor = %s, data = %s WHERE id = %s AND usuario_id = %s",
+        (novo_valor, nova_data, id, usuario_id)
+    )
+    conexao.commit()
+
+
+# CATEGORIAS
 
 def visualizar_categorias():
     cursor.execute("SELECT * FROM categorias")
-    resultados=cursor.fetchall()
-    return resultados
+    return cursor.fetchall()
 
-def visualizar_gastos_por_categoria(categoria_id):
-    cursor.execute("SELECT * FROM gastos WHERE categoria_id = %s",(categoria_id,))
-    resultados=cursor.fetchall()
-    return resultados
 
-def visualizar_gastos_por_mes(mes,ano):
-    cursor.execute("SELECT * FROM gastos WHERE EXTRACT(MONTH FROM data) = %s" \
-    " AND EXTRACT(YEAR FROM data) = %s",(mes,ano,))
-    resultados=cursor.fetchall()
-    return resultados
+def visualizar_gastos_por_categoria(categoria_id, usuario_id):
+    cursor.execute(
+        "SELECT id, descricao, valor, data, categoria_id FROM gastos"
+        " WHERE categoria_id = %s AND usuario_id = %s",
+        (categoria_id, usuario_id)
+    )
+    return cursor.fetchall()
 
-def total_por_categoria():
-    cursor.execute("SELECT categorias.nome, SUM(gastos.valor) FROM gastos JOIN categorias ON gastos.categoria_id = categorias.id GROUP BY categorias.nome")
-    resultados=cursor.fetchall()
-    return resultados
 
-def total_por_mes(mes,ano):
-    cursor.execute("SELECT SUM(valor) FROM gastos WHERE EXTRACT(MONTH FROM data) = %s" \
-    " AND EXTRACT(YEAR FROM data) = %s",(mes,ano,))
-    resultado=cursor.fetchone()
-    return resultado
+def visualizar_gastos_por_mes(mes, ano, usuario_id):
+    cursor.execute(
+        "SELECT id, descricao, valor, data, categoria_id FROM gastos"
+        " WHERE EXTRACT(MONTH FROM data) = %s"
+        " AND EXTRACT(YEAR FROM data) = %s"
+        " AND usuario_id = %s",
+        (mes, ano, usuario_id)
+    )
+    return cursor.fetchall()
+
+
+def total_por_categoria(usuario_id):
+    cursor.execute(
+        "SELECT categorias.nome, SUM(gastos.valor) FROM gastos"
+        " JOIN categorias ON gastos.categoria_id = categorias.id"
+        " WHERE gastos.usuario_id = %s"
+        " GROUP BY categorias.nome",
+        (usuario_id,)
+    )
+    return cursor.fetchall()
+
+
+def total_por_mes(mes, ano, usuario_id):
+    cursor.execute(
+        "SELECT SUM(valor) FROM gastos"
+        " WHERE EXTRACT(MONTH FROM data) = %s"
+        " AND EXTRACT(YEAR FROM data) = %s"
+        " AND usuario_id = %s",
+        (mes, ano, usuario_id)
+    )
+    return cursor.fetchone()
