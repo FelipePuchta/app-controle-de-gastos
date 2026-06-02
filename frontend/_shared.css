@@ -288,6 +288,9 @@ textarea.input {
   background: var(--accent);
 }
 
+/* Botão adicionar — sem traço no topo (ícone flutua acima da barra) */
+.nav-item.nav-add.active::before { display: none; }
+
 /* Botão adicionar — quadrado amarelo */
 .nav-item.nav-add svg {
   width: 38px; height: 38px;

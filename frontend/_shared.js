@@ -136,13 +136,24 @@
   }
 
   async function getGastos() {
+    const CACHE_KEY = 'ft-gastos-cache';
     const estaLogado = !!auth.getToken();
     try {
       const data = await api('/gastos');
       usingDemo = false;
-      return Array.isArray(data) ? data : (data?.gastos || []);
+      const result = Array.isArray(data) ? data : (data?.gastos || []);
+      if (estaLogado && result.length > 0) {
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(result)); } catch {}
+      }
+      return result;
     } catch (e) {
-      if (estaLogado) return [];
+      if (estaLogado) {
+        try {
+          const cached = localStorage.getItem(CACHE_KEY);
+          if (cached) return JSON.parse(cached);
+        } catch {}
+        return [];
+      }
       usingDemo = true;
       return demoGastos();
     }
