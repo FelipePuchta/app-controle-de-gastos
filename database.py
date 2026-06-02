@@ -20,15 +20,6 @@ else:
 cursor = conexao.cursor()
 
 
-def _migrar(sql):
-    try:
-        cursor.execute(sql)
-        conexao.commit()
-    except Exception as e:
-        conexao.rollback()
-        print(f"Migration skipped: {e}")
-
-
 def criar_tabela():
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS categorias("
@@ -40,7 +31,7 @@ def criar_tabela():
         "CREATE TABLE IF NOT EXISTS usuarios ("
         "id SERIAL PRIMARY KEY, "
         "nome VARCHAR(50) NOT NULL, "
-        "email VARCHAR(60) NOT NULL, "
+        "email VARCHAR(60) UNIQUE NOT NULL, "
         "senha VARCHAR(255) NOT NULL)"
     )
     conexao.commit()
@@ -55,31 +46,6 @@ def criar_tabela():
         "usuario_id INTEGER REFERENCES usuarios(id))"
     )
     conexao.commit()
-
-    # Garante colunas obrigatórias caso a tabela tenha sido criada com schema diferente
-    _migrar("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS nome  VARCHAR(50)  NOT NULL DEFAULT ''")
-    _migrar("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS email VARCHAR(60)  NOT NULL DEFAULT ''")
-    _migrar("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS senha VARCHAR(255) NOT NULL DEFAULT ''")
-    _migrar("ALTER TABLE usuarios ALTER COLUMN senha TYPE VARCHAR(255)")
-    _migrar("""
-        DO $$ BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM pg_constraint WHERE conname = 'usuarios_email_unique'
-            ) THEN
-                ALTER TABLE usuarios ADD CONSTRAINT usuarios_email_unique UNIQUE (email);
-            END IF;
-        END $$;
-    """)
-    _migrar("""
-        DO $$ BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_name = 'gastos' AND column_name = 'usuario_id'
-            ) THEN
-                ALTER TABLE gastos ADD COLUMN usuario_id INTEGER REFERENCES usuarios(id);
-            END IF;
-        END $$;
-    """)
 
 
 # USUARIOS
