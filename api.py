@@ -12,8 +12,10 @@ import jwt
 
 from database import (
     criar_tabela,
-    registrar_usuario, buscar_usuario_por_email,
+    registrar_usuario, buscar_usuario_por_email, buscar_usuario_por_id,
+    atualizar_perfil, atualizar_senha_usuario, deletar_usuario,
     adicionar_gasto, visualizar_gasto, deletar_gasto, atualizar_gasto,
+    deletar_todos_gastos_usuario,
     visualizar_categorias, visualizar_gastos_por_categoria,
     visualizar_gastos_por_mes, total_por_categoria, total_por_mes,
 )
@@ -76,6 +78,20 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer)
 
 # --- Models ---
 
+class PerfilUpdate(BaseModel):
+    nome: str
+    email: str
+
+
+class SenhaUpdate(BaseModel):
+    senha_atual: str
+    nova_senha: str
+
+
+class ContaDelete(BaseModel):
+    senha: str
+
+
 class UsuarioCreate(BaseModel):
     nome: str
     email: str
@@ -128,6 +144,49 @@ def login(dados: LoginData):
     if not usuario or not _verificar(dados.senha, usuario[3]):
         raise HTTPException(status_code=401, detail="E-mail ou senha incorretos")
     return {"access_token": _criar_token(usuario[0], usuario[2]), "token_type": "bearer", "nome": usuario[1]}
+
+
+@app.get("/auth/me")
+def me(uid: int = Depends(get_current_user)):
+    u = buscar_usuario_por_id(uid)
+    if not u:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    return {"id": u[0], "nome": u[1], "email": u[2]}
+
+
+@app.put("/auth/perfil")
+def update_perfil(dados: PerfilUpdate, uid: int = Depends(get_current_user)):
+    existing = buscar_usuario_por_email(dados.email)
+    if existing and existing[0] != uid:
+        raise HTTPException(status_code=409, detail="E-mail já em uso por outra conta")
+    atualizar_perfil(uid, dados.nome, dados.email)
+    return {"mensagem": "Perfil atualizado"}
+
+
+@app.put("/auth/senha")
+def update_senha(dados: SenhaUpdate, uid: int = Depends(get_current_user)):
+    u = buscar_usuario_por_id(uid)
+    if not u or not _verificar(dados.senha_atual, u[3]):
+        raise HTTPException(status_code=401, detail="Senha atual incorreta")
+    if len(dados.nova_senha) < 6:
+        raise HTTPException(status_code=422, detail="A nova senha deve ter pelo menos 6 caracteres")
+    atualizar_senha_usuario(uid, _hash(dados.nova_senha))
+    return {"mensagem": "Senha alterada com sucesso"}
+
+
+@app.delete("/auth/conta")
+def delete_conta(dados: ContaDelete, uid: int = Depends(get_current_user)):
+    u = buscar_usuario_por_id(uid)
+    if not u or not _verificar(dados.senha, u[3]):
+        raise HTTPException(status_code=401, detail="Senha incorreta")
+    deletar_usuario(uid)
+    return {"mensagem": "Conta excluída"}
+
+
+@app.delete("/gastos/todos")
+def deletar_gastos_todos(uid: int = Depends(get_current_user)):
+    deletar_todos_gastos_usuario(uid)
+    return {"mensagem": "Todos os gastos foram excluídos"}
 
 
 # --- Gastos ---

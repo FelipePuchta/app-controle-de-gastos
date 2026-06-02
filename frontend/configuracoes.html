@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Configurações — FinTrack</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    .cfg-section {
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cfg-section:last-child { border-bottom: none; }
+
+    .cfg-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .cfg-msg {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+      min-height: 16px;
+    }
+    .cfg-msg.ok  { color: #4ade80; }
+    .cfg-msg.err { color: #f87171; }
+
+    .btn-cfg {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 48px;
+      padding: 0 18px;
+      font-family: 'Sora', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.12s;
+      margin-top: 12px;
+    }
+    .btn-cfg:first-of-type { margin-top: 4px; }
+    .btn-cfg:active { transform: scale(0.98); }
+
+    .btn-cfg.primary { background: var(--accent); color: #000; }
+    .btn-cfg.primary:hover { filter: brightness(1.08); }
+
+    .btn-cfg.ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border-str);
+    }
+    .btn-cfg.ghost:hover { color: var(--fg); border-color: var(--fg); }
+
+    .btn-cfg.danger {
+      background: transparent;
+      color: #f87171;
+      border: 1px solid rgba(248,113,113,0.3);
+    }
+    .btn-cfg.danger:hover { border-color: #f87171; }
+
+    .btn-cfg .arr { font-size: 16px; font-weight: 300; letter-spacing: 0; }
+
+    /* Modal de confirmação */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      width: 100%; max-width: var(--app-max);
+      background: #0a0a0a;
+      border-top: 1px solid var(--border-str);
+      padding: 32px 24px max(32px, env(safe-area-inset-bottom) + 24px);
+      animation: rise 0.3s var(--ease) both;
+    }
+    .modal-title {
+      font-size: 13px; font-weight: 700;
+      letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .modal-sub {
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 0.03em; margin-bottom: 24px; line-height: 1.6;
+    }
+    .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Conta</div>
+        <h1>Configurações</h1>
+      </div>
+    </header>
+
+    <div class="screen">
+
+      <!-- Perfil -->
+      <section class="cfg-section">
+        <div class="cfg-label">Perfil</div>
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input id="nome" type="text" class="input" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" type="email" class="input" autocomplete="email" />
+        </div>
+        <button class="btn-cfg primary" id="btn-perfil">
+          <span>Salvar perfil</span><span class="arr">→</span>
+        </button>
+        <p id="msg-perfil" class="cfg-msg"></p>
+      </section>
+
+      <!-- Senha -->
+      <section class="cfg-section">
+        <div class="cfg-label">Segurança</div>
+        <div class="field">
+          <label for="senha-atual">Senha atual</label>
+          <input id="senha-atual" type="password" class="input" autocomplete="current-password" />
+        </div>
+        <div class="field">
+          <label for="nova-senha">Nova senha</label>
+          <input id="nova-senha" type="password" class="input" autocomplete="new-password" />
+        </div>
+        <button class="btn-cfg primary" id="btn-senha">
+          <span>Alterar senha</span><span class="arr">→</span>
+        </button>
+        <p id="msg-senha" class="cfg-msg"></p>
+      </section>
+
+      <!-- Dados -->
+      <section class="cfg-section">
+        <div class="cfg-label">Dados</div>
+        <button class="btn-cfg ghost" id="btn-exportar">
+          <span>Exportar gastos (CSV)</span><span class="arr">↓</span>
+        </button>
+        <button class="btn-cfg danger" id="btn-limpar">
+          <span>Apagar todos os gastos</span><span class="arr">×</span>
+        </button>
+      </section>
+
+      <!-- Conta -->
+      <section class="cfg-section">
+        <div class="cfg-label">Conta</div>
+        <button class="btn-cfg ghost" id="btn-sair">
+          <span>Sair da conta</span><span class="arr">←</span>
+        </button>
+        <button class="btn-cfg danger" id="btn-excluir-conta">
+          <span>Excluir conta permanentemente</span><span class="arr">×</span>
+        </button>
+      </section>
+
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="adicionar.html" class="nav-item nav-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar
+      </a>
+      <a href="gastos.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        Gastos
+      </a>
+      <a href="configuracoes.html" class="nav-item active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Config
+      </a>
+    </nav>
+  </main>
+
+  <!-- Modal: apagar todos os gastos -->
+  <div class="modal-overlay" id="modal-limpar">
+    <div class="modal-box">
+      <div class="modal-title">Apagar todos os gastos?</div>
+      <div class="modal-sub">Todos os seus registros de gastos serão excluídos permanentemente. Esta ação não pode ser desfeita.</div>
+      <div class="modal-actions">
+        <button class="btn-cfg danger" id="btn-limpar-confirmar">
+          <span>Sim, apagar tudo</span><span class="arr">×</span>
+        </button>
+        <button class="btn-cfg ghost" id="btn-limpar-cancelar">
+          <span>Cancelar</span><span class="arr">←</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: excluir conta -->
+  <div class="modal-overlay" id="modal-excluir">
+    <div class="modal-box">
+      <div class="modal-title">Excluir conta permanentemente?</div>
+      <div class="modal-sub">Seu perfil e todos os gastos serão excluídos. Digite sua senha para confirmar.</div>
+      <div class="field" style="margin-bottom:16px;">
+        <label for="senha-excluir">Senha</label>
+        <input id="senha-excluir" type="password" class="input" />
+      </div>
+      <p id="msg-excluir" class="cfg-msg err" style="margin-bottom:8px;"></p>
+      <div class="modal-actions">
+        <button class="btn-cfg danger" id="btn-excluir-confirmar">
+          <span>Excluir minha conta</span><span class="arr">×</span>
+        </button>
+        <button class="btn-cfg ghost" id="btn-excluir-cancelar">
+          <span>Cancelar</span><span class="arr">←</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="_shared.js"></script>
+  <script>
+    FinTrack.requireAuth();
+    const API = FinTrack.API_BASE;
+    const token = () => FinTrack.auth.getToken();
+    const $ = (s) => document.querySelector(s);
+
+    function setMsg(id, txt, tipo) {
+      const el = $(id);
+      el.textContent = txt;
+      el.className = 'cfg-msg ' + (tipo || '');
+    }
+
+    function setBtn(id, loading) {
+      const btn = $(id);
+      btn.disabled = loading;
+      btn.style.opacity = loading ? '0.5' : '1';
+    }
+
+    async function apiCall(path, method, body) {
+      const res = await fetch(API + path, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      let data;
+      try { data = await res.json(); } catch { data = {}; }
+      return { ok: res.ok, data, status: res.status };
+    }
+
+    // Carrega perfil
+    async function carregarPerfil() {
+      const { ok, data } = await apiCall('/auth/me', 'GET');
+      if (ok) {
+        $('#nome').value  = data.nome  || '';
+        $('#email').value = data.email || '';
+      }
+    }
+    carregarPerfil();
+
+    // Salvar perfil
+    $('#btn-perfil').onclick = async () => {
+      const nome  = $('#nome').value.trim();
+      const email = $('#email').value.trim();
+      if (!nome || !email) { setMsg('#msg-perfil', 'Preencha nome e e-mail.', 'err'); return; }
+      setBtn('#btn-perfil', true);
+      const { ok, data } = await apiCall('/auth/perfil', 'PUT', { nome, email });
+      setMsg('#msg-perfil', ok ? 'Perfil atualizado.' : (data.detail || 'Erro ao salvar.'), ok ? 'ok' : 'err');
+      setBtn('#btn-perfil', false);
+    };
+
+    // Alterar senha
+    $('#btn-senha').onclick = async () => {
+      const senha_atual = $('#senha-atual').value;
+      const nova_senha  = $('#nova-senha').value;
+      if (!senha_atual || !nova_senha) { setMsg('#msg-senha', 'Preencha os dois campos.', 'err'); return; }
+      setBtn('#btn-senha', true);
+      const { ok, data } = await apiCall('/auth/senha', 'PUT', { senha_atual, nova_senha });
+      setMsg('#msg-senha', ok ? 'Senha alterada.' : (data.detail || 'Erro ao alterar.'), ok ? 'ok' : 'err');
+      if (ok) { $('#senha-atual').value = ''; $('#nova-senha').value = ''; }
+      setBtn('#btn-senha', false);
+    };
+
+    // Exportar CSV
+    $('#btn-exportar').onclick = async () => {
+      setBtn('#btn-exportar', true);
+      const { ok, data } = await apiCall('/gastos', 'GET');
+      if (!ok || !Array.isArray(data)) { setBtn('#btn-exportar', false); return; }
+      const header = 'id,descricao,valor,data,categoria_id';
+      const rows = data.map(g =>
+        [g.id, '"' + String(g.descricao).replace(/"/g, '""') + '"', g.valor, g.data, g.categoria_id].join(',')
+      );
+      const csv = [header, ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = 'fintrack_gastos.csv'; a.click();
+      URL.revokeObjectURL(url);
+      setBtn('#btn-exportar', false);
+    };
+
+    // Modal apagar todos os gastos
+    $('#btn-limpar').onclick    = () => $('#modal-limpar').classList.add('open');
+    $('#btn-limpar-cancelar').onclick = () => $('#modal-limpar').classList.remove('open');
+    $('#btn-limpar-confirmar').onclick = async () => {
+      setBtn('#btn-limpar-confirmar', true);
+      const { ok } = await apiCall('/gastos/todos', 'DELETE');
+      $('#modal-limpar').classList.remove('open');
+      setBtn('#btn-limpar-confirmar', false);
+      if (ok) setMsg('#msg-perfil', 'Todos os gastos foram apagados.', 'ok');
+    };
+
+    // Modal excluir conta
+    $('#btn-excluir-conta').onclick   = () => { $('#msg-excluir').textContent = ''; $('#modal-excluir').classList.add('open'); };
+    $('#btn-excluir-cancelar').onclick = () => $('#modal-excluir').classList.remove('open');
+    $('#btn-excluir-confirmar').onclick = async () => {
+      const senha = $('#senha-excluir').value;
+      if (!senha) { setMsg('#msg-excluir', 'Digite sua senha.', 'err'); return; }
+      setBtn('#btn-excluir-confirmar', true);
+      const { ok, data } = await apiCall('/auth/conta', 'DELETE', { senha });
+      if (ok) {
+        FinTrack.auth.logout();
+      } else {
+        setMsg('#msg-excluir', data.detail || 'Senha incorreta.', 'err');
+        setBtn('#btn-excluir-confirmar', false);
+      }
+    };
+
+    // Sair
+    $('#btn-sair').onclick = () => FinTrack.auth.logout();
+
+    // Fecha modal clicando fora
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+      m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+    });
+  </script>
+</body>
+</html>

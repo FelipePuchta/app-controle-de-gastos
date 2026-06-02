@@ -67,6 +67,41 @@ def buscar_usuario_por_email(email):
     return cursor.fetchone()
 
 
+def buscar_usuario_por_id(usuario_id):
+    cursor.execute(
+        "SELECT id, nome, email, senha FROM usuarios WHERE id = %s",
+        (usuario_id,)
+    )
+    return cursor.fetchone()
+
+
+def atualizar_perfil(usuario_id, nome, email):
+    cursor.execute(
+        "UPDATE usuarios SET nome = %s, email = %s WHERE id = %s",
+        (nome, email, usuario_id)
+    )
+    conexao.commit()
+
+
+def atualizar_senha_usuario(usuario_id, nova_senha_hash):
+    cursor.execute(
+        "UPDATE usuarios SET senha = %s WHERE id = %s",
+        (nova_senha_hash, usuario_id)
+    )
+    conexao.commit()
+
+
+def deletar_usuario(usuario_id):
+    cursor.execute("DELETE FROM gastos WHERE usuario_id = %s", (usuario_id,))
+    cursor.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
+    conexao.commit()
+
+
+def deletar_todos_gastos_usuario(usuario_id):
+    cursor.execute("DELETE FROM gastos WHERE usuario_id = %s", (usuario_id,))
+    conexao.commit()
+
+
 # GASTOS
 
 def adicionar_gasto(descricao, valor, data, categoria_id, usuario_id):
