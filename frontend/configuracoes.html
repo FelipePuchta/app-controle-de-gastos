@@ -87,7 +87,7 @@
     .modal-overlay.open { display: flex; }
     .modal-box {
       width: 100%; max-width: var(--app-max);
-      background: #0a0a0a;
+      background: var(--bg);
       border-top: 1px solid var(--border-str);
       padding: 32px 24px max(32px, env(safe-area-inset-bottom) + 24px);
       animation: rise 0.3s var(--ease) both;
@@ -156,6 +156,14 @@
         </button>
         <button class="btn-cfg danger" id="btn-limpar">
           <span>Apagar todos os gastos</span><span class="arr">×</span>
+        </button>
+      </section>
+
+      <!-- Aparência -->
+      <section class="cfg-section">
+        <div class="cfg-label">Aparência</div>
+        <button class="btn-cfg ghost" id="btn-tema">
+          <span id="tema-label"></span><span class="arr" id="tema-icon"></span>
         </button>
       </section>
 
@@ -336,6 +344,15 @@
         setBtn('#btn-excluir-confirmar', false);
       }
     };
+
+    // Aparência
+    function atualizarBtnTema() {
+      const escuro = FinTrack.theme.get() === 'dark';
+      $('#tema-label').textContent = escuro ? 'Tema escuro ativo' : 'Tema claro ativo';
+      $('#tema-icon').textContent  = escuro ? '☀' : '🌙';
+    }
+    atualizarBtnTema();
+    $('#btn-tema').onclick = () => { FinTrack.theme.toggle(); atualizarBtnTema(); };
 
     // Sair
     $('#btn-sair').onclick = () => FinTrack.auth.logout();

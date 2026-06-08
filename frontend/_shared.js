@@ -1,5 +1,13 @@
 /* FinTrack — _shared.js — camada de dados + utilitários */
 
+/* ---------- Tema (roda antes de tudo para evitar flash) ---------- */
+(function () {
+  const t = localStorage.getItem('ft-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  const mc = document.querySelector('meta[name="theme-color"]');
+  if (mc) mc.setAttribute('content', t === 'light' ? '#F4F5F0' : '#000000');
+})();
+
 /* ---------- Splash screen (uma vez por sessão) ---------- */
 (function () {
   if (sessionStorage.getItem('ft-splash')) return;
@@ -15,6 +23,25 @@
   'use strict';
 
   const API_BASE = 'https://harmonious-unity-production-e26f.up.railway.app';
+
+  /* ---------- Tema ---------- */
+  const _ICON_SUN  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+  const _ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+  const theme = {
+    get() { return localStorage.getItem('ft-theme') || 'dark'; },
+    set(t) {
+      localStorage.setItem('ft-theme', t);
+      document.documentElement.setAttribute('data-theme', t);
+      const mc = document.querySelector('meta[name="theme-color"]');
+      if (mc) mc.setAttribute('content', t === 'light' ? '#F4F5F0' : '#000000');
+      document.querySelectorAll('.ft-theme-btn').forEach(btn => {
+        btn.innerHTML = t === 'dark' ? _ICON_SUN : _ICON_MOON;
+        btn.setAttribute('aria-label', t === 'dark' ? 'Tema claro' : 'Tema escuro');
+      });
+    },
+    toggle() { this.set(this.get() === 'dark' ? 'light' : 'dark'); },
+  };
 
   /* ---------- Ícones SVG das categorias ---------- */
   const CAT_ICONS = {
@@ -94,15 +121,16 @@
       return;
     }
     document.addEventListener('DOMContentLoaded', () => {
-      const header = document.querySelector('.l-header');
-      if (!header) return;
-      const btn = document.createElement('button');
-      btn.textContent = 'SAIR';
-      btn.style.cssText = 'background:none;border:none;color:rgba(255,255,255,0.28);font:600 10px/1 Sora,sans-serif;letter-spacing:.14em;cursor:pointer;padding:0;';
-      btn.onmouseenter = () => { btn.style.color = 'rgba(255,255,255,0.65)'; };
-      btn.onmouseleave = () => { btn.style.color = 'rgba(255,255,255,0.28)'; };
-      btn.onclick = auth.logout;
-      header.appendChild(btn);
+      const topbar = document.querySelector('.topbar');
+      if (topbar) {
+        const themeBtn = document.createElement('button');
+        themeBtn.className = 'ft-theme-btn';
+        const cur = theme.get();
+        themeBtn.innerHTML = cur === 'dark' ? _ICON_SUN : _ICON_MOON;
+        themeBtn.setAttribute('aria-label', cur === 'dark' ? 'Tema claro' : 'Tema escuro');
+        themeBtn.onclick = () => theme.toggle();
+        topbar.appendChild(themeBtn);
+      }
     });
   }
 
@@ -243,6 +271,6 @@
     getGastos, addGasto, updateGasto, deleteGasto, getCategorias,
     metaForCategoria, buildCatMap, normKey, iconForCategoria,
     formatBRL, formatData, mesAnoDe,
-    isDemo, auth, requireAuth,
+    isDemo, auth, requireAuth, theme,
   };
 })();

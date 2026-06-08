@@ -28,6 +28,21 @@
   --app-max: 480px;
   --nav-h:   60px;
   --ease:    cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  --bg:         #F4F5F0;
+  --bg-sub:     #ECEEE8;
+  --fg:         #0A0A0A;
+  --muted:      rgba(0,0,0,0.50);
+  --faint:      rgba(0,0,0,0.22);
+  --accent:     #4E6B41;
+  --border:     rgba(0,0,0,0.09);
+  --border-mid: rgba(0,0,0,0.16);
+  --border-str: rgba(0,0,0,0.32);
+  color-scheme: light;
 }
 
 /* ── Reset ────────────────────────────────────────────────────────── */
@@ -260,6 +275,7 @@ textarea.input {
   padding-bottom: env(safe-area-inset-bottom, 0);
   z-index: 50;
 }
+html[data-theme="light"] .bottom-nav { background: rgba(244,245,240,0.96); }
 .nav-item {
   display: flex;
   flex-direction: column;
@@ -311,7 +327,7 @@ textarea.input {
 .spinner {
   width: 26px; height: 26px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,0.08);
+  border: 1.5px solid var(--border);
   border-top-color: var(--accent);
   animation: spin 0.7s linear infinite;
 }
@@ -374,6 +390,19 @@ textarea.input {
   display: flex; align-items: center; gap: 8px;
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ── Botão de tema ────────────────────────────────────────────────── */
+.ft-theme-btn {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: color 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+.ft-theme-btn:hover { color: var(--fg); border-color: var(--border-str); }
+.ft-theme-btn svg { width: 14px; height: 14px; }
 
 /* ── Animações ────────────────────────────────────────────────────── */
 @keyframes spin { to { transform: rotate(360deg); } }

@@ -20,7 +20,35 @@ else:
 cursor = conexao.cursor()
 
 
+def _do_reconnect():
+    global conexao, cursor
+    try:
+        conexao.close()
+    except Exception:
+        pass
+    if database_url:
+        conexao = psycopg2.connect(database_url, sslmode="require")
+    else:
+        conexao = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_DATABASE"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            port=os.getenv("DB_PORT"),
+            sslmode="require",
+        )
+    cursor = conexao.cursor()
+
+
+def _ensure_connection():
+    try:
+        cursor.execute("SELECT 1")
+    except Exception:
+        _do_reconnect()
+
+
 def criar_tabela():
+    _ensure_connection()
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS categorias("
         "id SERIAL PRIMARY KEY, nome VARCHAR(30) NOT NULL)"
@@ -51,6 +79,7 @@ def criar_tabela():
 # USUARIOS
 
 def registrar_usuario(nome, email, senha_hash):
+    _ensure_connection()
     cursor.execute(
         "INSERT INTO usuarios(nome, email, senha) VALUES(%s, %s, %s) RETURNING id",
         (nome, email, senha_hash)
@@ -60,6 +89,7 @@ def registrar_usuario(nome, email, senha_hash):
 
 
 def buscar_usuario_por_email(email):
+    _ensure_connection()
     cursor.execute(
         "SELECT id, nome, email, senha FROM usuarios WHERE email = %s",
         (email,)
@@ -68,6 +98,7 @@ def buscar_usuario_por_email(email):
 
 
 def buscar_usuario_por_id(usuario_id):
+    _ensure_connection()
     cursor.execute(
         "SELECT id, nome, email, senha FROM usuarios WHERE id = %s",
         (usuario_id,)
@@ -76,6 +107,7 @@ def buscar_usuario_por_id(usuario_id):
 
 
 def atualizar_perfil(usuario_id, nome, email):
+    _ensure_connection()
     cursor.execute(
         "UPDATE usuarios SET nome = %s, email = %s WHERE id = %s",
         (nome, email, usuario_id)
@@ -84,6 +116,7 @@ def atualizar_perfil(usuario_id, nome, email):
 
 
 def atualizar_senha_usuario(usuario_id, nova_senha_hash):
+    _ensure_connection()
     cursor.execute(
         "UPDATE usuarios SET senha = %s WHERE id = %s",
         (nova_senha_hash, usuario_id)
@@ -92,12 +125,14 @@ def atualizar_senha_usuario(usuario_id, nova_senha_hash):
 
 
 def deletar_usuario(usuario_id):
+    _ensure_connection()
     cursor.execute("DELETE FROM gastos WHERE usuario_id = %s", (usuario_id,))
     cursor.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
     conexao.commit()
 
 
 def deletar_todos_gastos_usuario(usuario_id):
+    _ensure_connection()
     cursor.execute("DELETE FROM gastos WHERE usuario_id = %s", (usuario_id,))
     conexao.commit()
 
@@ -105,6 +140,7 @@ def deletar_todos_gastos_usuario(usuario_id):
 # GASTOS
 
 def adicionar_gasto(descricao, valor, data, categoria_id, usuario_id):
+    _ensure_connection()
     cursor.execute(
         "INSERT INTO gastos(descricao, valor, data, categoria_id, usuario_id)"
         " VALUES(%s, %s, %s, %s, %s)",
@@ -114,6 +150,7 @@ def adicionar_gasto(descricao, valor, data, categoria_id, usuario_id):
 
 
 def visualizar_gasto(usuario_id):
+    _ensure_connection()
     cursor.execute(
         "SELECT id, descricao, valor, data, categoria_id FROM gastos WHERE usuario_id = %s",
         (usuario_id,)
@@ -122,6 +159,7 @@ def visualizar_gasto(usuario_id):
 
 
 def deletar_gasto(id, usuario_id):
+    _ensure_connection()
     cursor.execute(
         "DELETE FROM gastos WHERE id = %s AND usuario_id = %s",
         (id, usuario_id)
@@ -130,6 +168,7 @@ def deletar_gasto(id, usuario_id):
 
 
 def atualizar_gasto(novo_valor, nova_data, id, usuario_id):
+    _ensure_connection()
     cursor.execute(
         "UPDATE gastos SET valor = %s, data = %s WHERE id = %s AND usuario_id = %s",
         (novo_valor, nova_data, id, usuario_id)
@@ -140,11 +179,13 @@ def atualizar_gasto(novo_valor, nova_data, id, usuario_id):
 # CATEGORIAS
 
 def visualizar_categorias():
+    _ensure_connection()
     cursor.execute("SELECT * FROM categorias")
     return cursor.fetchall()
 
 
 def visualizar_gastos_por_categoria(categoria_id, usuario_id):
+    _ensure_connection()
     cursor.execute(
         "SELECT id, descricao, valor, data, categoria_id FROM gastos"
         " WHERE categoria_id = %s AND usuario_id = %s",
@@ -154,6 +195,7 @@ def visualizar_gastos_por_categoria(categoria_id, usuario_id):
 
 
 def visualizar_gastos_por_mes(mes, ano, usuario_id):
+    _ensure_connection()
     cursor.execute(
         "SELECT id, descricao, valor, data, categoria_id FROM gastos"
         " WHERE EXTRACT(MONTH FROM data) = %s"
@@ -165,6 +207,7 @@ def visualizar_gastos_por_mes(mes, ano, usuario_id):
 
 
 def total_por_categoria(usuario_id):
+    _ensure_connection()
     cursor.execute(
         "SELECT categorias.nome, SUM(gastos.valor) FROM gastos"
         " JOIN categorias ON gastos.categoria_id = categorias.id"
@@ -176,6 +219,7 @@ def total_por_categoria(usuario_id):
 
 
 def total_por_mes(mes, ano, usuario_id):
+    _ensure_connection()
     cursor.execute(
         "SELECT SUM(valor) FROM gastos"
         " WHERE EXTRACT(MONTH FROM data) = %s"
