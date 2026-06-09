@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Análise — FinTrack</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* ── Seletor de ano ── */
+    .year-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .year-bar button.nav-y {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      color: var(--muted);
+      transition: all 0.18s var(--ease);
+      flex-shrink: 0;
+    }
+    .year-bar button.nav-y:hover { border-color: var(--border-str); color: var(--fg); }
+    .year-bar button.nav-y:active { transform: scale(0.9); }
+    .year-bar button.nav-y svg { width: 14px; height: 14px; }
+    .year-bar .cur-year {
+      font-size: 15px; font-weight: 800;
+      letter-spacing: -0.02em; text-transform: uppercase;
+    }
+
+    /* ── Insight hero ── */
+    .insight-hero {
+      padding: 28px 0 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .insight-hero .prefix {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 14px;
+    }
+    .insight-hero .headline {
+      font-size: clamp(34px, 10.5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+      text-transform: uppercase;
+    }
+    .insight-hero .headline em {
+      color: var(--accent); font-style: normal;
+    }
+    .insight-hero .sub-insights {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .sub-insight {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.06em; color: var(--muted);
+    }
+    .sub-insight b { color: var(--fg); font-weight: 700; }
+
+    /* ── Heatmap ── */
+    .heatmap-section {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .heatmap-meta {
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .heatmap-meta .scale-legend {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .heatmap-meta .scale-legend span {
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: var(--faint);
+    }
+    .scale-squares { display: flex; gap: 2px; }
+    .scale-sq {
+      width: 8px; height: 8px;
+    }
+
+    /* ── Dia da semana ── */
+    .dow-section {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .dow-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 100px;
+      margin-bottom: 6px;
+    }
+    .dow-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .dow-val-lbl {
+      font-size: 7px;
+      color: var(--faint);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .dow-bar-track {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .dow-bar {
+      width: 3px; max-width: 3px;
+      background: rgba(255,255,255,0.18);
+      height: 0;
+      transition: height 0.9s var(--ease);
+    }
+    .dow-bar.peak {
+      background: var(--accent);
+      width: 4px; max-width: 4px;
+    }
+    .dow-day-lbl {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .dow-col.peak-col .dow-day-lbl { color: var(--accent); }
+
+    /* ── Top meses ── */
+    .months-section {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .month-rank-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .month-rank-row:last-child { border-bottom: none; }
+    .rank-pos {
+      font-size: 10px; font-weight: 700;
+      color: var(--faint); width: 14px;
+      text-align: right; flex-shrink: 0;
+    }
+    .rank-pos.top { color: var(--accent); }
+    .rank-m-name {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: var(--muted); width: 26px; flex-shrink: 0;
+    }
+    .rank-bar-wrap {
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,0.06);
+    }
+    .rank-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.8s var(--ease);
+    }
+    .rank-total {
+      font-size: 13px; font-weight: 800;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+
+    /* ── Top gastos (all time) ── */
+    .top-gastos-section {
+      padding: 24px 0;
+    }
+    .top-gasto-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-gasto-row:last-child { border-bottom: none; }
+    .tg-icon {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .tg-icon svg { width: 13px; height: 13px; }
+    .tg-body { flex: 1; min-width: 0; }
+    .tg-desc {
+      font-size: 12px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      letter-spacing: 0.01em;
+    }
+    .tg-date {
+      font-size: 10px; color: var(--muted);
+      margin-top: 2px; letter-spacing: 0.04em;
+    }
+    .tg-val {
+      font-size: 14px; font-weight: 800;
+      letter-spacing: -0.03em; flex-shrink: 0;
+    }
+
+    /* ── Tooltip ── */
+    #h-tooltip {
+      position: fixed;
+      background: #111;
+      border: 1px solid var(--border-mid);
+      color: var(--fg);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 6px 10px;
+      pointer-events: none;
+      z-index: 999;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.15s;
+      letter-spacing: 0.04em;
+    }
+    #h-tooltip.show { opacity: 1; }
+
+    /* ── Nav tabs (mês/ano) dentro de seção ── */
+    .period-toggle {
+      display: flex; gap: 4px;
+    }
+    .period-tog {
+      height: 26px; padding: 0 10px;
+      border-radius: 0; font-family: var(--font);
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); transition: all 0.18s var(--ease);
+    }
+    .period-tog.active { border-color: var(--fg); color: var(--fg); }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Padrões de gasto</div>
+        <h1>Análise</h1>
+      </div>
+    </header>
+
+    <div class="screen">
+      <div id="notice-slot"></div>
+
+      <!-- Seletor de ano -->
+      <div class="year-bar">
+        <button class="nav-y" id="prev-ano" aria-label="Ano anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <span class="cur-year" id="cur-ano">—</span>
+        <button class="nav-y" id="next-ano" aria-label="Próximo ano">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+
+      <div id="content">
+        <div class="loading-wrap"><div class="spinner"></div>Carregando</div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="adicionar.html" class="nav-item nav-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar
+      </a>
+      <a href="gastos.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        Gastos
+      </a>
+      <a href="analise.html" class="nav-item active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 10 15 14 19 8"/></svg>
+        Análise
+      </a>
+      <a href="configuracoes.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Config
+      </a>
+    </nav>
+  </main>
+
+  <div id="h-tooltip"></div>
+
+  <script src="_shared.js"></script>
+  <script>
+    FinTrack.requireAuth();
+    const $ = (s) => document.querySelector(s);
+
+    const hoje = new Date();
+    const todayStr = hoje.toISOString().split('T')[0];
+    let curAno = hoje.getFullYear();
+    let gastos = [], categorias = [], catMap = {};
+
+    const DIAS_LONGO  = ['Domingos','Segundas','Terças','Quartas','Quintas','Sextas','Sábados'];
+    const DIAS_CURTO  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+    async function init() {
+      [gastos, categorias] = await Promise.all([FinTrack.getGastos(), FinTrack.getCategorias()]);
+      catMap = FinTrack.buildCatMap(categorias);
+      if (FinTrack.isDemo()) {
+        $('#notice-slot').innerHTML =
+          '<div class="notice"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
+      }
+      render();
+    }
+
+    $('#prev-ano').onclick = () => { curAno--; render(); };
+    $('#next-ano').onclick = () => { curAno++; render(); };
+
+    function gastosDoAno(ano) {
+      return gastos.filter(g => {
+        const { ano: a } = FinTrack.mesAnoDe(g.data);
+        return a === ano;
+      });
+    }
+
+    function render() {
+      $('#cur-ano').textContent = curAno;
+      const doAno = gastosDoAno(curAno);
+
+      // ── Heatmap data ──
+      const dayMap = {};
+      doAno.forEach(g => {
+        const d = String(g.data).split('T')[0];
+        dayMap[d] = (dayMap[d] || 0) + Number(g.valor);
+      });
+      const maxDay = Math.max(...Object.values(dayMap), 1);
+
+      // ── Day of week (all year) ──
+      const dowTotals = new Array(7).fill(0);
+      const dowCounts = new Array(7).fill(0);
+      doAno.forEach(g => {
+        const date = new Date(String(g.data).split('T')[0] + 'T12:00:00');
+        const dow = date.getDay();
+        dowTotals[dow] += Number(g.valor);
+        dowCounts[dow]++;
+      });
+      const maxDow = Math.max(...dowTotals, 1);
+      const peakDow = dowTotals.indexOf(Math.max(...dowTotals));
+      const emptyYear = doAno.length === 0;
+
+      // ── Totais mensais ──
+      const monthTotals = new Array(12).fill(0);
+      doAno.forEach(g => {
+        const { mes } = FinTrack.mesAnoDe(g.data);
+        monthTotals[mes - 1] += Number(g.valor);
+      });
+      const maxMonth = Math.max(...monthTotals, 1);
+      const sortedMonths = monthTotals
+        .map((t, i) => ({ mes: i, total: t }))
+        .filter(x => x.total > 0)
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 6);
+
+      // ── Top gastos individuais ──
+      const topGastos = [...doAno]
+        .sort((a, b) => Number(b.valor) - Number(a.valor))
+        .slice(0, 5);
+
+      // ── Insights ──
+      const topCatMap = {};
+      doAno.forEach(g => {
+        topCatMap[g.categoria_id] = (topCatMap[g.categoria_id] || 0) + Number(g.valor);
+      });
+      const topCatId = Object.keys(topCatMap).sort((a, b) => topCatMap[b] - topCatMap[a])[0];
+      const topCatMeta = topCatId ? (catMap[Number(topCatId)] || FinTrack.metaForCategoria('')) : null;
+      const totalAno = doAno.reduce((s, g) => s + Number(g.valor), 0);
+      const mediasMes = doAno.length
+        ? (() => {
+            const meses = new Set(doAno.map(g => FinTrack.mesAnoDe(g.data).mes));
+            return totalAno / meses.size;
+          })()
+        : 0;
+
+      // ── BUILD HTML ──
+      let html = '';
+
+      // Insight hero
+      if (!emptyYear) {
+        const insightTitle = topCatMeta
+          ? `Você gastou mais em <em>${topCatMeta.nome || 'Outros'}</em>`
+          : 'Nenhum dado para o período';
+        const dowInsight = dowTotals.some(v => v > 0)
+          ? `Pico às ${DIAS_LONGO[peakDow].toLowerCase()}`
+          : '';
+
+        html += `
+          <div class="insight-hero rise">
+            <div class="prefix">Principal descoberta · ${curAno}</div>
+            <div class="headline">${insightTitle}</div>
+            <div class="sub-insights">
+              ${totalAno ? `<span class="sub-insight">Total <b>${FinTrack.formatBRL(totalAno)}</b></span>` : ''}
+              ${mediasMes ? `<span class="sub-insight">Média mensal <b>${FinTrack.formatBRL(mediasMes)}</b></span>` : ''}
+              ${dowInsight ? `<span class="sub-insight">${dowInsight}</span>` : ''}
+            </div>
+          </div>`;
+      }
+
+      // Heatmap
+      html += `
+        <div class="heatmap-section rise" style="animation-delay:.06s;">
+          <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+            Atividade no ano
+            <div class="scale-squares">
+              <span style="font-size:8px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--faint);margin-right:4px;">Menos</span>
+              ${[0.05,0.25,0.45,0.65,0.90].map(o => `<div class="scale-sq" style="background:rgba(255,230,0,${o});"></div>`).join('')}
+              <span style="font-size:8px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--faint);margin-left:4px;">Mais</span>
+            </div>
+          </div>
+          ${buildHeatmapHTML(curAno, dayMap, maxDay)}
+        </div>`;
+
+      // Day of week
+      html += `
+        <div class="dow-section rise" style="animation-delay:.12s;">
+          <div class="section-title">Distribuição semanal</div>
+          <div class="dow-bars" id="dow-bars">`;
+
+      DIAS_CURTO.forEach((label, i) => {
+        const isPeak = i === peakDow && dowTotals[i] > 0;
+        const hPct = maxDow > 0 ? Math.round((dowTotals[i] / maxDow) * 100) : 0;
+        const valLabel = dowTotals[i] >= 1000
+          ? (dowTotals[i] / 1000).toFixed(1) + 'k'
+          : dowTotals[i] > 0 ? Math.round(dowTotals[i]) : '–';
+        html += `
+          <div class="dow-col${isPeak ? ' peak-col' : ''}">
+            <span class="dow-val-lbl">${valLabel}</span>
+            <div class="dow-bar-track">
+              <div class="dow-bar${isPeak ? ' peak' : ''}" data-h="${hPct}"></div>
+            </div>
+            <span class="dow-day-lbl">${label}</span>
+          </div>`;
+      });
+
+      html += `</div></div>`;
+
+      // Top meses
+      if (sortedMonths.length) {
+        html += `
+          <div class="months-section rise" style="animation-delay:.18s;">
+            <div class="section-title">Meses mais altos</div>`;
+        sortedMonths.forEach((item, idx) => {
+          const pct = Math.round((item.total / maxMonth) * 100);
+          html += `
+            <div class="month-rank-row">
+              <span class="rank-pos${idx === 0 ? ' top' : ''}">${idx + 1}</span>
+              <span class="rank-m-name">${FinTrack.MESES[item.mes]}</span>
+              <div class="rank-bar-wrap">
+                <div class="rank-bar-fill" style="width:${pct}%;"></div>
+              </div>
+              <span class="rank-total">${FinTrack.formatBRL(item.total)}</span>
+            </div>`;
+        });
+        html += `</div>`;
+      }
+
+      // Top gastos individuais
+      if (topGastos.length) {
+        html += `
+          <div class="top-gastos-section rise" style="animation-delay:.24s;">
+            <div class="section-title">Maiores gastos do ano</div>`;
+        topGastos.forEach(g => {
+          const meta = catMap[g.categoria_id] || FinTrack.metaForCategoria('');
+          html += `
+            <div class="top-gasto-row">
+              <div class="tg-icon" style="border-color:${meta.hex}22;color:${meta.hex};">
+                ${FinTrack.iconForCategoria(meta.nome)}
+              </div>
+              <div class="tg-body">
+                <div class="tg-desc">${escapeHtml(g.descricao)}</div>
+                <div class="tg-date">${FinTrack.formatData(g.data)} · ${meta.nome || 'Outros'}</div>
+              </div>
+              <span class="tg-val">${FinTrack.formatBRL(g.valor)}</span>
+            </div>`;
+        });
+        html += `</div>`;
+      }
+
+      if (emptyYear) {
+        html += `<div class="empty"><div class="ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M3 3v18h18"/><polyline points="7 16 11 10 15 14 19 8"/></svg></div>Sem dados para ${curAno}</div>`;
+      }
+
+      $('#content').innerHTML = html;
+
+      // Animate bars
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.querySelectorAll('.dow-bar').forEach(b => {
+            b.style.height = b.dataset.h + '%';
+          });
+          document.querySelectorAll('.rank-bar-fill').forEach(b => {
+            const w = b.style.width;
+            b.style.width = '0';
+            requestAnimationFrame(() => { b.style.width = w; });
+          });
+        }, 100);
+      });
+
+      // Heatmap tooltip
+      setupTooltip();
+    }
+
+    function buildHeatmapHTML(year, dayMap, maxDay) {
+      const jan1 = new Date(year, 0, 1);
+      const startDay = new Date(jan1);
+      startDay.setDate(startDay.getDate() - startDay.getDay());
+      const dec31 = new Date(year, 11, 31);
+
+      const weeks = [];
+      const current = new Date(startDay);
+      const monthStarts = {};
+
+      while (current <= dec31 || current.getDay() !== 0) {
+        if (current > dec31 && current.getDay() === 0) break;
+        const week = [];
+        for (let d = 0; d < 7; d++) {
+          const dateStr = current.toISOString().split('T')[0];
+          const inYear = current.getFullYear() === year;
+          if (inYear && current.getDate() <= 7 && !monthStarts[current.getMonth()]) {
+            monthStarts[current.getMonth()] = weeks.length;
+          }
+          week.push({
+            date: dateStr,
+            total: inYear ? (dayMap[dateStr] || 0) : null,
+            inYear,
+            isToday: dateStr === todayStr,
+          });
+          current.setDate(current.getDate() + 1);
+        }
+        weeks.push(week);
+      }
+
+      // Month label row
+      const MESES_ABBR = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      let monthLabels = '<div class="heatmap-months">';
+      const weekW = 10; // 8px cell + 2px gap
+      Object.entries(monthStarts).forEach(([mo, wi]) => {
+        monthLabels += `<span style="left:${wi * weekW}px;">${MESES_ABBR[mo]}</span>`;
+      });
+      monthLabels += '</div>';
+
+      // Grid
+      let grid = '<div class="heatmap">';
+      weeks.forEach(week => {
+        grid += '<div class="h-week">';
+        week.forEach(cell => {
+          if (!cell.inYear) {
+            grid += '<div class="h-cell out-of-range"></div>';
+          } else {
+            const opacity = cell.total > 0
+              ? (0.18 + Math.pow(cell.total / maxDay, 0.5) * 0.82).toFixed(2)
+              : '0.05';
+            const bg = cell.total > 0
+              ? `rgba(255,230,0,${opacity})`
+              : 'rgba(255,255,255,0.05)';
+            grid += `<div class="h-cell${cell.isToday ? ' today' : ''}" style="background:${bg};" data-date="${cell.date}" data-total="${cell.total}"></div>`;
+          }
+        });
+        grid += '</div>';
+      });
+      grid += '</div>';
+
+      return `<div class="heatmap-scroll"><div class="heatmap-outer"><div class="heatmap-days-col"><span></span><span>S</span><span></span><span>Q</span><span></span><span>S</span><span></span></div><div class="heatmap-grid-wrap">${monthLabels}${grid}</div></div></div>`;
+    }
+
+    function setupTooltip() {
+      const tip = $('#h-tooltip') || document.getElementById('h-tooltip');
+      if (!tip) return;
+      document.querySelectorAll('.h-cell[data-date]').forEach(cell => {
+        cell.addEventListener('mouseenter', (e) => {
+          const date = cell.dataset.date;
+          const total = parseFloat(cell.dataset.total) || 0;
+          const [ano, mes, dia] = date.split('-');
+          const label = `${dia}/${mes}/${ano}`;
+          tip.textContent = total > 0 ? `${label} · ${FinTrack.formatBRL(total)}` : `${label} · sem gastos`;
+          tip.classList.add('show');
+        });
+        cell.addEventListener('mousemove', (e) => {
+          tip.style.left = (e.clientX + 12) + 'px';
+          tip.style.top  = (e.clientY - 28) + 'px';
+        });
+        cell.addEventListener('mouseleave', () => tip.classList.remove('show'));
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -188,6 +188,36 @@
     }
   }
 
+  async function getMetas() {
+    try {
+      const data = await api('/metas');
+      return Array.isArray(data) ? data : [];
+    } catch (e) {
+      try {
+        const cached = localStorage.getItem('ft-metas-cache');
+        return cached ? JSON.parse(cached) : [];
+      } catch { return []; }
+    }
+  }
+
+  async function saveMeta(categoria_id, valor) {
+    try {
+      const result = await api('/metas', { method: 'POST', body: JSON.stringify({ categoria_id, valor }) });
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function deleteMeta(categoria_id) {
+    try {
+      await api('/metas/' + categoria_id, { method: 'DELETE' });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function normKey(nome) {
     return String(nome || '')
       .toLowerCase()
@@ -230,6 +260,7 @@
     API_BASE,
     CAT_META, CAT_ICONS, CAT_DEFAULT, MESES, MESES_LONGO,
     getGastos, addGasto, updateGasto, deleteGasto, getCategorias,
+    getMetas, saveMeta, deleteMeta,
     metaForCategoria, buildCatMap, normKey, iconForCategoria,
     formatBRL, formatData, mesAnoDe,
     isDemo, auth, requireAuth,

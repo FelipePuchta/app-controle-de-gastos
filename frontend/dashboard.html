@@ -105,6 +105,8 @@
       letter-spacing: -0.04em;
       line-height: 1;
     }
+    .stat-block .val.positive { color: #10B981; }
+    .stat-block .val.negative { color: #EF4444; }
     .stat-block .sub {
       font-size: 11px;
       color: var(--muted);
@@ -114,6 +116,65 @@
       text-overflow: ellipsis;
       letter-spacing: 0.02em;
     }
+
+    /* ── Semana ── */
+    .week-section {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .week-head {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .week-head .t {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.20em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .week-delta {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      padding: 3px 8px; border: 1px solid;
+    }
+    .week-delta.up   { color: #EF4444; border-color: rgba(239,68,68,0.25); }
+    .week-delta.down { color: #10B981; border-color: rgba(16,185,129,0.25); }
+    .week-delta.flat { color: var(--faint); border-color: rgba(255,255,255,0.08); }
+    .week-bars {
+      display: flex; gap: 4px; align-items: flex-end; height: 56px;
+    }
+    .wk-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .wk-bar-track { width: 100%; flex: 1; display: flex; align-items: flex-end; justify-content: center; }
+    .wk-bar { width: 3px; background: rgba(255,255,255,0.18); height: 0; transition: height 0.8s var(--ease); }
+    .wk-bar.today { background: var(--accent); width: 4px; }
+    .wk-day-lbl { font-size: 7px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--faint); }
+    .wk-col.today-col .wk-day-lbl { color: var(--accent); }
+
+    /* ── Preview metas ── */
+    .metas-preview {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .metas-preview-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .metas-preview-head .t {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.20em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .meta-mini-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .meta-mini-row:last-child { border-bottom: none; }
+    .meta-mini-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .meta-mini-icon svg { width: 12px; height: 12px; }
+    .meta-mini-name { font-size: 11px; font-weight: 600; flex: 1; color: var(--muted); letter-spacing: 0.04em; }
+    .meta-mini-bar-wrap { width: 80px; height: 2px; background: rgba(255,255,255,0.07); flex-shrink: 0; }
+    .meta-mini-bar-fill { height: 100%; transition: width 0.8s var(--ease); }
+    .meta-mini-pct { font-size: 11px; font-weight: 800; letter-spacing: -0.01em; width: 34px; text-align: right; flex-shrink: 0; }
 
     /* ── Seção de gráfico ── */
     .chart-section {
@@ -345,6 +406,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
         Gastos
       </a>
+      <a href="analise.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 10 15 14 19 8"/></svg>
+        Análise
+      </a>
       <a href="configuracoes.html" class="nav-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Config
@@ -356,7 +421,7 @@
   <script>
     FinTrack.requireAuth();
     const $ = (s) => document.querySelector(s);
-    let gastos = [], categorias = [], catMap = {};
+    let gastos = [], categorias = [], catMap = {}, metasMap = {};
     const hoje = new Date();
     let curMes = hoje.getMonth() + 1;
     let curAno  = hoje.getFullYear();
@@ -365,6 +430,8 @@
     async function init() {
       [gastos, categorias] = await Promise.all([FinTrack.getGastos(), FinTrack.getCategorias()]);
       catMap = FinTrack.buildCatMap(categorias);
+      const metasList = await FinTrack.getMetas();
+      metasList.forEach(m => { metasMap[m.categoria_id] = m.valor; });
       if (FinTrack.isDemo()) {
         $('#notice-slot').innerHTML =
           '<div class="notice"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>API indisponível — exibindo <b>dados de demonstração</b>.</span></div>';
@@ -409,6 +476,48 @@
         .map((id) => ({ id: Number(id), total: porCat[id], meta: catMap[id] || FinTrack.metaForCategoria('') }))
         .sort((x, y) => y.total - x.total);
 
+      // ── Semana atual vs anterior ──
+      const DIAS_CURTO = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+      const todayStr = hoje.toISOString().split('T')[0];
+      const startOfWeek = new Date(hoje);
+      startOfWeek.setDate(hoje.getDate() - hoje.getDay());
+      const startOfLastWeek = new Date(startOfWeek);
+      startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
+
+      const weekDays = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(startOfWeek);
+        d.setDate(d.getDate() + i);
+        return d.toISOString().split('T')[0];
+      });
+      const lastWeekDays = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(startOfLastWeek);
+        d.setDate(d.getDate() + i);
+        return d.toISOString().split('T')[0];
+      });
+
+      const weekDayMap = {};
+      gastos.forEach(g => {
+        const d = String(g.data).split('T')[0];
+        weekDayMap[d] = (weekDayMap[d] || 0) + Number(g.valor);
+      });
+
+      const totalSemana = weekDays.reduce((s, d) => s + (weekDayMap[d] || 0), 0);
+      const totalSemanaPassada = lastWeekDays.reduce((s, d) => s + (weekDayMap[d] || 0), 0);
+      const maxWeekDay = Math.max(...weekDays.map(d => weekDayMap[d] || 0), 1);
+
+      let deltaPct = 0, deltaClass = 'flat', deltaLabel = 'igual';
+      if (totalSemanaPassada > 0) {
+        deltaPct = Math.round(((totalSemana - totalSemanaPassada) / totalSemanaPassada) * 100);
+        if (deltaPct > 5)       { deltaClass = 'up';   deltaLabel = '+' + deltaPct + '%'; }
+        else if (deltaPct < -5) { deltaClass = 'down'; deltaLabel = deltaPct + '%'; }
+        else                    { deltaClass = 'flat'; deltaLabel = '='; }
+      }
+
+      // ── Metas preview ──
+      const hasMetasCat = Object.keys(metasMap).length > 0;
+      const spentByCat = {};
+      doMes.forEach(g => { spentByCat[g.categoria_id] = (spentByCat[g.categoria_id] || 0) + Number(g.valor); });
+
       // ── HTML ──
       const labelPeriodo = evolMeses === 3 ? '3M' : evolMeses === 6 ? '6M' : '1A';
 
@@ -417,7 +526,7 @@
         <div class="total-hero rise">
           <div class="lbl">Total do mês</div>
           <div class="val" data-count="${total}">R$ 0,00</div>
-          <div class="meta"><b>${qtd}</b> gastos · média <b>${FinTrack.formatBRL(media)}</b></div>
+          <div class="meta"><b>${qtd}</b> gastos · média <b>${FinTrack.formatBRL(media)}</b> por gasto</div>
         </div>
 
         <!-- Stats em linha -->
@@ -428,11 +537,34 @@
             <div class="sub">${maior ? escapeHtml(maior.descricao) : 'Sem registros'}</div>
           </div>
           <div class="stat-block">
-            <div class="cap">Quantidade</div>
-            <div class="val">${qtd}</div>
-            <div class="sub">lançamentos</div>
+            <div class="cap">Média diária</div>
+            <div class="val">${qtd ? FinTrack.formatBRL(total / new Date(curAno, curMes, 0).getDate()) : 'R$ 0,00'}</div>
+            <div class="sub">estimado no mês</div>
           </div>
         </div>
+
+        <!-- Semana atual -->
+        <div class="week-section rise" style="animation-delay:.09s;">
+          <div class="week-head">
+            <span class="t">Esta semana</span>
+            <span class="week-delta ${deltaClass}">${deltaLabel} vs semana passada</span>
+          </div>
+          <div class="week-bars">`;
+
+      weekDays.forEach((d, i) => {
+        const val = weekDayMap[d] || 0;
+        const h = Math.round((val / maxWeekDay) * 100);
+        const isToday = d === todayStr;
+        html += `
+          <div class="wk-col${isToday ? ' today-col' : ''}">
+            <div class="wk-bar-track">
+              <div class="wk-bar${isToday ? ' today' : ''}" data-h="${h}"></div>
+            </div>
+            <span class="wk-day-lbl">${DIAS_CURTO[i]}</span>
+          </div>`;
+      });
+
+      html += `</div></div>`;
 
         <!-- Gráfico de barras -->
         <div class="chart-section rise" style="animation-delay:.12s;">
@@ -456,6 +588,37 @@
           </div>`;
       });
       html += `</div></div>
+
+        <!-- Preview metas -->
+        ${hasMetasCat ? `
+        <div class="metas-preview rise" style="animation-delay:.15s;">
+          <div class="metas-preview-head">
+            <a href="metas.html" class="t section-link">Metas do mês <span class="arr-sm">→</span></a>
+          </div>
+          ${Object.keys(metasMap).slice(0, 4).map(catId => {
+            const meta = catMap[Number(catId)] || FinTrack.metaForCategoria('');
+            const spent  = spentByCat[Number(catId)] || 0;
+            const budget = metasMap[catId];
+            const pct    = Math.min((spent / budget) * 100, 100);
+            const color  = pct >= 100 ? '#EF4444' : pct >= 75 ? '#F97316' : '#10B981';
+            return `<div class="meta-mini-row">
+              <div class="meta-mini-icon" style="color:${meta.hex};">${FinTrack.iconForCategoria(meta.nome)}</div>
+              <span class="meta-mini-name">${meta.nome || 'Outros'}</span>
+              <div class="meta-mini-bar-wrap">
+                <div class="meta-mini-bar-fill" style="width:${pct}%;background:${color};"></div>
+              </div>
+              <span class="meta-mini-pct" style="color:${color};">${Math.round(pct)}%</span>
+            </div>`;
+          }).join('')}
+        </div>` : `
+        <div class="metas-preview rise" style="animation-delay:.15s;">
+          <div class="metas-preview-head">
+            <a href="metas.html" class="t section-link">Metas <span class="arr-sm">→</span></a>
+          </div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;padding:4px 0 8px;">
+            Defina orçamentos mensais por categoria
+          </div>
+        </div>`}
 
         <!-- Categorias -->
         <div class="cat-section rise" style="animation-delay:.18s;">
@@ -513,6 +676,7 @@
         animateCount($('.total-hero .val'), total);
         setTimeout(() => {
           document.querySelectorAll('.bar').forEach(b => { b.style.height = b.dataset.h + '%'; });
+          document.querySelectorAll('.wk-bar').forEach(b => { b.style.height = b.dataset.h + '%'; });
         }, 80);
         setTimeout(() => {
           document.querySelectorAll('.donut circle[data-len]').forEach((c, i) => {

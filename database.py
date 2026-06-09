@@ -228,3 +228,92 @@ def total_por_mes(mes, ano, usuario_id):
         (mes, ano, usuario_id)
     )
     return cursor.fetchone()
+
+
+# METAS
+
+def criar_tabela_metas():
+    _ensure_connection()
+    cursor.execute(
+        "CREATE TABLE IF NOT EXISTS metas("
+        "id SERIAL PRIMARY KEY, "
+        "usuario_id INTEGER REFERENCES usuarios(id), "
+        "categoria_id INTEGER REFERENCES categorias(id), "
+        "valor REAL NOT NULL, "
+        "UNIQUE(usuario_id, categoria_id))"
+    )
+    conexao.commit()
+
+
+def buscar_metas(usuario_id):
+    _ensure_connection()
+    cursor.execute(
+        "SELECT categoria_id, valor FROM metas WHERE usuario_id = %s",
+        (usuario_id,)
+    )
+    return cursor.fetchall()
+
+
+def salvar_meta(usuario_id, categoria_id, valor):
+    _ensure_connection()
+    cursor.execute(
+        "INSERT INTO metas(usuario_id, categoria_id, valor) VALUES(%s, %s, %s)"
+        " ON CONFLICT (usuario_id, categoria_id) DO UPDATE SET valor = EXCLUDED.valor",
+        (usuario_id, categoria_id, valor)
+    )
+    conexao.commit()
+
+
+def remover_meta(usuario_id, categoria_id):
+    _ensure_connection()
+    cursor.execute(
+        "DELETE FROM metas WHERE usuario_id = %s AND categoria_id = %s",
+        (usuario_id, categoria_id)
+    )
+    conexao.commit()
+
+
+def deletar_metas_usuario(usuario_id):
+    _ensure_connection()
+    cursor.execute("DELETE FROM metas WHERE usuario_id = %s", (usuario_id,))
+    conexao.commit()
+
+
+# ANÁLISE
+
+def gastos_heatmap_ano(usuario_id, ano):
+    _ensure_connection()
+    cursor.execute(
+        "SELECT data, SUM(valor) FROM gastos"
+        " WHERE usuario_id = %s AND EXTRACT(YEAR FROM data) = %s"
+        " GROUP BY data ORDER BY data",
+        (usuario_id, ano)
+    )
+    return cursor.fetchall()
+
+
+def gastos_por_dia_semana(usuario_id, mes, ano):
+    _ensure_connection()
+    cursor.execute(
+        "SELECT EXTRACT(DOW FROM data) AS dow, SUM(valor), COUNT(*) FROM gastos"
+        " WHERE usuario_id = %s"
+        " AND EXTRACT(MONTH FROM data) = %s"
+        " AND EXTRACT(YEAR FROM data) = %s"
+        " GROUP BY dow ORDER BY dow",
+        (usuario_id, mes, ano)
+    )
+    return cursor.fetchall()
+
+
+def total_por_categoria_mes(mes, ano, usuario_id):
+    _ensure_connection()
+    cursor.execute(
+        "SELECT categorias.nome, categorias.id, SUM(gastos.valor) FROM gastos"
+        " JOIN categorias ON gastos.categoria_id = categorias.id"
+        " WHERE gastos.usuario_id = %s"
+        " AND EXTRACT(MONTH FROM gastos.data) = %s"
+        " AND EXTRACT(YEAR FROM gastos.data) = %s"
+        " GROUP BY categorias.nome, categorias.id",
+        (usuario_id, mes, ano)
+    )
+    return cursor.fetchall()

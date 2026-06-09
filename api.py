@@ -18,6 +18,8 @@ from database import (
     deletar_todos_gastos_usuario,
     visualizar_categorias, visualizar_gastos_por_categoria,
     visualizar_gastos_por_mes, total_por_categoria, total_por_mes,
+    criar_tabela_metas, buscar_metas, salvar_meta, remover_meta, deletar_metas_usuario,
+    gastos_heatmap_ano, gastos_por_dia_semana, total_por_categoria_mes,
 )
 
 SECRET_KEY = os.getenv("JWT_SECRET", "fintrack-dev-secret-change-in-prod")
@@ -31,6 +33,7 @@ bearer = HTTPBearer()
 async def lifespan(app: FastAPI):
     try:
         criar_tabela()
+        criar_tabela_metas()
     except Exception as e:
         print(f"WARNING: DB init failed: {e}")
     yield
@@ -113,6 +116,11 @@ class GastoCreate(BaseModel):
 class GastoUpdate(BaseModel):
     valor: float
     data: str
+
+
+class MetaUpsert(BaseModel):
+    categoria_id: int
+    valor: float
 
 
 class Gasto(BaseModel):
@@ -253,3 +261,39 @@ def total_gastos_por_categoria(uid: int = Depends(get_current_user)):
 def total_gastos_por_mes(mes: int, ano: int, uid: int = Depends(get_current_user)):
     resultado = total_por_mes(mes, ano, uid)
     return {"mes": mes, "ano": ano, "total": resultado[0] if resultado and resultado[0] else 0.0}
+
+
+@app.get("/gastos/total/categoria/mes/{mes}/{ano}")
+def total_categoria_por_mes(mes: int, ano: int, uid: int = Depends(get_current_user)):
+    return [{"nome": r[0], "categoria_id": r[1], "total": r[2]} for r in total_por_categoria_mes(mes, ano, uid)]
+
+
+@app.get("/gastos/heatmap/{ano}")
+def heatmap_gastos(ano: int, uid: int = Depends(get_current_user)):
+    rows = gastos_heatmap_ano(uid, ano)
+    return [{"data": str(r[0]), "total": float(r[1])} for r in rows]
+
+
+@app.get("/gastos/dia-semana/{mes}/{ano}")
+def gastos_dia_semana(mes: int, ano: int, uid: int = Depends(get_current_user)):
+    rows = gastos_por_dia_semana(uid, mes, ano)
+    return [{"dow": int(r[0]), "total": float(r[1]), "count": int(r[2])} for r in rows]
+
+
+# --- Metas ---
+
+@app.get("/metas")
+def listar_metas(uid: int = Depends(get_current_user)):
+    return [{"categoria_id": r[0], "valor": r[1]} for r in buscar_metas(uid)]
+
+
+@app.post("/metas", status_code=201)
+def criar_meta(meta: MetaUpsert, uid: int = Depends(get_current_user)):
+    salvar_meta(uid, meta.categoria_id, meta.valor)
+    return {"mensagem": "Meta salva"}
+
+
+@app.delete("/metas/{categoria_id}")
+def excluir_meta(categoria_id: int, uid: int = Depends(get_current_user)):
+    remover_meta(uid, categoria_id)
+    return {"mensagem": "Meta removida"}

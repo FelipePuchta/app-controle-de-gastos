@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Metas — FinTrack</title>
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* ── Seletor de mês ── */
+    .period {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .period button.nav {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      color: var(--muted);
+      transition: all 0.18s var(--ease);
+    }
+    .period button.nav:hover { border-color: var(--border-str); color: var(--fg); }
+    .period button.nav:active { transform: scale(0.9); }
+    .period button.nav svg { width: 14px; height: 14px; }
+    .period .cur { text-align: center; }
+    .period .cur .m {
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0em; text-transform: uppercase; line-height: 1;
+    }
+    .period .cur .y {
+      font-size: 10px; color: var(--muted);
+      letter-spacing: 0.16em; margin-top: 3px; font-weight: 600;
+    }
+
+    /* ── Sumário geral ── */
+    .summary-block {
+      padding: 28px 0 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-block .lbl {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .summary-block .val {
+      font-size: clamp(40px, 12vw, 60px);
+      font-weight: 800; letter-spacing: -0.05em; line-height: 0.9;
+    }
+    .summary-block .val.over { color: #EF4444; }
+    .summary-block .meta {
+      font-size: 11px; color: var(--muted);
+      margin-top: 12px; letter-spacing: 0.04em;
+    }
+    .summary-block .meta b { color: rgba(255,255,255,0.70); font-weight: 600; }
+    .overall-bar {
+      margin-top: 16px;
+      width: 100%; height: 2px;
+      background: rgba(255,255,255,0.07);
+    }
+    .overall-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 1s var(--ease);
+    }
+    .overall-fill.danger  { background: #EF4444; }
+    .overall-fill.warning { background: #F97316; }
+
+    /* ── Cards de categoria ── */
+    .cats-section {
+      padding: 20px 0 0;
+    }
+    .cats-header {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.20em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 4px;
+    }
+
+    .meta-card {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .meta-card:last-child { border-bottom: none; }
+    .meta-card-top {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .meta-cat-icon {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .meta-cat-icon svg { width: 15px; height: 15px; }
+    .meta-cat-name {
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      flex: 1;
+    }
+    .meta-status {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      padding: 3px 8px;
+      border: 1px solid;
+    }
+    .meta-status.ok      { color: #10B981; border-color: rgba(16,185,129,0.25); }
+    .meta-status.warning { color: #F97316; border-color: rgba(249,115,22,0.25); }
+    .meta-status.danger  { color: #EF4444; border-color: rgba(239,68,68,0.25); }
+    .meta-status.unset   { color: var(--faint); border-color: rgba(255,255,255,0.08); }
+
+    .meta-numbers {
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .meta-spent {
+      font-size: 22px; font-weight: 800;
+      letter-spacing: -0.04em; line-height: 1;
+    }
+    .meta-budget-txt {
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .meta-budget-txt b { color: var(--fg); font-weight: 600; }
+
+    .meta-progress {
+      width: 100%; height: 2px;
+      background: rgba(255,255,255,0.07);
+      margin-bottom: 12px;
+    }
+    .meta-progress-fill {
+      height: 100%;
+      transition: width 1s var(--ease);
+    }
+
+    /* ── Editor inline de meta ── */
+    .meta-edit-row {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .meta-input-wrap {
+      flex: 1; position: relative;
+    }
+    .meta-input-wrap::before {
+      content: 'R$';
+      position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px; font-weight: 700;
+      color: var(--muted); pointer-events: none;
+      letter-spacing: 0.04em;
+    }
+    .meta-input {
+      width: 100%; height: 36px;
+      padding: 0 0 0 28px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border-mid);
+      color: var(--fg);
+      font-family: var(--font);
+      font-size: 14px; font-weight: 600;
+      transition: border-color 0.2s var(--ease);
+      -webkit-appearance: none; appearance: none;
+    }
+    .meta-input::placeholder { color: var(--faint); }
+    .meta-input:focus { outline: none; border-bottom-color: var(--fg); }
+
+    .meta-btn-save {
+      height: 36px; padding: 0 16px;
+      background: var(--accent); color: #000;
+      font-family: var(--font); font-size: 9px;
+      font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; border: none;
+      border-radius: 0; cursor: pointer;
+      transition: filter 0.15s var(--ease);
+      flex-shrink: 0;
+    }
+    .meta-btn-save:hover { filter: brightness(1.1); }
+    .meta-btn-save:active { transform: scale(0.97); }
+
+    .meta-btn-clear {
+      height: 36px; padding: 0 12px;
+      background: transparent;
+      border: 1px solid rgba(239,68,68,0.25);
+      color: rgba(239,68,68,0.7);
+      font-family: var(--font); font-size: 9px;
+      font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; border-radius: 0; cursor: pointer;
+      transition: background 0.15s var(--ease);
+      flex-shrink: 0;
+    }
+    .meta-btn-clear:hover { background: rgba(239,68,68,0.07); }
+
+    /* ── Aviso sem metas ── */
+    .no-metas-tip {
+      padding: 20px 0 8px;
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 0.04em; line-height: 1.7;
+    }
+    .no-metas-tip b { color: var(--fg); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Controle de orçamento</div>
+        <h1>Metas</h1>
+      </div>
+    </header>
+
+    <div class="screen">
+      <div id="notice-slot"></div>
+
+      <!-- Seletor de mês -->
+      <div class="period">
+        <button class="nav" id="prev" aria-label="Mês anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <div class="cur">
+          <div class="m" id="per-mes">—</div>
+          <div class="y" id="per-ano">—</div>
+        </div>
+        <button class="nav" id="next" aria-label="Próximo mês">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+
+      <div id="content">
+        <div class="loading-wrap"><div class="spinner"></div>Carregando</div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="adicionar.html" class="nav-item nav-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar
+      </a>
+      <a href="gastos.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="3.5" cy="12" r="1.2"/><circle cx="3.5" cy="18" r="1.2"/></svg>
+        Gastos
+      </a>
+      <a href="analise.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 10 15 14 19 8"/></svg>
+        Análise
+      </a>
+      <a href="configuracoes.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Config
+      </a>
+    </nav>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="_shared.js"></script>
+  <script>
+    FinTrack.requireAuth();
+    const $ = (s) => document.querySelector(s);
+
+    const hoje = new Date();
+    let curMes = hoje.getMonth() + 1;
+    let curAno  = hoje.getFullYear();
+    let gastos = [], categorias = [], catMap = {}, metas = {}, saving = {};
+
+    async function init() {
+      [gastos, categorias] = await Promise.all([FinTrack.getGastos(), FinTrack.getCategorias()]);
+      catMap = FinTrack.buildCatMap(categorias);
+      const metasList = await FinTrack.getMetas();
+      metasList.forEach(m => { metas[m.categoria_id] = m.valor; });
+      if (FinTrack.isDemo()) {
+        $('#notice-slot').innerHTML =
+          '<div class="notice"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>API indisponível — metas não serão salvas no servidor.</span></div>';
+      }
+      render();
+    }
+
+    $('#prev').onclick = () => { curMes--; if (curMes < 1) { curMes = 12; curAno--; } render(); };
+    $('#next').onclick = () => { curMes++; if (curMes > 12) { curMes = 1; curAno++; } render(); };
+
+    function gastosDoMes(mes, ano) {
+      return gastos.filter(g => {
+        const { mes: m, ano: a } = FinTrack.mesAnoDe(g.data);
+        return m === mes && a === ano;
+      });
+    }
+
+    function statusMeta(pct) {
+      if (pct >= 100) return 'danger';
+      if (pct >= 75)  return 'warning';
+      return 'ok';
+    }
+
+    function render() {
+      $('#per-mes').textContent = FinTrack.MESES_LONGO[curMes - 1].toUpperCase();
+      $('#per-ano').textContent = curAno;
+
+      const doMes = gastosDoMes(curMes, curAno);
+
+      // Totais por categoria no mês
+      const spentByCat = {};
+      doMes.forEach(g => {
+        spentByCat[g.categoria_id] = (spentByCat[g.categoria_id] || 0) + Number(g.valor);
+      });
+
+      // Total gasto e total orçado
+      const totalGasto    = doMes.reduce((s, g) => s + Number(g.valor), 0);
+      const totalOrcado   = Object.values(metas).reduce((s, v) => s + v, 0);
+      const pctGeral      = totalOrcado > 0 ? Math.min((totalGasto / totalOrcado) * 100, 120) : 0;
+      const statusGeral   = statusMeta(pctGeral);
+      const temMetas      = totalOrcado > 0;
+
+      let html = '';
+
+      // Sumário geral
+      html += `
+        <div class="summary-block rise">
+          <div class="lbl">Gasto no mês</div>
+          <div class="val${statusGeral === 'danger' && temMetas ? ' over' : ''}" id="total-val" data-count="${totalGasto}">R$ 0,00</div>
+          <div class="meta">
+            ${temMetas
+              ? `<b>${FinTrack.formatBRL(totalOrcado)}</b> orçados · <b>${Math.round(pctGeral)}%</b> utilizado`
+              : 'Defina metas por categoria abaixo'}
+          </div>
+          ${temMetas ? `
+          <div class="overall-bar">
+            <div class="overall-fill ${statusGeral}" style="width:0%;" data-w="${Math.min(pctGeral, 100)}%"></div>
+          </div>` : ''}
+        </div>`;
+
+      if (!temMetas) {
+        html += `<div class="no-metas-tip">Defina um <b>orçamento mensal</b> para cada categoria e acompanhe se está gastando dentro do limite.</div>`;
+      }
+
+      // Cards de categoria
+      html += `<div class="cats-section stagger">`;
+
+      categorias.forEach(cat => {
+        const meta    = catMap[cat.id] || FinTrack.metaForCategoria(cat.nome);
+        const spent   = spentByCat[cat.id] || 0;
+        const budget  = metas[cat.id] || 0;
+        const pct     = budget > 0 ? Math.min((spent / budget) * 100, 120) : 0;
+        const status  = budget > 0 ? statusMeta(pct) : 'unset';
+        const pctDisplay = budget > 0 ? Math.round(pct) : null;
+        const colorMap = { ok: '#10B981', warning: '#F97316', danger: '#EF4444', unset: 'rgba(255,255,255,0.18)' };
+        const fillColor = colorMap[status];
+
+        const statusLabel = {
+          ok:      'OK',
+          warning: 'Atenção',
+          danger:  'Excedido',
+          unset:   'Sem meta',
+        }[status];
+
+        html += `
+          <div class="meta-card" data-cat-id="${cat.id}">
+            <div class="meta-card-top">
+              <div class="meta-cat-icon" style="border-color:${meta.hex}22;color:${meta.hex};">
+                ${FinTrack.iconForCategoria(cat.nome)}
+              </div>
+              <span class="meta-cat-name">${cat.nome}</span>
+              <span class="meta-status ${status}">${statusLabel}</span>
+            </div>
+            <div class="meta-numbers">
+              <span class="meta-spent">${FinTrack.formatBRL(spent)}</span>
+              <span class="meta-budget-txt">
+                ${budget > 0
+                  ? `de <b>${FinTrack.formatBRL(budget)}</b> · ${pctDisplay}%`
+                  : 'sem orçamento'}
+              </span>
+            </div>
+            <div class="meta-progress">
+              <div class="meta-progress-fill" style="width:0%;background:${fillColor};" data-w="${Math.min(pct, 100).toFixed(1)}%"></div>
+            </div>
+            <div class="meta-edit-row">
+              <div class="meta-input-wrap">
+                <input class="meta-input" type="number" min="0" step="10" inputmode="decimal"
+                  placeholder="${budget > 0 ? (budget).toFixed(2) : '0,00'}"
+                  id="meta-inp-${cat.id}"
+                  value="${budget > 0 ? budget : ''}"
+                  aria-label="Meta mensal para ${cat.nome}" />
+              </div>
+              <button class="meta-btn-save" onclick="onSave(${cat.id})">Salvar</button>
+              ${budget > 0
+                ? `<button class="meta-btn-clear" onclick="onClear(${cat.id})" aria-label="Remover meta de ${cat.nome}">×</button>`
+                : ''}
+            </div>
+          </div>`;
+      });
+
+      html += `</div>`;
+      $('#content').innerHTML = html;
+
+      // Animate count
+      requestAnimationFrame(() => {
+        animateCount($('#total-val'), totalGasto);
+        setTimeout(() => {
+          const fill = $('.overall-fill');
+          if (fill) fill.style.width = fill.dataset.w || '0%';
+          document.querySelectorAll('.meta-progress-fill').forEach(b => {
+            b.style.width = b.dataset.w || '0%';
+          });
+        }, 120);
+      });
+    }
+
+    async function onSave(catId) {
+      if (saving[catId]) return;
+      const inp = document.getElementById('meta-inp-' + catId);
+      const val = parseFloat(inp.value);
+      if (!val || val <= 0) { showToast('Valor inválido'); return; }
+      saving[catId] = true;
+      const btn = inp.closest('.meta-edit-row').querySelector('.meta-btn-save');
+      btn.textContent = '...';
+      await FinTrack.saveMeta(catId, val);
+      metas[catId] = val;
+      saving[catId] = false;
+      showToast('Meta salva');
+      render();
+    }
+
+    async function onClear(catId) {
+      if (saving[catId]) return;
+      saving[catId] = true;
+      await FinTrack.deleteMeta(catId);
+      delete metas[catId];
+      saving[catId] = false;
+      showToast('Meta removida');
+      render();
+    }
+
+    function animateCount(el, target) {
+      if (!el) return;
+      const dur = 600, t0 = performance.now();
+      function step(now) {
+        const p = Math.min((now - t0) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = FinTrack.formatBRL(target * eased);
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = $('#toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    init();
+  </script>
+</body>
+</html>
