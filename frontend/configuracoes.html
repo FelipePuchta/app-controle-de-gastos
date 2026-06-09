@@ -9,6 +9,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="manifest.json" />
   <title>Configurações — FinTrack</title>
+  <script>try{var _t=localStorage.getItem('ft-theme');if(_t)document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
   <link rel="stylesheet" href="_shared.css" />
   <style>
     .cfg-section {
@@ -74,6 +75,51 @@
 
     .btn-cfg .arr { font-size: 16px; font-weight: 300; letter-spacing: 0; }
 
+    /* Toggle tema */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .theme-toggle-left {
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .theme-toggle-label {
+      font-size: 13px; font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .theme-toggle-sub {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .theme-toggle-pill {
+      position: relative;
+      width: 52px; height: 28px;
+      border: 1px solid var(--border-str);
+      flex-shrink: 0;
+      transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
+    }
+    .theme-toggle-pill::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      background: var(--fg);
+      transition: transform 0.3s var(--ease), background 0.3s var(--ease);
+    }
+    .theme-toggle-pill.light-on {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .theme-toggle-pill.light-on::after {
+      transform: translateX(24px);
+      background: #000000;
+    }
+
     /* Modal de confirmação */
     .modal-overlay {
       display: none;
@@ -113,6 +159,18 @@
     </header>
 
     <div class="screen">
+
+      <!-- Aparência -->
+      <section class="cfg-section">
+        <div class="cfg-label">Aparência</div>
+        <div class="theme-toggle" id="btn-tema" role="button" aria-label="Alternar tema">
+          <div class="theme-toggle-left">
+            <span class="theme-toggle-label" id="tema-nome">Modo escuro</span>
+            <span class="theme-toggle-sub" id="tema-sub">Tema atual</span>
+          </div>
+          <div class="theme-toggle-pill" id="tema-pill"></div>
+        </div>
+      </section>
 
       <!-- Perfil -->
       <section class="cfg-section">
@@ -339,6 +397,21 @@
         setMsg('#msg-excluir', data.detail || 'Senha incorreta.', 'err');
         setBtn('#btn-excluir-confirmar', false);
       }
+    };
+
+    // Tema
+    function syncTemaUI() {
+      const isLight = FinTrack.theme.isLight();
+      $('#tema-nome').textContent = isLight ? 'Modo claro' : 'Modo escuro';
+      $('#tema-sub').textContent  = isLight ? 'Ativo' : 'Ativo';
+      const pill = $('#tema-pill');
+      if (isLight) pill.classList.add('light-on');
+      else pill.classList.remove('light-on');
+    }
+    syncTemaUI();
+    $('#btn-tema').onclick = () => {
+      FinTrack.theme.toggle();
+      syncTemaUI();
     };
 
     // Sair

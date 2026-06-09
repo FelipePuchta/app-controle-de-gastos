@@ -24,11 +24,19 @@
   --cat-educacao:    #EC4899;
   --cat-outros:      #6B7280;
 
-  --font:    'Sora', system-ui, sans-serif;
-  --app-max: 480px;
-  --nav-h:   60px;
-  --ease:    cubic-bezier(0.22, 1, 0.36, 1);
+  --font:       'Sora', system-ui, sans-serif;
+  --app-max:    480px;
+  --nav-h:      60px;
+  --ease:       cubic-bezier(0.22, 1, 0.36, 1);
 
+  /* tokens para overrides de tema */
+  --nav-bg:      rgba(0,0,0,0.96);
+  --nav-add-bg:  #000000;
+  --tooltip-bg:  #111111;
+  --cell-bg:     rgba(255,255,255,0.05);
+  --surface:     rgba(255,255,255,0.05);
+  --surface-2:   rgba(255,255,255,0.08);
+  --accent-faint: rgba(255,230,0,0.20);
 }
 
 /* ── Reset ────────────────────────────────────────────────────────── */
@@ -254,7 +262,7 @@ textarea.input {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   align-items: center;
-  background: rgba(0,0,0,0.96);
+  background: var(--nav-bg);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
   border-top: 1px solid var(--border);
@@ -300,7 +308,7 @@ textarea.input {
   border: 1px solid var(--border-str);
   color: var(--fg);
   stroke-width: 2;
-  background: #000;
+  background: var(--nav-add-bg);
 }
 .nav-item.nav-add.active svg,
 .nav-item.nav-add:hover svg {
@@ -347,7 +355,7 @@ textarea.input {
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--muted);
-  border: 1px solid rgba(255,230,0,0.15);
+  border: 1px solid var(--accent-faint);
   padding: 10px 14px;
   margin: 8px 0 18px;
 }
@@ -407,11 +415,162 @@ textarea.input {
 
 ::-webkit-scrollbar { width: 0; height: 0; }
 
+/* =====================================================================
+   MODO CLARO — creme quente · tinta preta · âmbar dourado
+   ===================================================================== */
+
+[data-theme="light"] {
+  --bg:         #FAF8F4;
+  --bg-sub:     #F0EDE6;
+  --fg:         #0C0B09;
+  --muted:      rgba(12,11,9,0.52);
+  --faint:      rgba(12,11,9,0.34);
+  --accent:     #B8750A;
+  --border:     rgba(12,11,9,0.07);
+  --border-mid: rgba(12,11,9,0.13);
+  --border-str: rgba(12,11,9,0.26);
+
+  --nav-bg:      rgba(250,248,244,0.96);
+  --nav-add-bg:  var(--bg);
+  --tooltip-bg:  #FFFFFF;
+  --cell-bg:     rgba(12,11,9,0.06);
+  --surface:     rgba(12,11,9,0.04);
+  --surface-2:   rgba(12,11,9,0.07);
+  --accent-faint: rgba(184,117,10,0.18);
+}
+
+/* Ajustes específicos para modo claro ─────────────────────────────── */
+
+/* Splash temático */
+[data-theme="light"] #ft-splash {
+  background: #FAF8F4;
+}
+[data-theme="light"] #ft-splash .s-fin   { color: #B8750A; }
+[data-theme="light"] #ft-splash .s-track { color: #0C0B09; }
+[data-theme="light"] #ft-splash .s-bar   { background: rgba(12,11,9,0.18); }
+
+/* Status bar color hint */
+[data-theme="light"] ~ head meta[name="theme-color"] { content: "#FAF8F4"; }
+
+/* Borda lateral do app shell */
+[data-theme="light"] .app {
+  border-left-color:  var(--border);
+  border-right-color: var(--border);
+}
+
+/* Nav indicator */
+[data-theme="light"] .nav-item.nav-add.active svg,
+[data-theme="light"] .nav-item.nav-add:hover svg {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Mensagens de formulário */
+[data-theme="light"] .cfg-msg.ok  { color: #0D7F52; }
+[data-theme="light"] .cfg-msg.err { color: #C0392B; }
+
+/* Modal overlay — continua escuro em ambos os temas */
+
+/* ── Dashboard ──────────────────────────────────────────────────── */
+
+[data-theme="light"] .total-hero .meta b {
+  color: rgba(12,11,9,0.72);
+}
+
+/* Barras do gráfico mensal */
+[data-theme="light"] .bar {
+  background: rgba(12,11,9,0.16);
+}
+
+/* Mini barras semanais */
+[data-theme="light"] .wk-bar {
+  background: rgba(12,11,9,0.14);
+}
+[data-theme="light"] .week-delta.flat {
+  border-color: rgba(12,11,9,0.10);
+}
+
+/* Preview de metas */
+[data-theme="light"] .meta-mini-row {
+  border-bottom-color: rgba(12,11,9,0.05);
+}
+[data-theme="light"] .meta-mini-bar-wrap {
+  background: rgba(12,11,9,0.07);
+}
+
+/* ── Análise ─────────────────────────────────────────────────────── */
+
+/* Barras dia da semana */
+[data-theme="light"] .dow-bar {
+  background: rgba(12,11,9,0.16);
+}
+
+/* Ranking de meses */
+[data-theme="light"] .rank-bar-wrap {
+  background: rgba(12,11,9,0.08);
+}
+[data-theme="light"] .month-rank-row {
+  border-bottom-color: rgba(12,11,9,0.05);
+}
+
+/* Heatmap scale legend */
+[data-theme="light"] .heatmap-meta .scale-legend span {
+  color: var(--muted);
+}
+
+/* ── Metas ───────────────────────────────────────────────────────── */
+
+[data-theme="light"] .summary-block .meta b {
+  color: rgba(12,11,9,0.72);
+}
+[data-theme="light"] .overall-bar {
+  background: rgba(12,11,9,0.07);
+}
+[data-theme="light"] .meta-cat-icon {
+  border-color: var(--border);
+}
+[data-theme="light"] .meta-status.unset {
+  border-color: var(--border);
+}
+[data-theme="light"] .meta-progress {
+  background: rgba(12,11,9,0.07);
+}
+
+/* ── Adicionar ────────────────────────────────────────────────────── */
+
+[data-theme="light"] #valor::placeholder {
+  color: rgba(12,11,9,0.22);
+}
+[data-theme="light"] .cat-cell:active {
+  background: rgba(12,11,9,0.04);
+}
+[data-theme="light"] .cat-cell.selected {
+  background: rgba(12,11,9,0.06);
+}
+
+/* ── Gastos ──────────────────────────────────────────────────────── */
+
+[data-theme="light"] .sheet .cat-cell.active {
+  background: rgba(12,11,9,0.05);
+}
+
+/* ── Análise (top gastos) ────────────────────────────────────────── */
+
+[data-theme="light"] .top-gasto-row {
+  border-color: var(--border);
+}
+
+/* ── Dashboard (active vlabel) ───────────────────────────────────── */
+
+[data-theme="light"] .bar-col.active .vlabel {
+  color: rgba(12,11,9,0.78);
+}
+
 /* ── Progress bar ─────────────────────────────────────────────────── */
 .progress-wrap {
   width: 100%;
   height: 3px;
-  background: rgba(255,255,255,0.08);
+  background: var(--surface-2);
   overflow: hidden;
 }
 .progress-fill {
@@ -495,18 +654,18 @@ textarea.input {
 .h-week { display: flex; flex-direction: column; gap: 2px; }
 .h-cell {
   width: 8px; height: 8px;
-  background: rgba(255,255,255,0.05);
+  background: var(--cell-bg);
   cursor: default;
   transition: opacity 0.15s;
 }
 .h-cell:hover { opacity: 0.75; }
-.h-cell.today { outline: 1px solid rgba(255,230,0,0.6); outline-offset: 0; }
+.h-cell.today { outline: 1px solid var(--accent-faint); outline-offset: 0; }
 .h-cell.out-of-range { background: transparent; }
 
 /* ── Tooltip heatmap ─────────────────────────────────────────────── */
 .h-tooltip {
   position: fixed;
-  background: #111;
+  background: var(--tooltip-bg);
   border: 1px solid var(--border-mid);
   color: var(--fg);
   font-family: var(--font);

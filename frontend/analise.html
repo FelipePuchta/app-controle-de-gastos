@@ -9,6 +9,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="manifest.json" />
   <title>Análise — FinTrack</title>
+  <script>try{var _t=localStorage.getItem('ft-theme');if(_t)document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
   <link rel="stylesheet" href="_shared.css" />
   <style>
     /* ── Seletor de ano ── */
@@ -572,12 +573,13 @@
           if (!cell.inYear) {
             grid += '<div class="h-cell out-of-range"></div>';
           } else {
+            const _light = FinTrack.theme.isLight();
             const opacity = cell.total > 0
               ? (0.18 + Math.pow(cell.total / maxDay, 0.5) * 0.82).toFixed(2)
               : '0.05';
             const bg = cell.total > 0
-              ? `rgba(255,230,0,${opacity})`
-              : 'rgba(255,255,255,0.05)';
+              ? (_light ? `rgba(184,117,10,${opacity})` : `rgba(255,230,0,${opacity})`)
+              : (_light ? 'rgba(12,11,9,0.05)' : 'rgba(255,255,255,0.05)');
             grid += `<div class="h-cell${cell.isToday ? ' today' : ''}" style="background:${bg};" data-date="${cell.date}" data-total="${cell.total}"></div>`;
           }
         });

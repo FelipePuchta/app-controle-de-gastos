@@ -1,5 +1,14 @@
 /* FinTrack — _shared.js — camada de dados + utilitários */
 
+/* ---------- Tema (executa antes de qualquer render) ---------- */
+(function () {
+  try {
+    const t = localStorage.getItem('ft-theme');
+    if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+  } catch (e) {}
+})();
+
 /* ---------- Splash screen (uma vez por sessão) ---------- */
 (function () {
   if (sessionStorage.getItem('ft-splash')) return;
@@ -268,6 +277,17 @@
     return { mes: parseInt(mes, 10), ano: parseInt(ano, 10) };
   }
 
+  const theme = {
+    get() { try { return localStorage.getItem('ft-theme') || 'dark'; } catch { return 'dark'; } },
+    set(t) {
+      try { localStorage.setItem('ft-theme', t); } catch {}
+      if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      else document.documentElement.removeAttribute('data-theme');
+    },
+    toggle() { theme.set(theme.get() === 'light' ? 'dark' : 'light'); },
+    isLight() { return theme.get() === 'light'; },
+  };
+
   window.FinTrack = {
     API_BASE,
     CAT_META, CAT_ICONS, CAT_DEFAULT, MESES, MESES_LONGO,
@@ -275,6 +295,6 @@
     getMetas, saveMeta, deleteMeta,
     metaForCategoria, buildCatMap, normKey, iconForCategoria,
     formatBRL, formatData, mesAnoDe,
-    isDemo, auth, requireAuth,
+    isDemo, auth, requireAuth, theme,
   };
 })();
