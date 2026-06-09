@@ -131,7 +131,19 @@
       const data = await api('/gastos');
       usingDemo = false;
       const result = Array.isArray(data) ? data : (data?.gastos || []);
-      if (estaLogado && result.length > 0) {
+
+      // Cold-start guard: se a API retornou itens mas todos com valor 0,
+      // é sinal de falha de conexão com o banco — usa cache em vez disso.
+      const temValoresReais = result.some(g => Number(g.valor) > 0);
+      if (estaLogado && result.length > 0 && !temValoresReais) {
+        try {
+          const cached = localStorage.getItem(CACHE_KEY);
+          if (cached) return JSON.parse(cached);
+        } catch {}
+        return result;
+      }
+
+      if (estaLogado && result.length > 0 && temValoresReais) {
         try { localStorage.setItem(CACHE_KEY, JSON.stringify(result)); } catch {}
       }
       return result;

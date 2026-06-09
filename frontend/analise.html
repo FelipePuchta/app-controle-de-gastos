@@ -81,9 +81,9 @@
       display: flex; align-items: center; gap: 4px;
     }
     .heatmap-meta .scale-legend span {
-      font-size: 8px; font-weight: 700;
+      font-size: 9px; font-weight: 700;
       letter-spacing: 0.10em; text-transform: uppercase;
-      color: var(--faint);
+      color: var(--muted);
     }
     .scale-squares { display: flex; gap: 2px; }
     .scale-sq {
@@ -112,8 +112,8 @@
       justify-content: flex-end;
     }
     .dow-val-lbl {
-      font-size: 7px;
-      color: var(--faint);
+      font-size: 9px;
+      color: var(--muted);
       font-weight: 600;
       letter-spacing: 0.02em;
       white-space: nowrap;
@@ -126,21 +126,21 @@
       justify-content: center;
     }
     .dow-bar {
-      width: 3px; max-width: 3px;
-      background: rgba(255,255,255,0.18);
+      width: 5px; max-width: 5px;
+      background: rgba(255,255,255,0.32);
       height: 0;
       transition: height 0.9s var(--ease);
     }
     .dow-bar.peak {
       background: var(--accent);
-      width: 4px; max-width: 4px;
+      width: 7px; max-width: 7px;
     }
     .dow-day-lbl {
-      font-size: 8px;
+      font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.10em;
       text-transform: uppercase;
-      color: var(--faint);
+      color: var(--muted);
     }
     .dow-col.peak-col .dow-day-lbl { color: var(--accent); }
 
@@ -159,7 +159,7 @@
     .month-rank-row:last-child { border-bottom: none; }
     .rank-pos {
       font-size: 10px; font-weight: 700;
-      color: var(--faint); width: 14px;
+      color: var(--muted); width: 14px;
       text-align: right; flex-shrink: 0;
     }
     .rank-pos.top { color: var(--accent); }
@@ -170,8 +170,8 @@
     }
     .rank-bar-wrap {
       flex: 1;
-      height: 2px;
-      background: rgba(255,255,255,0.06);
+      height: 4px;
+      background: rgba(255,255,255,0.10);
     }
     .rank-bar-fill {
       height: 100%;

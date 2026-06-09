@@ -43,8 +43,14 @@ def _do_reconnect():
 def _ensure_connection():
     try:
         cursor.execute("SELECT 1")
+        cursor.fetchone()
     except Exception:
         _do_reconnect()
+        try:
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+        except Exception:
+            _do_reconnect()
 
 
 def criar_tabela():

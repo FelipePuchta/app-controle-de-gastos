@@ -9,8 +9,8 @@
   --bg:         #000000;
   --bg-sub:     #080808;
   --fg:         #FFFFFF;
-  --muted:      rgba(255,255,255,0.45);
-  --faint:      rgba(255,255,255,0.18);
+  --muted:      rgba(255,255,255,0.62);
+  --faint:      rgba(255,255,255,0.40);
   --accent:     #FFE600;
   --border:     rgba(255,255,255,0.08);
   --border-mid: rgba(255,255,255,0.16);
@@ -267,16 +267,16 @@ textarea.input {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--faint);
+  color: var(--muted);
   height: 100%;
   position: relative;
   transition: color 0.2s var(--ease);
 }
-.nav-item svg { width: 19px; height: 19px; stroke-width: 1.5; transition: transform 0.2s var(--ease); }
+.nav-item svg { width: 20px; height: 20px; stroke-width: 1.6; transition: transform 0.2s var(--ease); }
 .nav-item:active svg { transform: scale(0.85); }
 .nav-item.active { color: var(--fg); }
 .nav-item.active::before {
